@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Virtual ItemsVC-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController storyboardIdentifier="VirtualItems" id="BYZ-38-t0r" customClass="VirtualItemsVC" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BiW-PD-Xfx" userLabel="Root View">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fhh-5T-PLT">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="64"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inventory" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bop-p2-zUl" userLabel="Screen Title">
+                                                <rect key="frame" x="20" y="21.5" width="71" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" name="black"/>
+                                        <constraints>
+                                            <constraint firstItem="bop-p2-zUl" firstAttribute="leading" secondItem="fhh-5T-PLT" secondAttribute="leading" constant="20" id="1bw-SO-9Zy"/>
+                                            <constraint firstAttribute="height" constant="64" id="BT1-T6-cIy"/>
+                                            <constraint firstItem="bop-p2-zUl" firstAttribute="centerY" secondItem="fhh-5T-PLT" secondAttribute="centerY" id="SiS-MK-JvS"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kPM-F3-0wa">
+                                        <rect key="frame" x="0.0" y="64" width="414" height="832"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="fhh-5T-PLT" secondAttribute="trailing" id="9kD-Mu-kfd"/>
+                                    <constraint firstItem="kPM-F3-0wa" firstAttribute="leading" secondItem="BiW-PD-Xfx" secondAttribute="leading" id="QE0-lS-sYL"/>
+                                    <constraint firstItem="fhh-5T-PLT" firstAttribute="leading" secondItem="BiW-PD-Xfx" secondAttribute="leading" id="bPL-9r-7NB"/>
+                                    <constraint firstItem="kPM-F3-0wa" firstAttribute="top" secondItem="fhh-5T-PLT" secondAttribute="bottom" id="cth-Dj-n6G"/>
+                                    <constraint firstAttribute="bottom" secondItem="kPM-F3-0wa" secondAttribute="bottom" id="inA-9O-DAD"/>
+                                    <constraint firstAttribute="trailing" secondItem="kPM-F3-0wa" secondAttribute="trailing" id="mK7-eW-weJ"/>
+                                    <constraint firstItem="fhh-5T-PLT" firstAttribute="top" secondItem="BiW-PD-Xfx" secondAttribute="top" id="pV4-QG-zz0"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" name="black"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="BiW-PD-Xfx" secondAttribute="bottom" id="7ka-ih-Nww"/>
+                            <constraint firstItem="BiW-PD-Xfx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="OGY-Sp-j5r"/>
+                            <constraint firstItem="BiW-PD-Xfx" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="TyS-iW-jj1"/>
+                            <constraint firstAttribute="trailing" secondItem="BiW-PD-Xfx" secondAttribute="trailing" id="UR4-zD-dki"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tabbarViewControllerContainer" destination="kPM-F3-0wa" id="NJu-o5-Zyl"/>
+                        <outlet property="titleLabel" destination="bop-p2-zUl" id="4Be-PI-kFc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="139" y="119"/>
+        </scene>
+    </scenes>
+    <resources>
+        <namedColor name="black">
+            <color red="0.027450980392156862" green="0.031372549019607843" blue="0.086274509803921567" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

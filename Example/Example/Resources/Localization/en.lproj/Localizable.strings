@@ -1,0 +1,95 @@
+// Copyright 2021-present Xsolla (USA), Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at q
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing and permissions and
+
+// MARK: - Common
+
+// MARK: - Auth Screen
+
+"Auth.main.tabs.login" = "Login";
+"Auth.main.tabs.signup" = "Sign up";
+
+"Auth.button.login" = "Log in";
+"Auth.button.loginDemo" = "Log in as demo user";
+"Auth.button.recoverPassword" = "Forgot your password?";
+"Auth.button.signup" = "Sign up";
+
+"Auth.button.privacyPolicy.text" = "By continuing, you agree to be bound by our %s.";
+"Auth.button.privacyPolicy.linkTitle" = "Privacy Policy";
+
+// MARK: - Recover Password Screen
+
+"RecoverPassword.button.resetPassword" = "Reset password";
+"RecoverPassword.button.back" = "Back to login";
+
+// MARK: - Forms
+
+"Form.field.common.error.empty" = "Required field";
+
+"Form.field.username.placeholder" = "Username";
+"Form.field.password.placeholder" = "Password";
+"Form.field.password.hint" = "Minimum length: 6 characters";
+"Form.field.password.error.minLength" = "Minimum length: 6 characters";
+"Form.field.confirmPassword.placeholder" = "Confirm password";
+"Form.field.confirmPassword.error.notMatch" = "Passwords do not match";
+"Form.field.email.placeholder" = "Email";
+
+// MARK: - Menu
+
+"Menu.item.character" = "Character";
+"Menu.item.inventory" = "My inventory";
+"Menu.item.friends" = "My friends";
+"Menu.item.store" = "Store";
+"Menu.item.virtualItems" = "Virtual items";
+"Menu.item.virtualCurrency" = "Virtual currency";
+"Menu.item.merchandise" = "Merchandise";
+"Menu.item.redeemCoupon" = "Redeem a coupon";
+"Menu.item.cart" = "Cart";
+"Menu.item.account" = "Account";
+"Menu.item.help" = "Help";
+"Menu.item.logout" = "Log out";
+
+// MARK: - Common
+
+"Common.tabbar.tab.all" = "All";
+"Common.button.consume" = "Consume";
+"Common.button.buyAgain" = "Buy Again";
+"Common.button.buy" = "Buy now";
+"Common.button.preview" = "Preview";
+
+// MARK: - Inventory
+
+"Inventory.title" = "My inventory";
+"Inventory.button.toStore" = "Go To Store";
+"Inventory.label.expired" = "Expired";
+"Inventory.label.active" = "Active until: %s";
+
+// MARK: - Virtual Items
+
+"VirtualItems.title" = "Virtual items";
+"VirtualItems.purchased" = "Purchased";
+
+// MARK: - Virtual Currency
+
+"VirtualCurrency.title" = "Virtual currency";
+
+// MARK: - Bundle preview
+
+"BundlePreview.title" = "Bundle Preview";
+
+// MARK: - Alerts
+
+"Alert.action.ok" = "OK";
+"Alert.registration.success.title" = "Successful registration";
+"Alert.registration.success.message" = "Please check your email.";
+"Alert.passwordRecover.success.title" = "Password reset success";
+"Alert.passwordRecover.success.message" = "Check your email.";

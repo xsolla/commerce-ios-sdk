@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--InventoryVC-->
+        <scene sceneID="U7n-OT-FeG">
+            <objects>
+                <viewController storyboardIdentifier="Inventory" id="zTV-bW-QNH" customClass="InventoryVC" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="T38-Ye-B5y">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JqZ-fR-XYS" userLabel="Root View">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sgi-FS-Obs" customClass="Button" customModule="Example" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="806" width="374" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="Ls6-O6-ynN"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <connections>
+                                            <action selector="onStoreButton:" destination="zTV-bW-QNH" eventType="touchUpInside" id="lwL-bc-yjN"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sho-64-TrL">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="64"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inventory" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWJ-mV-QI7" userLabel="Screen Title">
+                                                <rect key="frame" x="20" y="21.5" width="71" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="nWJ-mV-QI7" firstAttribute="leading" secondItem="sho-64-TrL" secondAttribute="leading" constant="20" id="Egb-p4-zEo"/>
+                                            <constraint firstItem="nWJ-mV-QI7" firstAttribute="centerY" secondItem="sho-64-TrL" secondAttribute="centerY" id="OqV-yp-lNG"/>
+                                            <constraint firstAttribute="height" constant="64" id="tpD-Lp-0ZN"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qL8-rS-Pcm" userLabel="Tabbar View Controller Container">
+                                        <rect key="frame" x="0.0" y="64" width="414" height="832"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="qL8-rS-Pcm" secondAttribute="trailing" id="7m8-fF-wGx"/>
+                                    <constraint firstAttribute="trailing" secondItem="sgi-FS-Obs" secondAttribute="trailing" constant="20" id="8bq-hL-Jf7"/>
+                                    <constraint firstItem="sho-64-TrL" firstAttribute="leading" secondItem="JqZ-fR-XYS" secondAttribute="leading" id="ElQ-ez-N9x"/>
+                                    <constraint firstAttribute="trailing" secondItem="sho-64-TrL" secondAttribute="trailing" id="HrM-B1-u7n"/>
+                                    <constraint firstItem="sgi-FS-Obs" firstAttribute="leading" secondItem="JqZ-fR-XYS" secondAttribute="leading" constant="20" id="JJT-GZ-Itw"/>
+                                    <constraint firstAttribute="bottom" secondItem="sgi-FS-Obs" secondAttribute="bottom" constant="60" id="SVK-lK-pPm"/>
+                                    <constraint firstAttribute="bottom" secondItem="qL8-rS-Pcm" secondAttribute="bottom" id="ZxW-0O-iZi"/>
+                                    <constraint firstItem="sho-64-TrL" firstAttribute="top" secondItem="JqZ-fR-XYS" secondAttribute="top" id="i3D-aw-pBS"/>
+                                    <constraint firstItem="qL8-rS-Pcm" firstAttribute="top" secondItem="sho-64-TrL" secondAttribute="bottom" id="rlj-Ip-dfg"/>
+                                    <constraint firstItem="qL8-rS-Pcm" firstAttribute="leading" secondItem="JqZ-fR-XYS" secondAttribute="leading" id="vaI-Zt-tMn"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="rer-0Y-swg"/>
+                        <color key="backgroundColor" name="black"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="JqZ-fR-XYS" secondAttribute="bottom" id="Jl5-6Y-xl9"/>
+                            <constraint firstItem="JqZ-fR-XYS" firstAttribute="trailing" secondItem="rer-0Y-swg" secondAttribute="trailing" id="kEC-y7-ACp"/>
+                            <constraint firstItem="JqZ-fR-XYS" firstAttribute="top" secondItem="T38-Ye-B5y" secondAttribute="top" id="sdd-bV-ZoK"/>
+                            <constraint firstItem="JqZ-fR-XYS" firstAttribute="leading" secondItem="rer-0Y-swg" secondAttribute="leading" id="zfV-5n-UXO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="storeButton" destination="sgi-FS-Obs" id="6LJ-Hl-ktf"/>
+                        <outlet property="tabbarViewControllerContainer" destination="qL8-rS-Pcm" id="48T-ka-LsW"/>
+                        <outlet property="titleLabel" destination="nWJ-mV-QI7" id="9D1-aL-BBJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ghj-CV-TxE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="137.68115942028987" y="118.52678571428571"/>
+        </scene>
+    </scenes>
+    <resources>
+        <namedColor name="black">
+            <color red="0.027450980392156862" green="0.031372549019607843" blue="0.086274509803921567" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
