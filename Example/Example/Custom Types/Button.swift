@@ -162,13 +162,28 @@ extension Button
         
         return scheme
     }
-    
+
     static let smallOutlined = ButtonAppearanceConfig(font: .xolla_label, height: 40, schemeType: .outlined)
     { scheme in
-        
+
         scheme.colorScheme.primaryColor = .xsolla_lightSlateGrey
         scheme.colorScheme.secondaryColor = .xsolla_transparentSlateGrey
         scheme.colorScheme.onSecondaryColor = .xsolla_transparentSlateGrey
+
+        let shapeScheme = MDCShapeScheme()
+
+        shapeScheme.smallComponentShape = MDCShapeCategory(cornersWith: .rounded, andSize: Shape.mediumCornerRadius)
+        scheme.shapeScheme = shapeScheme
+
+        return scheme
+    }
+
+    static let smallOutlinedDestructive = ButtonAppearanceConfig(font: .xolla_label, height: 40, schemeType: .outlined)
+    { scheme in
+        
+        scheme.colorScheme.primaryColor = .xsolla_magenta
+        scheme.colorScheme.secondaryColor = .xsolla_magenta
+        scheme.colorScheme.onSecondaryColor = .xsolla_magenta
         
         let shapeScheme = MDCShapeScheme()
         

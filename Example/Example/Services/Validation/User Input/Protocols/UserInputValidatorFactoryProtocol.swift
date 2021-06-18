@@ -17,4 +17,5 @@ protocol UserInputValidatorFactoryProtocol
 {
     func createDefaultValidator(for target: StringUserInputValidatable) -> UserInputValidatorProtocol
     func createPasswordValidator(for target: StringUserInputValidatable) -> UserInputValidatorProtocol
+    func createPhoneNumberValidator(for target: StringUserInputValidatable) -> UserInputValidatorProtocol
 }

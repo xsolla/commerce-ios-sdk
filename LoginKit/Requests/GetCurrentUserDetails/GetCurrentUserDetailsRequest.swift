@@ -14,6 +14,8 @@
 import Foundation
 import XsollaSDKUtilities
 
+// https://developers.xsolla.com/login-api/user-account/managed-by-client/user-profile/get-user-details
+
 class GetCurrentUserDetailsRequest: LoginBaseRequest<GetCurrentUserDetailsRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetCurrentUserDetailsResponse

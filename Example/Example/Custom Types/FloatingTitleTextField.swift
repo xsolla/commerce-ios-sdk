@@ -41,6 +41,11 @@ class FloatingTitleTextField: UIView
     var placeholder: String = "" { didSet { updateAppearance() } }
     var secureEntry: Bool = false { didSet { updateAppearance() } }
     
+    override var isUserInteractionEnabled: Bool
+    {
+        didSet { textInput.isUserInteractionEnabled = isUserInteractionEnabled }
+    }
+    
     // MARK: - Setters
     
     func set(text: String?)

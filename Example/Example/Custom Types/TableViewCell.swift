@@ -21,7 +21,10 @@ class TableViewCell: UITableViewCell
     var dividerTrailing: CGFloat { 20 }
     var dividerHeight: CGFloat { 0.5 }
     var dividerColor: UIColor { .xsolla_lightSlateGrey }
-    
+
+    var onTouchBegan: ((TableViewCell) -> Void)?
+    var onTouchEnded: ((TableViewCell) -> Void)?
+
     override func awakeFromNib()
     {
         super.awakeFromNib()
@@ -63,5 +66,23 @@ class TableViewCell: UITableViewCell
     func hideDivider()
     {
         if dividerView.superview != nil { removeDividerView() }
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        super.touchesBegan(touches, with: event)
+        onTouchBegan?(self)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        super.touchesEnded(touches, with: event)
+        onTouchEnded?(self)
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        super.touchesCancelled(touches, with: event)
+        onTouchEnded?(self)
     }
 }

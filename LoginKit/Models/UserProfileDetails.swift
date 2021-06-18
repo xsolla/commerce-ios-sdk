@@ -13,113 +13,147 @@
 
 import Foundation
 
-/// User details.
-public struct LoginUserDetails
+/// User profile details.
+public struct UserProfileDetails
 {
     /// Details of the user's ban. The value is `nil` for the users not from the ban list.
-    public let ban: BanDetails?
+    public var ban: BanDetails?
 
     /// User birth day.
-    public let birthday: Date?
+    public var birthday: Date?
 
     /// User birth date confirmed by [okname](https://www.ok-name.co.kr/).
     /// For Korean users only.
-    public let connectionInformation: String?
+    public var connectionInformation: String?
 
     /// User country.
-    public let country: String?
+    public var country: String?
 
     /// User email address.
-    public let email: String?
+    public var email: String?
 
     /// ID of the user in your game.
     /// To use the ID from your game, link the IDs by the [Link user IDs via external ID](https://developers.xsolla.com/login-api/methods/users/link-user-ids-via-external-id) method.
-    public let externalId: String?
+    public var externalId: String?
 
     /// User first name.
-    public let firstName: String?
+    public var firstName: String?
 
     /// User gender.
-    public let gender: Gender?
+    public var gender: Gender?
 
     /// Details about the groups the user was added to.
-    public let groups: [Group]
+    public var groups: [Group]
 
     /// User ID.
-    public let id: String
+    public var id: String
 
     /// Date of the last user login.
-    public let lastLogin: Date
+    public var lastLogin: Date
 
     /// User last name.
-    public let lastName: String?
+    public var lastName: String?
 
     /// User name in a social network.
-    public let name: String?
+    public var name: String?
 
     /// User nickname.
-    public let nickname: String?
+    public var nickname: String?
 
     /// User phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers).
-    public let phone: String?
+    public var phone: String?
 
     /// Link to the user profile picture.
-    public let picture: String?
+    public var picture: String?
 
     /// Date of user registration.
-    public let registered: Date
+    public var registered: Date
 
     /// User tag without \"#\" at the beginning.
     /// Can have no unique value and can be used in the [Search users by nickname](https://developers.xsolla.com/login-api/methods/users/search-users-by-nickname) method.
-    public let tag: String?
+    public var tag: String?
 
     /// Username.
-    public let username: String?
+    public var username: String?
 }
 
-public extension LoginUserDetails
+public extension UserProfileDetails
 {
     /// Details of the user's ban.
     struct BanDetails
     {
         /// Date when the user was banned.
-        public let dateFrom: Date
+        public var dateFrom: Date
 
         /// Date until the user remains banned.
-        public let dateTo: Date?
+        public var dateTo: Date?
 
         /// Reason the user ban.
-        public let reason: String?
+        public var reason: String?
     }
 
     /// Details about the group.
     struct Group
     {
         /// Group ID.
-        public let id: Int
+        public var id: Int
 
         /// Shows whether the group is default or not.
-        public let isDefault: Bool
+        public var isDefault: Bool
 
         /// Shows whether the group can be deleted or not. Default groups can’t be deleted.
-        public let isDeletable: Bool
+        public var isDeletable: Bool
 
         /// Group name.
-        public let name: String
+        public var name: String
     }
 
     enum Gender: String
     {
-        case female = "female"
-        case male = "male"
+        case female = "f"
+        case male = "m"
         case other = "other"
-        case preferNotToAnswer = "prefer not to answer"
+        case unspecified = "prefer not to answer"
     }
 }
 
-extension LoginUserDetails
+extension UserProfileDetails
 {
     init(fromGetCurrentUserDetailsResponse response: GetCurrentUserDetailsResponse)
+    {
+        var banDetails: BanDetails?
+        if let banResponse = response.ban
+        {
+            banDetails = BanDetails(dateFrom: banResponse.dateFrom,
+                                    dateTo: banResponse.dateTo,
+                                    reason: banResponse.reason)
+
+        }
+        self.ban = banDetails
+        self.birthday = response.birthday
+        self.connectionInformation = response.connectionInformation
+        self.country = response.country
+        self.email = response.email
+        self.externalId = response.externalId
+        self.firstName = response.firstName
+        self.gender = Gender(rawValue: response.gender ?? "")
+        self.groups = response.groups.map
+        {
+            Group(id: $0.id, isDefault: $0.isDefault, isDeletable: $0.isDeletable, name: $0.name)
+        }
+        self.id = response.id
+        self.lastLogin = response.lastLogin
+        self.lastName = response.lastName
+        self.name = response.name
+        self.nickname = response.nickname
+        self.phone = response.phone
+        self.picture = response.picture
+        self.registered = response.registered
+        self.tag = response.tag
+        self.username = response.username
+    }
+    
+    init(fromGetCurrentUserDetailsResponse response: UpdateCurrentUserDetailsResponse)
     {
         var banDetails: BanDetails?
         if let banResponse = response.ban

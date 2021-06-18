@@ -12,6 +12,7 @@
 // See the License for the specific language governing and permissions and
 
 import UIKit
+import XsollaSDKLoginKit
 
 protocol AuthenticationCoordinatorProtocol: Coordinator, Finishable { }
 
@@ -27,7 +28,7 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
 
         viewController.loginRequestHandler =
         { [weak self] viewController, sender, formData in
-            logger.info(.ui, domain: .example) { "Auth coordinator - loginRequestHandler \(formData)" }
+            logger.info(.ui, domain: .example) { "Auth coordinator - loginRequestHandler" }
             self?.loginRequestHandler(formData: formData, forVC: viewController, sender: sender)
         }
 
@@ -81,9 +82,10 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         { [weak self, weak viewController] result in guard let self = self else { return }
             switch result
             {
-                case .success: do
+                case .success(let tokenInfo): do
                 {
                     viewController?.setState(.normal, animated: true)
+                    self.handleAccessTokenInfo(tokenInfo)
                     self.onFinish?(self)
                 }
 
@@ -107,9 +109,10 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         { [weak self, weak viewController] result in guard let self = self else { return }
             switch result
             {
-                case .success: do
+                case .success(let tokenInfo): do
                 {
                     viewController?.setState(.normal, animated: true)
+                    self.handleAccessTokenInfo(tokenInfo)
                     self.onFinish?(self)
                 }
 
@@ -253,6 +256,16 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
     }
 
     // MARK: - Private
+    
+    private func handleAccessTokenInfo(_ tokenInfo: AccessTokenInfo)
+    {
+        var tokenExpireDate: Date?
+        if let expiresIn = tokenInfo.expiresIn { tokenExpireDate = Date() + Double(expiresIn) }
+        
+        dependencies.loginManager.login(accessToken: tokenInfo.accessToken,
+                                        refreshToken: tokenInfo.refreshToken,
+                                        expireDate: tokenExpireDate)
+    }
 
     /// Opens web browser with a link for performing social authentication.
     private func startSocialAuthSession(url: URL)
@@ -295,7 +308,12 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         { [weak self] result in guard let self = self else { return }
             switch result
             {
-                case .success: self.onFinish?(self)
+                case .success(let tokenInfo): do
+                {
+                    self.onFinish?(self)
+                    self.handleAccessTokenInfo(tokenInfo)
+                }
+                    
                 case .failure(let error): logger.error { error }
             }
         }
@@ -329,6 +347,7 @@ extension AuthenticationCoordinator
         let coordinatorFactory: CoordinatorFactoryProtocol
         let viewControllerFactory: ViewControllerFactoryProtocol
         let xsollaSDK: XsollaSDKProtocol
+        let loginManager: LoginManagerProtocol
     }
 
     typealias Params = EmptyParams

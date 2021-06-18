@@ -52,4 +52,9 @@ final class ThreadSafeArray<T>
             self.array = Array(self.array.dropFirst())
         }
     }
+    
+    func removeAll()
+    {
+        accessQueue.async(flags: .barrier) { self.array.removeAll() }
+    }
 }

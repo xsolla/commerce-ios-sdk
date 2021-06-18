@@ -85,10 +85,10 @@ struct GetCurrentUserDetailsResponse: Decodable
         let dateFormatter = DateFormatter()
         dateFormatter.calendar = Calendar(identifier: .iso8601)
         
-        dateFormatter.dateFormat = "YYYY-MM-DD"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         birthday = try container.decodeDateIfPresent(dateFormatter: dateFormatter, key: .birthday)
         
-        dateFormatter.dateFormat = "YYYY-MM-DD'T'hh:mm:ssZ"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
         lastLogin = try container.decodeDate(dateFormatter: dateFormatter, key: .lastLogin)
         registered = try container.decodeDate(dateFormatter: dateFormatter, key: .registered)
     }
@@ -144,40 +144,5 @@ extension GetCurrentUserDetailsResponse
             isDeletable = try container.decode(Bool.self, forKey: .isDeletable)
             name = try container.decode(String.self, forKey: .name)
         }
-    }
-}
-
-private extension KeyedDecodingContainer
-{
-    func decodeDateIfPresent(dateFormatter: DateFormatter, key: Self.Key) throws -> Date?
-    {
-        guard let dateString = try decodeIfPresent(String.self, forKey: key) else { return nil }
-        
-        guard let date = dateFormatter.date(from: dateString)
-        else
-        {
-            throw DecodingError.dataCorruptedError(
-                forKey: key,
-                in: self,
-                debugDescription: "Cannot parse date from string \(dateString)")
-        }
-        
-        return date
-    }
-    
-    func decodeDate(dateFormatter: DateFormatter, key: Self.Key) throws -> Date
-    {
-        let dateString = try decode(String.self, forKey: key)
-        
-        guard let date = dateFormatter.date(from: dateString)
-        else
-        {
-            throw DecodingError.dataCorruptedError(
-                forKey: key,
-                in: self,
-                debugDescription: "Cannot parse date from string \(dateString)")
-        }
-        
-        return date
     }
 }

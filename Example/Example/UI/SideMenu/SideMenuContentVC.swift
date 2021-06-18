@@ -12,9 +12,12 @@
 // See the License for the specific language governing and permissions and
 
 import UIKit
+import SDWebImage
 
 protocol SideMenuContentVCProtocol: BaseViewController
 {
+    var profileMenuItemHandler: (() -> Void)? { get set }
+    var characterMenuItemHandler: (() -> Void)? { get set }
     var inventoryMenuItemHandler: (() -> Void)? { get set }
     var virtualItemsMenuItemHandler: (() -> Void)? { get set }
     var virtualCurrencyMenuItemHandler: (() -> Void)? { get set }
@@ -26,6 +29,8 @@ protocol SideMenuContentVCProtocol: BaseViewController
 
 class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
 {
+    var profileMenuItemHandler: (() -> Void)?
+    var characterMenuItemHandler: (() -> Void)?
     var inventoryMenuItemHandler: (() -> Void)?
     var virtualItemsMenuItemHandler: (() -> Void)?
     var virtualCurrencyMenuItemHandler: (() -> Void)?
@@ -44,9 +49,11 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
     private var profileEmail: String?
     private var profileAvatarURL: URL?
     
-    @IBOutlet private weak var profileAvatarImageView: UIImageView!
+    @IBOutlet private weak var profileContainerView: UIView!
+    @IBOutlet private weak var profileAvatarButtonView: AvatarButtonView!
     @IBOutlet private weak var profileUsernameLabel: UILabel!
     @IBOutlet private weak var profileEmailLabel: UILabel!
+    @IBOutlet private weak var characterSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var inventorySection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var storeSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var helpSection: ExpandableMenuItemsSectionView!
@@ -56,11 +63,30 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
     {
         super.viewWillAppear(animated)
         
+        setupProfileSection()
+        setupCharacterSection()
         setupInventorySection()
         setupStoreSection()
         setupHelpSection()
         setupLogoutSection()
         updateProfileInfo()
+    }
+
+    func setupProfileSection()
+    {
+        profileContainerView.addTapHandler { [weak self] in self?.profileMenuItemHandler?() }
+    }
+
+    func setupCharacterSection()
+    {
+        let section = characterSection!
+
+        let title = L10n.Menu.Item.character
+        let sectionTitle = MenuItemView(title: title, image: Asset.Images.menuCharacterIcon.image, height: 40)
+
+        let view = ExpandableMenuItemsSectionView.View(view: sectionTitle, tapHandler: characterMenuItemHandler)
+
+        section.setup(withTitleView: view, items: [])
     }
     
     func setupInventorySection()
@@ -134,6 +160,12 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
         
         profileUsernameLabel.attributedText = profileName?.attributed(.button, color: .xsolla_onSurfaceHigh)
         profileEmailLabel.attributedText = profileEmail?.attributed(.link, color: .xsolla_lightSlateGrey)
-        profileAvatarImageView.sd_setImage(with: profileAvatarURL)
+
+        profileAvatarButtonView.primaryImage = Asset.Images.avatarPlaceholder.image
+
+        SDWebImageDownloader.shared.downloadImage(with: profileAvatarURL)
+        { [weak self] (image, _, _, _) in
+            self?.profileAvatarButtonView.primaryImage = image ?? Asset.Images.avatarPlaceholder.image
+        }
     }
 }

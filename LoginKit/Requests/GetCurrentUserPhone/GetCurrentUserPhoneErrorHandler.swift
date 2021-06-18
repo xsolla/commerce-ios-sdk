@@ -12,6 +12,17 @@
 // See the License for the specific language governing and permissions and
 
 import Foundation
-import XsollaSDKLoginKit
+import XsollaSDKUtilities
 
-typealias AppUserInfo = LoginUserDetails
+final class GetCurrentUserPhoneErrorHandler: APIBaseErrorHandler
+{
+    override func setHandlers()
+    {
+        add(handler: APIServerCode400ErrorHandler())
+        add(handler: APIServerCode401ErrorHandler())
+        add(handler: APIServerCode403ErrorHandler())
+        add(handler: APIServerCode404ErrorHandler())
+        add(handler: APIServerCode422ErrorHandler())
+        add(handler: APIServerCode429ErrorHandler())
+    }
+}

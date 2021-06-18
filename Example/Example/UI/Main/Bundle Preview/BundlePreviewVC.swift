@@ -16,13 +16,13 @@ import SDWebImage
 
 protocol BundlePreviewVCProtocol: BaseViewController
 {
-    var dismissRequest: ((BundlePreviewVCProtocol) -> Void)? { get set }
+    var dismissRequestHandler: ((BundlePreviewVCProtocol) -> Void)? { get set }
 }
 
 class BundlePreviewVC: BaseViewController, BundlePreviewVCProtocol
 {
     var dataSource: BundlePreviewDataSource!
-    var dismissRequest: ((BundlePreviewVCProtocol) -> Void)?
+    var dismissRequestHandler: ((BundlePreviewVCProtocol) -> Void)?
     
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var dismissButton: UIButton!
@@ -139,12 +139,12 @@ class BundlePreviewVC: BaseViewController, BundlePreviewVCProtocol
     
     @IBAction private func onDismissButton(_ sender: UIButton)
     {
-        dismissRequest?(self)
+        dismissRequestHandler?(self)
     }
     
     @IBAction private func onActionButton(_ sender: Button)
     {
         logger.debug { "Buy bundle action button pressed" }
-        dismissRequest?(self)
+        dismissRequestHandler?(self)
     }
 }

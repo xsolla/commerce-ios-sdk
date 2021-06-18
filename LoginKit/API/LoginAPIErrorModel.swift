@@ -36,7 +36,8 @@ struct LoginAPIErrorModel: Codable
             let values = try decoder.container(keyedBy: CodingKeys.self)
             description = try values.decode(String.self, forKey: .description)
             
-            let codeString = try values.decode(String.self, forKey: .code)
+            let codeString = try (try? values.decode(String.self, forKey: .code))
+                ?? (try String(values.decode(Int.self, forKey: .code)))
             
             code = try type(of: self).parsed(code: codeString)
         }

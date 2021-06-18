@@ -24,4 +24,9 @@ class UserInputValidatorFactory: UserInputValidatorFactoryProtocol
     {
         PasswordValidator(target: target)
     }
+    
+    func createPhoneNumberValidator(for target: StringUserInputValidatable) -> UserInputValidatorProtocol
+    {
+        PhoneNumberValidator(target: target)
+    }
 }

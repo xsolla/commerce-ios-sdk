@@ -12,6 +12,7 @@
 // See the License for the specific language governing and permissions and
 
 // swiftlint:disable function_parameter_count
+// swiftlint:disable line_length
 
 import Foundation
 import XsollaSDKUtilities
@@ -21,6 +22,8 @@ typealias LoginAPIResult<T> = Result<T, LoginAPIError>
 
 protocol LoginAPIProtocol
 {
+    // MARK: Authentication
+    
     func authByUsernameAndPassword(username: String,
                                    password: String,
                                    oAuth2Params: OAuth2Params,
@@ -70,6 +73,93 @@ protocol LoginAPIProtocol
                        loginUrl: String?,
                        completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     
+    // MARK: - User Account: User Profile
+    
     func getCurrentUserDetails(accessToken: String,
                                completion: @escaping (LoginAPIResult<GetCurrentUserDetailsResponse>) -> Void)
+    
+    func updateCurrentUserDetails(accessToken: String,
+                                  birthday: String?,
+                                  firstName: String?,
+                                  lastName: String?,
+                                  gender: String?,
+                                  nickname: String?,
+                                  completion: @escaping (LoginAPIResult<UpdateCurrentUserDetailsResponse>) -> Void)
+    
+    func getUserEmail(accessToken: String,
+                      completion: @escaping (LoginAPIResult<GetUserEmailResponse>) -> Void)
+    
+    func deleteUserPicture(accessToken: String, completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    
+    func uploadUserPicture(accessToken: String,
+                           imageURL: URL,
+                           completion: @escaping (LoginAPIResult<UploadUserPictureResponse>) -> Void)
+    
+    func getCurrentUserPhone(accessToken: String,
+                             completion: @escaping (LoginAPIResult<GetCurrentUserPhoneResponse>) -> Void)
+    
+    func updateCurrentUserPhone(accessToken: String,
+                                phoneNumber: String,
+                                completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    
+    func deleteCurrentUserPhone(accessToken: String,
+                                phoneNumber: String,
+                                completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    
+    // MARK: User Account: User Friends
+    
+    func getCurrentUserFriends(accessToken: String,
+                               listType: String,
+                               sortType: String,
+                               sortOrder: String,
+                               after: String?,
+                               limit: Int?,
+                               completion: @escaping (LoginAPIResult<GetCurrentUserFriendsResponse>) -> Void)
+    
+    func updateCurrentUserFriends(accessToken: String,
+                                  action: String,
+                                  userID: String,
+                                  completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    
+    // MARK: User Account: Social Networks
+    
+    func getLinkedNetworks(accessToken: String,
+                           completion: @escaping (LoginAPIResult<GetLinkedNetworksResponse>) -> Void)
+    
+    func getURLToLinkSocialNetworkToAccount(
+        accessToken: String,
+        providerName: String,
+        loginURL: String,
+        completion: @escaping (LoginAPIResult<GetURLToLinkSocialNetworkToAccountResponse>) -> Void)
+    
+    func getSocialNetworkFriends(accessToken: String,
+                                 platform: String,
+                                 offset: Int,
+                                 limit: Int,
+                                 withLoginId: Bool,
+                                 completion: @escaping (LoginAPIResult<GetSocialNetworkFriendsResponse>) -> Void)
+    
+    func updateSocialNetworkFriends(accessToken: String,
+                                    platform: String,
+                                    completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    
+    // MARK: - User Attributes
+    
+    func getClientUserAttributes(accessToken: String,
+                                 keys: [String]?,
+                                 publisherProjectId: Int?,
+                                 userId: String?,
+                                 completion: @escaping (LoginAPIResult<GetClientUserAttributesResponse>) -> Void)
+    
+    func getClientUserReadOnlyAttributes(accessToken: String,
+                                         keys: [String]?,
+                                         publisherProjectId: Int?,
+                                         userId: String?,
+                                         completion: @escaping (LoginAPIResult<GetClientUserReadOnlyAttributesResponse>) -> Void)
+    
+    func updateClientUserAttributes(accessToken: String,
+                                    attributes: [UpdateClientUserAttributesRequest.Body.Attribute]?,
+                                    publisherProjectId: Int?,
+                                    removingKeys: [String]?,
+                                    completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
 }

@@ -343,11 +343,11 @@ extension LoginKit
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
         - completion: Instance of `LoginUserDetails` on success.
      */
     public func getCurrentUserDetails(accessToken: String,
-                                      completion: @escaping LoginKitCompletion<LoginUserDetails>)
+                                      completion: @escaping LoginKitCompletion<UserProfileDetails>)
     {
         api.getCurrentUserDetails(accessToken: accessToken)
         { result in
@@ -355,11 +355,475 @@ extension LoginKit
             {
                 case .success(let responseModel): do
                 {
-                    let userDetails = LoginUserDetails(fromGetCurrentUserDetailsResponse: responseModel)
+                    let userDetails = UserProfileDetails(fromGetCurrentUserDetailsResponse: responseModel)
                     completion(.success(userDetails))
                 }
 
                 case .failure(let error): completion(.failure(error.processed))
+            }
+        }
+    }
+
+    /**
+     Updates the details of the authenticated user by the JWT.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - completion: Instance of `LoginUserDetails` on success.
+     */
+    public func updateCurrentUserDetails(accessToken: String,
+                                         birthday: Date? = nil,
+                                         firstName: String? = nil,
+                                         lastName: String? = nil,
+                                         nickname: String? = nil,
+                                         gender: UserProfileDetails.Gender? = nil,
+                                         completion: @escaping LoginKitCompletion<UserProfileDetails>)
+    {
+        var birthdayString: String?
+        if let birthday = birthday
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYY-MM-dd"
+            birthdayString = dateFormatter.string(from: birthday)
+        }
+
+        api.updateCurrentUserDetails(accessToken: accessToken,
+                                     birthday: birthdayString,
+                                     firstName: firstName,
+                                     lastName: lastName,
+                                     gender: gender?.rawValue,
+                                     nickname: nickname)
+        { result in
+            switch result
+            {
+                case .success(let responseModel): do
+                {
+                    let userDetails = UserProfileDetails(fromGetCurrentUserDetailsResponse: responseModel)
+                    completion(.success(userDetails))
+                }
+
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Gets the email of the authenticated user by the JWT.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - completion: user's email on success.
+     */
+    public func getUserEmail(accessToken: String,
+                             completion: @escaping LoginKitCompletion<String?>)
+    {
+        api.getUserEmail(accessToken: accessToken)
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel.currentEmail))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Deletes the profile picture of the authenticated user by the JWT.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - completion: Empty response on success.
+     */
+    public func deleteUserPicture(accessToken: String, completion: @escaping LoginKitCompletion<Void>)
+    {
+        api.deleteUserPicture(accessToken: accessToken)
+        { result in
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Uploads the profile picture of the authenticated user by the JWT.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - imageURL: URL of image to be uploaded.
+        - completion: Picture link on success.
+     */
+    public func uploadUserPicture(accessToken: String,
+                                  imageURL: URL,
+                                  completion: @escaping LoginKitCompletion<String>)
+    {
+        api.uploadUserPicture(accessToken: accessToken, imageURL: imageURL)
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel.picture))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Gets the phone number of the authenticated user by the JWT.
+     The phone number in this method is used only for passing two-factor authentication.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - completion: Empty response on success.
+     */
+    public func getCurrentUserPhone(accessToken: String,
+                                    completion: @escaping LoginKitCompletion<String?>)
+    {
+        api.getCurrentUserPhone(accessToken: accessToken)
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel.phoneNumber))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Updates the phone number of the authenticated user by the JWT.
+     The phone number in this method is used only for passing two-factor authentication.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - phoneNumber: Updated user phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers)
+        - completion: User phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers) on success.
+     */
+    public func updateCurrentUserPhone(accessToken: String,
+                                       phoneNumber: String,
+                                       completion: @escaping LoginKitCompletion<Void>)
+    {
+        api.updateCurrentUserPhone(accessToken: accessToken, phoneNumber: phoneNumber)
+        { result in
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Deletes the phone number of the authenticated user by the JWT.
+     The phone number in this method is used only for passing two-factor authentication.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - phoneNumber: User phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers)
+        - completion: Empty response on success.
+     */
+    public func deleteCurrentUserPhone(accessToken: String,
+                                       phoneNumber: String,
+                                       completion: @escaping LoginKitCompletion<Void>)
+    {
+        api.deleteCurrentUserPhone(accessToken: accessToken, phoneNumber: phoneNumber)
+        { result in
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Gets a list of users added as friends of the authenticated user.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+        You can use the Pay Station Access Token as an alternative.
+        You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - listType: Friend list type parameter.
+        - sortType: Sorting parameter.
+        - sortOrderType: Sorting order parameter
+        - after: Parameter that is used for API pagination.
+        - limit: Limit of the result.
+        - completion: Instance of `FriendsList` on success.
+     */
+    public func getCurrentUserFriends(accessToken: String,
+                                      listType: FriendsListType,
+                                      sortType: FriendsListSortType,
+                                      sortOrderType: FriendsListOrderType,
+                                      after: String?,
+                                      limit: Int? = nil,
+                                      completion: @escaping LoginKitCompletion<FriendsList>)
+    {
+        api.getCurrentUserFriends(accessToken: accessToken,
+                                  listType: listType.rawValue,
+                                  sortType: sortType.rawValue,
+                                  sortOrder: sortOrderType.rawValue,
+                                  after: after,
+                                  limit: limit)
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(FriendsList(fromResponse: responseModel)))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Updates the friend list of the authenticated user.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+        You can use the Pay Station Access Token as an alternative.
+        You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - after: Parameter that is used for API pagination.
+        - actionType: Type of the friend list updating action.
+        - userID: ID of the user to change relationships with.
+        - completion: Empty response on success.
+     */
+    public func updateCurrentUserFriends(accessToken: String,
+                                         actionType: FriendsListUpdateAction,
+                                         userID: String,
+                                         completion: @escaping LoginKitCompletion<Void>)
+    {
+        api.updateCurrentUserFriends(accessToken: accessToken,
+                                     action: actionType.rawValue,
+                                     userID: userID)
+        { result in
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Updates the friend list of the authenticated user.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+        You can use the Pay Station Access Token as an alternative.
+        You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - completion: Array of `UserSocialNetworkInfo` on success.
+     */
+    public func getLinkedNetworks(accessToken: String,
+                                  completion: @escaping LoginKitCompletion<[UserSocialNetworkInfo]>)
+    {
+        api.getLinkedNetworks(accessToken: accessToken)
+        { result in
+            switch result
+            {
+                case .success(let response): do
+                {
+                    let userSocialNetworInfos = response.map { UserSocialNetworkInfo(fromResponse: $0) }
+                    completion(.success(userSocialNetworInfos))
+                }
+
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Gets the URL to link the social network to the user account. The social network should be used for authentication.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+        You can use the Pay Station Access Token as an alternative.
+        You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - providerName: Name of the social network connected to Login in Publisher Account.
+     Can be: *amazon*, *apple*, *baidu*, *battlenet*, *discord*, *facebook*, *github*, *google*, *kakao*, *linkedin*,
+     *mailru*, *microsoft*, *msn*, *naver*, *ok*, *paypal*, *psn*, *reddit*, *steam*, *twitch*, *twitter*, *vimeo*, *vk*,
+     *wechat*, *weibo*, *yahoo*, *yandex*, *youtube*, *xbox*.
+        - loginURL: URL to redirect the user to after account confirmation, successful authentication, or password reset confirmation. Must be identical to the **Callback URL** specified in [Publisher Account](https://publisher.xsolla.com/) > your Login project > **General settings** > **URL**. **Required** if there are several Callback URLs.
+        - completion: URL used for authenticating the user via the social network on success.
+     */
+    public func getURLToLinkSocialNetworkToAccount(accessToken: String,
+                                                   providerName: String,
+                                                   loginURL: String,
+                                                   completion: @escaping LoginKitCompletion<String>)
+    {
+        api.getURLToLinkSocialNetworkToAccount(accessToken: accessToken, providerName: providerName, loginURL: loginURL)
+        { result in
+
+            switch result
+            {
+                case .success(let response): completion(.success(response.url))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Gets a list of user friends from a social provider.
+     - parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - platform: Name of the chosen social provider which you can enable in your [Publisher Account](https://publisher.xsolla.com/) > your Login project > **Social connections**.
+     If you do not specify it, the call gets friends from all social providers.
+        - offset: Number of the elements from which the list is generated.
+        - limit: Maximum number of friends that are returned at a time.
+        - withLoginId: Shows whether the social friends are from your game.
+        - completion: Instance of `SocialNetworkFriendsList` on success.
+     */
+    public func getSocialNetworkFriends(accessToken: String,
+                                        platform: String,
+                                        offset: Int,
+                                        limit: Int,
+                                        withLoginId: Bool,
+                                        completion: @escaping LoginKitCompletion<SocialNetworkFriendsList>)
+    {
+        api.getSocialNetworkFriends(accessToken: accessToken,
+                                    platform: platform,
+                                    offset: offset,
+                                    limit: limit,
+                                    withLoginId: withLoginId)
+        { result in
+            switch result
+            {
+                case .success(let response): completion(.success(SocialNetworkFriendsList(fromResponse: response)))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Begins processing to update a list of user’s friends from a social provider.
+     Note that there may be a delay in data processing because of the Xsolla Login server or provider server high loads.
+     - parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - platform: Name of the chosen social provider which you can enable in your [Publisher Account](https://publisher.xsolla.com/) > your Login project > **Social connections**.
+     If you do not specify it, the call gets friends from all social providers.
+        - completion: Empty result on success.
+     */
+    public func updateSocialNetworkFriends(accessToken: String,
+                                           platform: String,
+                                           completion: @escaping LoginKitCompletion<Void>)
+    {
+        api.updateSocialNetworkFriends(accessToken: accessToken, platform: platform)
+        { result in
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - User Attributes
+
+    /**
+     Gets a list of particular users attributes. Returns only attributes with the `client` value of the `attr_type` parameter.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - keys: List of attributes’ keys which you want to get. If you do not specify them, it returns all user attributes.
+        - publisherProjectId: Project ID from Publisher Account which you want to get attributes for.
+     If you do not specify it, it returns attributes without the value of this parameter.
+        - userId: User ID which attributes you want to get. Returns only attributes with the `public` value of the `permission` parameter.
+     If you do not specify it or put your user ID there, it returns only your attributes with any value for the `permission` parameter.
+        - completion: Array of `UserAttribute` on success.
+     */
+    public func getClientUserAttributes(accessToken: String,
+                                        keys: [String]?,
+                                        publisherProjectId: Int?,
+                                        userId: String?,
+                                        completion: @escaping LoginKitCompletion<[UserAttribute]>)
+    {
+        api.getClientUserAttributes(accessToken: accessToken,
+                                    keys: keys,
+                                    publisherProjectId: publisherProjectId,
+                                    userId: userId)
+        { result in
+
+            switch result
+            {
+                case .success(let response): completion(.success(response.map { UserAttribute(fromResponse: $0) }))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Gets a list of particular user read-only attributes. Returns only attributes with the `client` value of the `attr_type` parameter which was set only for reading.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - keys: List of attributes’ keys which you want to get. If you do not specify them, it returns all user’s attributes.
+        - publisherProjectId: Project ID from Publisher Account which you want to get attributes for.
+     If you do not specify it, it returns attributes without the value of this parameter.
+        - userId: User ID which attributes you want to get. Returns only attributes with the `public` value of the `permission` parameter.
+     If you do not specify it or put your user ID there, it returns only your attributes with any value for the `permission` parameter.
+        - completion: Array of `UserAttribute` on success.
+     */
+    public func getClientUserReadOnlyAttributes(accessToken: String,
+                                                keys: [String]?,
+                                                publisherProjectId: Int?,
+                                                userId: String?,
+                                                completion: @escaping LoginKitCompletion<[UserAttribute]>)
+    {
+        api.getClientUserReadOnlyAttributes(accessToken: accessToken,
+                                            keys: keys,
+                                            publisherProjectId: publisherProjectId,
+                                            userId: userId)
+        { result in
+
+            switch result
+            {
+                case .success(let response): completion(.success(response.map { UserAttribute(fromResponse: $0) }))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+    }
+
+    /**
+     Updates and creates particular user attributes.
+     - Parameters:
+        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+        - attributes: List of attributes of the specified game.
+     To add an attribute that does not exist, set this attribute to the `key` parameter.
+     To update `value` of the attribute, specify its `key` parameter and set new `value`.
+     You can change several attributes at a time.
+        - publisherProjectId: Project ID from Publisher Account which you want to get attributes for.
+     If you do not specify it, it returns attributes without the value of this parameter.
+        - removingKeys: List of attributes which you want to delete. If you specify the same attribute in `attributes` parameter, it will not be deleted.
+        - completion: Empty response on success.
+     */
+    public func updateClientUserAttributes(accessToken: String,
+                                           attributes: [UserAttribute]?,
+                                           publisherProjectId: Int?,
+                                           removingKeys: [String]?,
+                                           completion: @escaping LoginKitCompletion<Void>)
+    {
+        let requestUserAttributes = attributes?.map
+        {
+            UpdateClientUserAttributesRequest.Body.Attribute(key: $0.key, permission: $0.permission, value: $0.value)
+        }
+
+        api.updateClientUserAttributes(accessToken: accessToken,
+                                       attributes: requestUserAttributes,
+                                       publisherProjectId: publisherProjectId,
+                                       removingKeys: removingKeys)
+        { result in
+
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
             }
         }
     }
@@ -374,6 +838,11 @@ private extension Error
             return LoginKitError(code: model?.code) ?? self
         }
 
+        if case .forbidden(_, let model) = self as? APIError<LoginAPIErrorModel>
+        {
+            return LoginKitError(code: model?.code) ?? self
+        }
+
         return self
     }
 }
@@ -381,11 +850,14 @@ private extension Error
 public enum LoginKitError: Error
 {
     case cannotParseURLFromResponse
+    case invalidToken
 
     internal init?(code: Int?)
     {
         switch code
         {
+            case 10017: self = .invalidToken
+
             default: return nil
         }
     }

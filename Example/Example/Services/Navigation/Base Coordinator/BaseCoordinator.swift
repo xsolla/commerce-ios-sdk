@@ -25,7 +25,7 @@ class BaseCoordinator<Dependencies, Params>: NSObject, Coordinator, UINavigation
     weak var initialViewController: UIViewController?
     
     /// Parent Coordinator
-    var parent: Coordinator?
+    weak var parent: Coordinator?
 
     /// Coordinator did finish handler
     var onFinish: ((Coordinator) -> Void)?

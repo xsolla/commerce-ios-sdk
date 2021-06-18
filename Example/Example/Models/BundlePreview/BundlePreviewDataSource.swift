@@ -83,8 +83,15 @@ class BundlePreviewDataSource: NSObject, TableViewDataSource
     {
         self.bundle = bundle
         self.priceHelper = priceHelper
+        logger.debug(.initialization, domain: .example) { String(describing: Self.self) }
     }
-    
+
+    deinit
+    {
+        let deinitingType = String(describing: type(of: self))
+        logger.debug(.deinitialization, domain: .example) { deinitingType }
+    }
+
     private func cellModel(at indexPath: IndexPath) -> BundleContentListCell.Model
     {
         let item = items[indexPath.row]

@@ -139,20 +139,11 @@ class TabbarViewController: BaseViewController
     
     private func updateConstraints()
     {
-        guard
-            tabBarLeadingConstraint != nil,
-            tabBarTrailingConstraint != nil,
-            containerLeadingConstraint != nil,
-            containerTrailingConstraint != nil,
-            containerTopConstraint != nil
-        else
-            { return }
-        
-        tabBarLeadingConstraint.constant = tabBarLeading
-        tabBarTrailingConstraint.constant = -tabBarTrailing
-        containerTopConstraint.constant = containerTop
-        containerLeadingConstraint.constant = containerLeading
-        containerTrailingConstraint.constant = -containerTrailing
+        if let constraint = tabBarLeadingConstraint { constraint.constant = tabBarLeading }
+        if let constraint = tabBarTrailingConstraint { constraint.constant = -tabBarTrailing }
+        if let constraint = containerTopConstraint { constraint.constant = containerTop }
+        if let constraint = containerLeadingConstraint { constraint.constant = containerLeading }
+        if let constraint = containerTrailingConstraint { constraint.constant = -containerTrailing }
     }
     
     // MARK: - Setup
@@ -195,7 +186,7 @@ class TabbarViewController: BaseViewController
             tabbar.topAnchor.constraint(equalTo: view.topAnchor),
             tabBarLeadingConstraint,
             tabBarTrailingConstraint,
-            
+
             containerTopConstraint,
             containerLeadingConstraint,
             containerTrailingConstraint,
@@ -207,6 +198,8 @@ class TabbarViewController: BaseViewController
             stack.trailingAnchor.constraint(equalTo: container.contentLayoutGuide.trailingAnchor),
             stack.heightAnchor.constraint(equalTo: container.frameLayoutGuide.heightAnchor)
         ])
+
+        updateConstraints()
     }
     
     // MARK: - Lifecycle

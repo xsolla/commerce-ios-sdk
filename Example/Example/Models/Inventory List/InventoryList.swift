@@ -40,15 +40,24 @@ class InventoryList
                     {
                         $0.type == .virtualGood ? InventoryListDataSource.Item(inventoryKitItem: $0) : nil
                     }
-                    self.dependencies.dataSource.setup(items: items)
-                    self.dependencies.loadStateListener.setState(.normal, animated: true)
+
                     logger.info(.common, domain: .inventoryKit) { result }
+
+                    DispatchQueue.main.async
+                    {
+                        self.dependencies.dataSource.setup(items: items)
+                        self.dependencies.loadStateListener.setState(.normal, animated: true)
+                    }
                 }
                 
                 case .failure(let error): do
                 {
-                    self.dependencies.loadStateListener.setState(.error(nil), animated: true)
-                    logger.error(.common, domain: .inventoryKit) { error }
+                    logger.error(.application) { error }
+
+                    DispatchQueue.main.async
+                    {
+                        self.dependencies.loadStateListener.setState(.error(nil), animated: true)
+                    }
                 }
             }
         }

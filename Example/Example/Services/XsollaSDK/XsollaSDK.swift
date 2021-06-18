@@ -20,44 +20,49 @@ import XsollaSDKInventoryKit
 import XsollaSDKLoginKit
 import XsollaSDKStoreKit
 
+protocol XsollaSDKAuthorizationErrorDelegate: AnyObject
+{
+    func xsollaSDK(_ xsollaSDK: XsollaSDK, didFailAuthorizationWithError error: Error)
+}
+
 final class XsollaSDK
 {
-    let loginManager: LoginManagerProtocol
+    let accessTokenProvider: AccessTokenProvider
     
-    private(set) var currentUserInfo: AppUserInfo?
+    weak var authorizationErrorDelegate: XsollaSDKAuthorizationErrorDelegate?
     
     private var login: LoginKit { .shared }
     private var inventory: InventoryKit { .shared }
     private var store: StoreKit { .shared }
     
     @Atomic private var isTokenDependedTasksInProcess = false
-    private var tokenDependedTasksQueue = ThreadSafeArray<TokenDependedTask>()
+    private var tokenDependentTasksQueue = ThreadSafeArray<TokenDependentTask>()
     
-    init(loginManager: LoginManagerProtocol)
+    init(accessTokenProvider: AccessTokenProvider)
     {
-        self.loginManager = loginManager
+        self.accessTokenProvider = accessTokenProvider
     }
     
-    private func startTokenDependedTask(_ completion: @escaping (String) -> Void)
+    private func startTokenDependentTask(_ completion: @escaping (String?) -> Void)
     {
-        let task = TokenDependedTask(completion: completion)
-        startTokenDependedTask(task)
+        let task = TokenDependentTask(completion: completion)
+        startTokenDependentTask(task)
     }
     
-    private func startTokenDependedTask(_ task: TokenDependedTask)
+    private func startTokenDependentTask(_ task: TokenDependentTask)
     {
-        tokenDependedTasksQueue.append(task)
+        tokenDependentTasksQueue.append(task)
         
         guard !isTokenDependedTasksInProcess else { return }
         isTokenDependedTasksInProcess = true
         
-        loginManager.getAccessToken(withUpdateAttempt: true)
+        accessTokenProvider.getAccessToken
         { [weak self] result in
             
             switch result
             {
                 case .success(let token): self?.processTokenDependedTasksQueue(withToken: token)
-                case .failure: break
+                case .failure: self?.invalidateQueue()
             }
             
             self?.isTokenDependedTasksInProcess = false
@@ -66,10 +71,19 @@ final class XsollaSDK
     
     private func processTokenDependedTasksQueue(withToken token: String)
     {
-        while tokenDependedTasksQueue.count > 0
+        while tokenDependentTasksQueue.count > 0
         {
-            tokenDependedTasksQueue.first?.completion(token)
-            tokenDependedTasksQueue.dropFirst()
+            tokenDependentTasksQueue.first?.completion(token)
+            tokenDependentTasksQueue.dropFirst()
+        }
+    }
+    
+    private func invalidateQueue()
+    {
+        while tokenDependentTasksQueue.count > 0
+        {
+            tokenDependentTasksQueue.first?.completion(nil)
+            tokenDependentTasksQueue.dropFirst()
         }
     }
 }
@@ -93,7 +107,7 @@ extension XsollaSDK: XsollaSDKProtocol
                                       password: String,
                                       clientId: Int,
                                       scope: String?,
-                                      completion: ((Result<Void, Error>) -> Void)?)
+                                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     {
         login.authByUsernameAndPasswordJWT(username: username,
                                            password: password,
@@ -104,11 +118,14 @@ extension XsollaSDK: XsollaSDKProtocol
             {
                 case .success(let tokenInfo): do
                 {
-                    self?.handleTokenInfo(tokenInfo)
-                    completion?(.success(()))
+                    completion?(.success(tokenInfo))
                 }
                 
-                case .failure(let error): completion?(.failure(error))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
             }
         }
     }
@@ -141,7 +158,7 @@ extension XsollaSDK: XsollaSDKProtocol
                      clientSecret: String?,
                      redirectUri: String?,
                      authCode: String?,
-                     completion: ((Result<Void, Error>) -> Void)?)
+                     completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     {
         login.generateJWT(grantType: grantType,
                           clientId: clientId,
@@ -154,11 +171,14 @@ extension XsollaSDK: XsollaSDKProtocol
             {
                 case .success(let tokenInfo): do
                 {
-                    self?.handleTokenInfo(tokenInfo)
-                    completion?(.success(()))
+                    completion?(.success(tokenInfo))
                 }
                 
-                case .failure(let error): completion?(.failure(error))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
             }
         }
     }
@@ -170,7 +190,7 @@ extension XsollaSDK: XsollaSDKProtocol
                          acceptConsent: Bool?,
                          fields: [String: String]?,
                          promoEmailAgreement: Int?,
-                         completion: @escaping LoginKitCompletion<URL?>)
+                         completion: ((Result<URL?, Error>) -> Void)?)
     {
         login.registerNewUser(oAuth2Params: oAuth2Params,
                               username: username,
@@ -178,25 +198,46 @@ extension XsollaSDK: XsollaSDKProtocol
                               email: email,
                               acceptConsent: acceptConsent,
                               fields: fields,
-                              promoEmailAgreement: promoEmailAgreement,
-                              completion: completion)
+                              promoEmailAgreement: promoEmailAgreement)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let url): completion?(.success(url))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
     }
     
     func resetPassword(loginProjectId: String,
                        username: String,
                        loginUrl: String?,
-                       completion: @escaping LoginKitCompletion<Void>)
+                       completion: ((Result<Void, Error>) -> Void)?)
     {
         login.resetPassword(loginProjectId: loginProjectId,
                             username: username,
-                            loginUrl: loginUrl,
-                            completion: completion)
+                            loginUrl: loginUrl)
+        { [weak self] result in
+            switch result
+            {
+                case .success: completion?(.success(()))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
     }
     
-    func getCurrentUserDetails(completion: ((Result<LoginUserDetails, Error>) -> Void)?)
+    func getCurrentUserDetails(completion: ((Result<UserProfileDetails, Error>) -> Void)?)
     {
-        startTokenDependedTask
+        startTokenDependentTask
         { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
             
             self?.login.getCurrentUserDetails(accessToken: token)
             { result in
@@ -205,11 +246,390 @@ extension XsollaSDK: XsollaSDKProtocol
                 {
                     case .success(let userDetails): do
                     {
-                        self?.currentUserInfo = userDetails
                         completion?(.success(userDetails))
                     }
                         
-                    case .failure(let error): completion?(.failure(error))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateCurrentUserDetails(birthday: Date?,
+                                  firstName: String?,
+                                  lastName: String?,
+                                  nickname: String?,
+                                  gender: UserProfileDetails.Gender?,
+                                  completion: ((Result<UserProfileDetails, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.updateCurrentUserDetails(accessToken: token,
+                                                 birthday: birthday,
+                                                 firstName: firstName,
+                                                 lastName: lastName,
+                                                 nickname: nickname,
+                                                 gender: gender)
+            { result in
+                
+                switch result
+                {
+                    case .success(let userDetails): do
+                    {
+                        completion?(.success(userDetails))
+                    }
+                        
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func getUserEmail(completion: ((Result<String?, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getUserEmail(accessToken: token)
+            { result in
+                
+                switch result
+                {
+                    case .success(let email): completion?(.success(email))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func deleteUserPicture(completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.deleteUserPicture(accessToken: token)
+            { result in
+                
+                switch result
+                {
+                    case .success: completion?(.success(()))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func uploadUserPicture(imageURL: URL, completion: ((Result<String, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.uploadUserPicture(accessToken: token, imageURL: imageURL)
+            { result in
+                
+                switch result
+                {
+                    case .success(let urlString): completion?(.success(urlString))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func getCurrentUserPhone(completion: ((Result<String?, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getCurrentUserPhone(accessToken: token)
+            { result in
+                
+                switch result
+                {
+                    case .success(let phone): completion?(.success(phone))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateCurrentUserPhone(phoneNumber: String, completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.updateCurrentUserPhone(accessToken: token, phoneNumber: phoneNumber)
+            { result in
+                
+                switch result
+                {
+                    case .success: completion?(.success(()))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func deleteCurrentUserPhone(phoneNumber: String, completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.deleteCurrentUserPhone(accessToken: token, phoneNumber: phoneNumber)
+            { result in
+                
+                switch result
+                {
+                    case .success: completion?(.success(()))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func getCurrentUserFriends(listType: FriendsListType,
+                               sortType: FriendsListSortType,
+                               sortOrderType: FriendsListOrderType,
+                               after: String?,
+                               limit: Int?,
+                               completion: ((Result<FriendsList, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getCurrentUserFriends(accessToken: token,
+                                              listType: listType,
+                                              sortType: sortType,
+                                              sortOrderType: sortOrderType,
+                                              after: after,
+                                              limit: limit)
+            { result in
+                
+                switch result
+                {
+                    case .success(let friendsList): completion?(.success(friendsList))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateCurrentUserFriends(actionType: FriendsListUpdateAction,
+                                  userID: String,
+                                  completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.updateCurrentUserFriends(accessToken: token, actionType: actionType, userID: userID)
+            { result in
+                
+                switch result
+                {
+                    case .success: completion?(.success(()))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func getLinkedNetworks(completion: ((Result<[UserSocialNetworkInfo], Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getLinkedNetworks(accessToken: token)
+            { result in
+                
+                switch result
+                {
+                    case .success(let userSocialNetworks): completion?(.success(userSocialNetworks))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func getURLToLinkSocialNetworkToAccount(providerName: String,
+                                            loginURL: String,
+                                            completion: ((Result<String, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getURLToLinkSocialNetworkToAccount(accessToken: token,
+                                                           providerName: providerName,
+                                                           loginURL: loginURL)
+            { result in
+                
+                switch result
+                {
+                    case .success(let urlString): completion?(.success(urlString))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func startSocialNetworkLinking(toProvider providerName: String,
+                                   loginURL: String,
+                                   presenter: Presenter,
+                                   completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            let viewController = SocialNetworkLinkingVC()
+            presenter.present(viewController, animated: true, completion: nil)
+            
+            viewController.startLinking(toProvider: providerName, withAccessToken: token, loginURL: loginURL)
+            { (result, vc) in
+                vc.dismiss(animated: true, completion: nil)
+                completion?(result)
+            }
+        }
+    }
+    
+    func getClientUserAttributes(keys: [String]?,
+                                 publisherProjectId: Int?,
+                                 userId: String?,
+                                 completion: ((Result<[UserAttribute], Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getClientUserAttributes(accessToken: token,
+                                                keys: keys,
+                                                publisherProjectId: publisherProjectId,
+                                                userId: userId)
+            { result in
+                
+                switch result
+                {
+                    case .success(let userAttributes): completion?(.success(userAttributes))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func getClientUserReadOnlyAttributes(keys: [String]?,
+                                         publisherProjectId: Int?,
+                                         userId: String?,
+                                         completion: ((Result<[UserAttribute], Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getClientUserReadOnlyAttributes(accessToken: token,
+                                                        keys: keys,
+                                                        publisherProjectId: publisherProjectId,
+                                                        userId: userId)
+            { result in
+                
+                switch result
+                {
+                    case .success(let userAttributes): completion?(.success(userAttributes))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateClientUserAttributes(attributes: [UserAttribute]?,
+                                    publisherProjectId: Int?,
+                                    removingKeys: [String]?,
+                                    completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.updateClientUserAttributes(accessToken: token,
+                                                   attributes: attributes,
+                                                   publisherProjectId: publisherProjectId,
+                                                   removingKeys: removingKeys)
+            { result in
+                
+                switch result
+                {
+                    case .success: completion?(.success(()))
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
                 }
             }
         }
@@ -226,10 +646,13 @@ extension XsollaSDK
         completion: @escaping InventoryKitCompletion<[InventoryVirtualCurrencyBalance]>)
     {
         let inventory = self.inventory
-        startTokenDependedTask { inventory.getUserVirtualCurrencyBalance(accessToken: $0,
-                                                                         projectId: projectId,
-                                                                         platform: platform,
-                                                                         completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            inventory.getUserVirtualCurrencyBalance(accessToken: token,
+                                                    projectId: projectId,
+                                                    platform: platform,
+                                                    completion: completion) }
     }
     
     func getUserSubscriptions(projectId: Int,
@@ -237,10 +660,13 @@ extension XsollaSDK
                               completion: @escaping InventoryKitCompletion<[InventoryUserSubscription]>)
     {
         let inventory = self.inventory
-        startTokenDependedTask { inventory.getUserSubscriptions(accessToken: $0,
-                                                                projectId: projectId,
-                                                                platform: platform,
-                                                                completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            inventory.getUserSubscriptions(accessToken: token,
+                                           projectId: projectId,
+                                           platform: platform,
+                                           completion: completion) }
     }
     
     func consumeItem(projectId: Int,
@@ -249,11 +675,14 @@ extension XsollaSDK
                      completion: @escaping InventoryKitCompletion<Void>)
     {
         let inventory = self.inventory
-        startTokenDependedTask { inventory.consumeItem(accessToken: $0,
-                                                       projectId: projectId,
-                                                       platform: platform,
-                                                       consumingItem: consumingItem,
-                                                       completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            inventory.consumeItem(accessToken: token,
+                                  projectId: projectId,
+                                  platform: platform,
+                                  consumingItem: consumingItem,
+                                  completion: completion) }
     }
     
     func getUserInventoryItems(projectId: Int,
@@ -262,11 +691,14 @@ extension XsollaSDK
                                completion: @escaping InventoryKitCompletion<[InventoryItem]>)
     {
         let inventory = self.inventory
-        startTokenDependedTask { inventory.getUserInventoryItems(accessToken: $0,
-                                                                 projectId: projectId,
-                                                                 platform: platform,
-                                                                 detailedSubscriptions: detailedSubscriptions,
-                                                                 completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            inventory.getUserInventoryItems(accessToken: token,
+                                            projectId: projectId,
+                                            platform: platform,
+                                            detailedSubscriptions: detailedSubscriptions,
+                                            completion: completion) }
     }
 }
 
@@ -344,15 +776,18 @@ extension XsollaSDK
                      completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
     {
         let store = self.store
-        startTokenDependedTask { store.createOrder(projectId: projectId,
-                                                   accessToken: $0,
-                                                   itemSKU: itemSKU,
-                                                   currency: currency,
-                                                   locale: locale,
-                                                   isSandbox: isSandbox,
-                                                   paymentProjectSettings: paymentProjectSettings,
-                                                   customParameters: customParameters,
-                                                   completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            store.createOrder(projectId: projectId,
+                              accessToken: token,
+                              itemSKU: itemSKU,
+                              currency: currency,
+                              locale: locale,
+                              isSandbox: isSandbox,
+                              paymentProjectSettings: paymentProjectSettings,
+                              customParameters: customParameters,
+                              completion: completion) }
     }
     
     func purchaseItemByVirtualCurrency(projectId: Int,
@@ -363,13 +798,16 @@ extension XsollaSDK
                                        completion: @escaping (StoreKitCompletion<Int>))
     {
         let store = self.store
-        startTokenDependedTask { store.purchaseItemByVirtualCurrency(projectId: projectId,
-                                                                     accessToken: $0,
-                                                                     itemSKU: itemSKU,
-                                                                     virtualCurrencySKU: virtualCurrencySKU,
-                                                                     platform: platform,
-                                                                     customParameters: customParameters,
-                                                                     completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            store.purchaseItemByVirtualCurrency(projectId: projectId,
+                                                accessToken: token,
+                                                itemSKU: itemSKU,
+                                                virtualCurrencySKU: virtualCurrencySKU,
+                                                platform: platform,
+                                                customParameters: customParameters,
+                                                completion: completion) }
     }
     
     func redeemCoupon(projectId: Int,
@@ -378,11 +816,14 @@ extension XsollaSDK
                       completion: @escaping StoreKitCompletion<[StoreCouponRedeemedItem]>)
     {
         let store = self.store
-        startTokenDependedTask { store.redeemCoupon(projectId: projectId,
-                                                    accessToken: $0,
-                                                    couponCode: couponCode,
-                                                    selectedUnitItems: selectedUnitItems,
-                                                    completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            store.redeemCoupon(projectId: projectId,
+                               accessToken: token,
+                               couponCode: couponCode,
+                               selectedUnitItems: selectedUnitItems,
+                               completion: completion) }
     }
     
     func getCouponRewards(projectId: Int,
@@ -390,10 +831,13 @@ extension XsollaSDK
                           completion: @escaping StoreKitCompletion<StoreCouponRewards>)
     {
         let store = self.store
-        startTokenDependedTask { store.getCouponRewards(projectId: projectId,
-                                                        accessToken: $0,
-                                                        couponCode: couponCode,
-                                                    completion: completion) }
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            store.getCouponRewards(projectId: projectId,
+                                   accessToken: token,
+                                   couponCode: couponCode,
+                                   completion: completion) }
     }
 }
 
@@ -401,21 +845,22 @@ extension XsollaSDK
 
 extension XsollaSDK
 {
-    private func handleTokenInfo(_ tokenInfo: AccessTokenInfo)
+    private func processError(_ error: Error)
     {
-        var tokenExpireDate: Date?
-        if let expiresIn = tokenInfo.expiresIn { tokenExpireDate = Date() + Double(expiresIn) }
-        
-        loginManager.login(accessToken: tokenInfo.accessToken,
-                           refreshToken: tokenInfo.refreshToken,
-                           expireDate: tokenExpireDate)
+        switch error
+        {
+            case LoginKitError.invalidToken:
+                authorizationErrorDelegate?.xsollaSDK(self, didFailAuthorizationWithError: error)
+            
+            default: break
+        }
     }
 }
 
 extension XsollaSDK
 {
-    struct TokenDependedTask
+    struct TokenDependentTask
     {
-        let completion: (String) -> Void
+        let completion: (String?) -> Void
     }
 }

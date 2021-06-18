@@ -20,8 +20,6 @@ import XsollaSDKStoreKit
 
 protocol XsollaSDKProtocol
 {
-    var currentUserInfo: AppUserInfo? { get }
-    
     // MARK: - LoginKit
     
     func authByUsernameAndPassword(username: String,
@@ -33,7 +31,7 @@ protocol XsollaSDKProtocol
                                       password: String,
                                       clientId: Int,
                                       scope: String?,
-                                      completion: ((Result<Void, Error>) -> Void)?)
+                                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     
     func getLinkForSocialAuth(providerName: String,
                               oauth2params: OAuth2Params,
@@ -52,7 +50,7 @@ protocol XsollaSDKProtocol
                      clientSecret: String?,
                      redirectUri: String?,
                      authCode: String?,
-                     completion: ((Result<Void, Error>) -> Void)?)
+                     completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     
     func registerNewUser(oAuth2Params: OAuth2Params,
                          username: String,
@@ -61,14 +59,70 @@ protocol XsollaSDKProtocol
                          acceptConsent: Bool?,
                          fields: [String: String]?,
                          promoEmailAgreement: Int?,
-                         completion: @escaping LoginKitCompletion<URL?>)
+                         completion: ((Result<URL?, Error>) -> Void)?)
     
     func resetPassword(loginProjectId: String,
                        username: String,
                        loginUrl: String?,
-                       completion: @escaping LoginKitCompletion<Void>)
+                       completion: ((Result<Void, Error>) -> Void)?)
     
-    func getCurrentUserDetails(completion: ((Result<LoginUserDetails, Error>) -> Void)?)
+    func getCurrentUserDetails(completion: ((Result<UserProfileDetails, Error>) -> Void)?)
+    
+    func updateCurrentUserDetails(birthday: Date?,
+                                  firstName: String?,
+                                  lastName: String?,
+                                  nickname: String?,
+                                  gender: UserProfileDetails.Gender?,
+                                  completion: ((Result<UserProfileDetails, Error>) -> Void)?)
+    
+    func getUserEmail(completion: ((Result<String?, Error>) -> Void)?)
+    
+    func deleteUserPicture(completion: ((Result<Void, Error>) -> Void)?)
+    
+    func uploadUserPicture(imageURL: URL, completion: ((Result<String, Error>) -> Void)?)
+    
+    func getCurrentUserPhone(completion: ((Result<String?, Error>) -> Void)?)
+    
+    func updateCurrentUserPhone(phoneNumber: String, completion: ((Result<Void, Error>) -> Void)?)
+    
+    func deleteCurrentUserPhone(phoneNumber: String, completion: ((Result<Void, Error>) -> Void)?)
+    
+    func getCurrentUserFriends(listType: FriendsListType,
+                               sortType: FriendsListSortType,
+                               sortOrderType: FriendsListOrderType,
+                               after: String?,
+                               limit: Int?,
+                               completion: ((Result<FriendsList, Error>) -> Void)?)
+    
+    func updateCurrentUserFriends(actionType: FriendsListUpdateAction,
+                                  userID: String,
+                                  completion: ((Result<Void, Error>) -> Void)?)
+    
+    func getLinkedNetworks(completion: ((Result<[UserSocialNetworkInfo], Error>) -> Void)?)
+    
+    func getURLToLinkSocialNetworkToAccount(providerName: String,
+                                            loginURL: String,
+                                            completion: ((Result<String, Error>) -> Void)?)
+    
+    func startSocialNetworkLinking(toProvider providerName: String,
+                                   loginURL: String,
+                                   presenter: Presenter,
+                                   completion: ((Result<Void, Error>) -> Void)?)
+    
+    func getClientUserAttributes(keys: [String]?,
+                                 publisherProjectId: Int?,
+                                 userId: String?,
+                                 completion: ((Result<[UserAttribute], Error>) -> Void)?)
+    
+    func getClientUserReadOnlyAttributes(keys: [String]?,
+                                         publisherProjectId: Int?,
+                                         userId: String?,
+                                         completion: ((Result<[UserAttribute], Error>) -> Void)?)
+    
+    func updateClientUserAttributes(attributes: [UserAttribute]?,
+                                    publisherProjectId: Int?,
+                                    removingKeys: [String]?,
+                                    completion: ((Result<Void, Error>) -> Void)?)
     
     // MARK: - InventoryKit
     

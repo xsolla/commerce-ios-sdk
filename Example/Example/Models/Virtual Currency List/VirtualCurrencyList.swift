@@ -40,8 +40,12 @@ class VirtualCurrencyList
                 
                 case .failure(let error): do
                 {
-                    logger.error { error }
-                    self.dependencies.loadStateListener.setState(.error(nil), animated: true)
+                    logger.error(.application) { error }
+
+                    DispatchQueue.main.async
+                    {
+                        self.dependencies.loadStateListener.setState(.error(nil), animated: true)
+                    }
                 }
             }
         }

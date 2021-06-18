@@ -23,7 +23,8 @@ protocol ModelFactoryProtocol
     func createVirtualItemsList(params: VirtualItemsListBuildParams) -> VirtualItemsList
     func createVirtualItemsActionHandler(params: VirtualItemsActionHandlerBuildParams) -> VirtualItemsActionHandler
     func createVirtualCurrencyBalanceProvider(params: VirtualCurrencyBalanceProviderBuildParams) -> VirtualCurrencyBalanceProvider
-    func createCurrentUserInfoProvider(params: CurrentUserInfoProviderBuildParams) -> CurrentUserInfoProvider
+    func createUserProfile(params: UserProfileBuildParams) -> UserProfile
+    func createUserCharacter(params: UserCharacterBuildParams) -> UserCharacter
 }
 
 class ModelFactory: ModelFactoryProtocol
@@ -62,11 +63,25 @@ class ModelFactory: ModelFactoryProtocol
         return VirtualCurrencyBalanceProvider(xsollaSDK: self.params.xsollaSDK, projectId: params.projectId)
     }
     
-    func createCurrentUserInfoProvider(params: CurrentUserInfoProviderBuildParams) -> CurrentUserInfoProvider
+    func createUserProfile(params: UserProfileBuildParams) -> UserProfile
     {
-        return CurrentUserInfoProvider(xsollaSDK: self.params.xsollaSDK)
+        return UserProfile(dependencies: .init(asyncUtility: UserProfileAsyncUtility(api: self.params.xsollaSDK)))
     }
-    
+
+    func createUserCharacter(params: UserCharacterBuildParams) -> UserCharacter
+    {
+        let asyncUtility = CharacterAsyncUtility(api: self.params.xsollaSDK,
+                                                 projectId: params.projectId,
+                                                 userDetailsProvider: params.userDetailsProvider)
+
+        let dependencies = UserCharacter.Dependencies(asyncUtility: asyncUtility,
+                                                      loadStateListener: params.loadStateListener,
+                                                      customAttributesDataSource: params.customAttributesDataSource,
+                                                      readonlyAttributesDataSource: params.readonlyAttributesDataSource)
+
+        return UserCharacter(dependencies: dependencies)
+    }
+
     // MARK: - Initialization
     
     let params: Params
@@ -82,6 +97,7 @@ extension ModelFactory
     struct Params
     {
         let xsollaSDK: XsollaSDKProtocol
+        let dataSourceFactory: DatasourceFactoryProtocol
     }
 }
 
@@ -116,7 +132,13 @@ struct VirtualCurrencyBalanceProviderBuildParams
     let projectId: Int
 }
 
-struct CurrentUserInfoProviderBuildParams
+struct UserCharacterBuildParams
 {
-    static let empty = CurrentUserInfoProviderBuildParams()
+    let projectId: Int
+    let userDetailsProvider: UserProfileDetailsProvider
+    let loadStateListener: LoadStatable
+    let customAttributesDataSource: UserAttributesListDataSource
+    let readonlyAttributesDataSource: UserAttributesListDataSource
 }
+
+typealias UserProfileBuildParams = EmptyParams

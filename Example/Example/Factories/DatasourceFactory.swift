@@ -16,6 +16,7 @@
 
 import Foundation
 import XsollaSDKStoreKit
+import XsollaSDKLoginKit
 
 protocol DatasourceFactoryProtocol
 {
@@ -26,6 +27,7 @@ protocol DatasourceFactoryProtocol
     func createVirtualItemsListGroupDataSource(params: VirtualItemsListGroupDataSourceBuildParams) -> VirtualItemsListGroupDataSource
     func createInventoryListGroupDataSource(params: InventoryListGroupDataSourceBuildParams) -> InventoryListGroupDataSource
     func createBundlePreviewDataSource(params: BundlePreviewDataSourceBuildParams) -> BundlePreviewDataSource
+    func createUserAttributesListDataSource(params: UserAttributesListDataSourceBuildParams) -> UserAttributesListDataSource
 }
 
 class DatasourceFactory: DatasourceFactoryProtocol
@@ -82,6 +84,18 @@ class DatasourceFactory: DatasourceFactoryProtocol
         
         return dataSource
     }
+
+    func createUserAttributesListDataSource(params: UserAttributesListDataSourceBuildParams) -> UserAttributesListDataSource
+    {
+        switch params.type
+        {
+            case .custom: return CustomUserAttributesListDataSource(title: L10n.Character.TabBar.customAttributes,
+                                                                    actionHandler: params.actionHandler)
+
+            case .readonly: return ReadonlyUserAttributesListDataSource(title: L10n.Character.TabBar.customAttributes,
+                                                                        actionHandler: params.actionHandler)
+        }
+    }
     
     // MARK: - Initialization
     
@@ -129,4 +143,26 @@ struct InventoryListGroupDataSourceBuildParams
 struct BundlePreviewDataSourceBuildParams
 {
     let bundle: StoreBundle
+}
+
+struct UserAttributesListDataSourceBuildParams
+{
+    let type: AttributeType
+    let actionHandler: UserAttributesListDataSource.ActionHandler
+
+    enum AttributeType
+    {
+        case custom
+        case readonly
+    }
+
+    static func custom(actionHandler: @escaping UserAttributesListDataSource.ActionHandler) -> Self
+    {
+        Self(type: .custom, actionHandler: actionHandler)
+    }
+
+    static func readonly(actionHandler: @escaping UserAttributesListDataSource.ActionHandler) -> Self
+    {
+        Self(type: .readonly, actionHandler: actionHandler)
+    }
 }

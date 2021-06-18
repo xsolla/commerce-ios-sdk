@@ -30,6 +30,8 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
 
         window.rootViewController = presenter
         window.makeKeyAndVisible()
+
+        dependencies.loginManager.delegate = self
     }
     
     override func start()
@@ -57,7 +59,8 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
     private func getAuthenticationCoordinator() -> Coordinator
     {
         let factory = dependencies.factories.coordinatorFactory
-        let coordinator = factory.createAuthenticationCoordinator(presenter: presenter, params: .none)
+        let params = AuthenticationCoordinatorBuildParameters(loginManager: dependencies.loginManager)
+        let coordinator = factory.createAuthenticationCoordinator(presenter: presenter, params: params)
         
         return coordinator
     }
@@ -67,14 +70,18 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
         let factory = dependencies.factories.coordinatorFactory
         let coordinator = factory.createMainContainerCoordinator(presenter: presenter, params: .none)
         
-        coordinator.onLogout =
-        { [unowned self, unowned coordinator] in
-            
-            self.dependencies.loginManager.logout()
-            coordinator.finish()
-        }
+        coordinator.onLogout = { [unowned self] in self.dependencies.loginManager.logout() }
         
         return coordinator
+    }
+}
+
+extension AppCoordinator: LoginManagerDelegate
+{
+    func loginManager(_ loginManager: LoginManagerProtocol, didInvalidateAccessToken withError: LoginManagerError?)
+    {
+        childCoordinators = []
+        start()
     }
 }
 

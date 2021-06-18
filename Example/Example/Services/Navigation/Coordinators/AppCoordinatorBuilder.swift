@@ -35,8 +35,11 @@ extension AppCoordinator
         
         let viewControllerFactory = ViewControllerFactory(params: .none)
         let datasourceFactory = DatasourceFactory(params: .init(priceHelper: priceHelper))
-        let xsollaSDK = XsollaSDK(loginManager: LoginManager.shared)
-        let modelFactory = ModelFactory(params: .init(xsollaSDK: xsollaSDK))
+        
+        let xsollaSDK = XsollaSDK(accessTokenProvider: LoginManager.shared)
+        xsollaSDK.authorizationErrorDelegate = LoginManager.shared
+        
+        let modelFactory = ModelFactory(params: .init(xsollaSDK: xsollaSDK, dataSourceFactory: datasourceFactory))
         
         let store = Store(dependencies: .init(xsollaSDK: xsollaSDK))
         

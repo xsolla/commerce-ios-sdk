@@ -11,27 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing and permissions and
 
-import Foundation
-import XsollaSDKLoginKit
+// swiftlint:disable redundant_string_enum_value
+// swiftlint:disable type_name
 
-class CurrentUserInfoProvider
+import Foundation
+
+struct GetURLToLinkSocialNetworkToAccountResponse: Decodable
 {
-    let xsollaSDK: XsollaSDKProtocol
+    let url: String
     
-    init(xsollaSDK: XsollaSDKProtocol)
+    enum CodingKeys: String, CodingKey
     {
-        self.xsollaSDK = xsollaSDK
+        case url = "url"
     }
     
-    func requestData()
+    init(from decoder: Decoder) throws
     {
-        xsollaSDK.getCurrentUserDetails
-        { result in
-            switch result
-            {
-                case .success: break
-                case .failure(let error): logger.error { error }
-            }
-        }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        url = try container.decode(String.self, forKey: .url)
     }
 }

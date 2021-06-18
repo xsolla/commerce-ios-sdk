@@ -16,10 +16,11 @@ import XsollaSDKLoginKit
 
 enum LoginManagerError: Error
 {
-    case tokenHasExpired
-    case cannotUpdateToken
+    case expiredToken
+    case tokenUpdateFailure
     case accessTokenNotFound
     case refreshTokenNotFound
+    case invalidToken
 }
 
 protocol LoginInfoProvider
@@ -27,23 +28,22 @@ protocol LoginInfoProvider
     var userLogedIn: Bool { get }
 }
 
-protocol LoginManagerProtocol: LoginInfoProvider
+protocol AccessTokenProvider
 {
-    var currentUserInfo: AppUserInfo? { get }
+    func getAccessToken(completion: @escaping (Result<String, LoginManagerError>) -> Void)
+}
 
+protocol LoginManagerProtocol: AnyObject, LoginInfoProvider
+{
     var delegate: LoginManagerDelegate? { get set }
 
     func login(accessToken: String, refreshToken: String?, expireDate: Date?)
     func logout()
-
-    func setCurrentUserInfo(_ userInfo: AppUserInfo)
-
-    func getAccessToken(withUpdateAttempt: Bool, completion: @escaping (Result<String, LoginManagerError>) -> Void)
 }
 
 protocol LoginManagerDelegate: AnyObject
 {
-    func tokenInfoNotFound(_ error: LoginManagerError)
+    func loginManager(_ loginManager: LoginManagerProtocol, didInvalidateAccessToken withError: LoginManagerError?)
 }
 
 /// WARNING!
@@ -53,15 +53,11 @@ class LoginManager: LoginManagerProtocol
 {
     static let shared = LoginManager()
 
-    var currentUserInfo: AppUserInfo?
-
     weak var delegate: LoginManagerDelegate?
 
     func logout()
     {
-        UserDefaults.standard.removeObject(forKey: Keys.accessToken)
-        UserDefaults.standard.removeObject(forKey: Keys.refreshToken)
-        UserDefaults.standard.removeObject(forKey: Keys.tokenExpireDate)
+        invalidateAccessToken(withError: nil)
     }
 
     private var accessToken: String?
@@ -89,41 +85,15 @@ class LoginManager: LoginManagerProtocol
         self.tokenExpireDate = expireDate
     }
 
-    func setCurrentUserInfo(_ userInfo: AppUserInfo)
+    private func invalidateAccessToken(withError error: LoginManagerError?)
     {
-        currentUserInfo = userInfo
-    }
+        guard UserDefaults.standard.object(forKey: Keys.accessToken) != nil else { return }
 
-    func getAccessToken(withUpdateAttempt: Bool, completion: @escaping (Result<String, LoginManagerError>) -> Void)
-    {
-        guard let token = accessToken
-        else
-        {
-            delegate?.tokenInfoNotFound(.accessTokenNotFound)
-            completion(.failure(.accessTokenNotFound))
-            return
-        }
+        UserDefaults.standard.removeObject(forKey: Keys.accessToken)
+        UserDefaults.standard.removeObject(forKey: Keys.refreshToken)
+        UserDefaults.standard.removeObject(forKey: Keys.tokenExpireDate)
 
-        let expireDate = tokenExpireDate ?? Date()
-
-        if expireDate > Date()
-        {
-            completion(.success(token))
-        }
-        else
-        {
-            guard withUpdateAttempt else
-            {
-                delegate?.tokenInfoNotFound(.tokenHasExpired)
-                completion(.failure(.tokenHasExpired))
-                return
-            }
-
-            updateToken
-            { [weak self] _ in
-                self?.getAccessToken(withUpdateAttempt: false, completion: completion)
-            }
-        }
+        delegate?.loginManager(self, didInvalidateAccessToken: error)
     }
 
     private init() { }
@@ -143,7 +113,7 @@ extension LoginManager
     {
         guard let refreshToken = refreshToken else
         {
-            delegate?.tokenInfoNotFound(.refreshTokenNotFound)
+            invalidateAccessToken(withError: .refreshTokenNotFound)
             completion(.failure(.refreshTokenNotFound))
             return
         }
@@ -155,6 +125,13 @@ extension LoginManager
                                     redirectUri: AppConfig.redirectURL,
                                     authCode: nil)
         { [weak self] result in
+
+            guard let self = self else
+            {
+                completion(.failure(.tokenUpdateFailure))
+                return
+            }
+
             switch result
             {
                 case .success(let tokenInfo): do
@@ -162,7 +139,7 @@ extension LoginManager
                     var tokenExpireDate: Date?
                     if let expiresIn = tokenInfo.expiresIn { tokenExpireDate = Date() + Double(expiresIn) }
 
-                    self?.login(accessToken: tokenInfo.accessToken,
+                    self.login(accessToken: tokenInfo.accessToken,
                                 refreshToken: tokenInfo.refreshToken,
                                 expireDate: tokenExpireDate)
 
@@ -171,10 +148,64 @@ extension LoginManager
 
                 case .failure: do
                 {
-                    self?.delegate?.tokenInfoNotFound(.cannotUpdateToken)
-                    completion(.failure(.cannotUpdateToken))
+                    self.invalidateAccessToken(withError: .tokenUpdateFailure)
+                    completion(.failure(.tokenUpdateFailure))
                 }
             }
+        }
+    }
+    
+    private func getAccessToken(withUpdateAttempt: Bool,
+                                completion: @escaping (Result<String, LoginManagerError>) -> Void)
+    {
+        guard let token = accessToken
+        else
+        {
+            invalidateAccessToken(withError: .accessTokenNotFound)
+            completion(.failure(.accessTokenNotFound))
+            return
+        }
+
+        let expireDate = tokenExpireDate ?? Date()
+
+        if expireDate > Date()
+        {
+            completion(.success(token))
+        }
+        else
+        {
+            guard withUpdateAttempt else
+            {
+                invalidateAccessToken(withError: .expiredToken)
+                completion(.failure(.expiredToken))
+                return
+            }
+
+            updateToken
+            { [weak self] _ in
+                self?.getAccessToken(withUpdateAttempt: false, completion: completion)
+            }
+        }
+    }
+}
+
+extension LoginManager: AccessTokenProvider
+{
+    func getAccessToken(completion: @escaping (Result<String, LoginManagerError>) -> Void)
+    {
+        getAccessToken(withUpdateAttempt: true, completion: completion)
+    }
+}
+
+extension LoginManager: XsollaSDKAuthorizationErrorDelegate
+{
+    func xsollaSDK(_ xsollaSDK: XsollaSDK, didFailAuthorizationWithError error: Error)
+    {
+        switch error
+        {
+            case LoginKitError.invalidToken: invalidateAccessToken(withError: .invalidToken)
+            
+            default:  invalidateAccessToken(withError: nil)
         }
     }
 }

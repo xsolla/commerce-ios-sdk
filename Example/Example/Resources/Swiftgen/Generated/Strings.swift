@@ -14,10 +14,80 @@ internal enum L10n {
 
   /// Update bundle if you need to change the app language
   static var bundle: Bundle?
+    internal enum Account {
+      /// Reset password
+      internal static var resetPasswordButton: String { L10n.tr("Localizable", "Account.resetPasswordButton") }
+      /// Save changes
+      internal static var saveButton: String { L10n.tr("Localizable", "Account.saveButton") }
+      /// Account
+      internal static var title: String { L10n.tr("Localizable", "Account.title") }
+      internal enum DatePicker {
+        /// CANCEL
+        internal static var cancelButton: String { L10n.tr("Localizable", "Account.datePicker.cancelButton") }
+        /// OK
+        internal static var confirmButton: String { L10n.tr("Localizable", "Account.datePicker.confirmButton") }
+      }
+      internal enum Field {
+        internal enum Birthday {
+          /// Birthday
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.birthday.placeholder") }
+        }
+        internal enum Email {
+          /// Email
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.email.placeholder") }
+        }
+        internal enum FirstName {
+          /// First name
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.firstName.placeholder") }
+        }
+        internal enum Gender {
+          /// Female
+          internal static var female: String { L10n.tr("Localizable", "Account.field.gender.female") }
+          /// Male
+          internal static var male: String { L10n.tr("Localizable", "Account.field.gender.male") }
+          /// Other
+          internal static var other: String { L10n.tr("Localizable", "Account.field.gender.other") }
+          /// Gender
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.gender.placeholder") }
+          /// Prefer not to answer
+          internal static var unspecified: String { L10n.tr("Localizable", "Account.field.gender.unspecified") }
+        }
+        internal enum LastName {
+          /// Last name
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.lastName.placeholder") }
+        }
+        internal enum Nickname {
+          /// Nickname
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.nickname.placeholder") }
+        }
+        internal enum Phone {
+          /// Phone
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.phone.placeholder") }
+          /// Validation error
+          internal static var validationError: String { L10n.tr("Localizable", "Account.field.phone.validationError") }
+        }
+        internal enum Username {
+          /// Username
+          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.username.placeholder") }
+        }
+      }
+    }
+    internal enum AccountAvatar {
+      /// Avatar
+      internal static var title: String { L10n.tr("Localizable", "AccountAvatar.title") }
+      internal enum RemoveButton {
+        /// REMOVE AVATAR
+        internal static var title: String { L10n.tr("Localizable", "AccountAvatar.removeButton.title") }
+      }
+    }
     internal enum Alert {
       internal enum Action {
         /// OK
         internal static var ok: String { L10n.tr("Localizable", "Alert.action.ok") }
+      }
+      internal enum Error {
+        /// Error occured
+        internal static var common: String { L10n.tr("Localizable", "Alert.error.common") }
       }
       internal enum PasswordRecover {
         internal enum Success {
@@ -34,6 +104,32 @@ internal enum L10n {
           /// Successful registration
           internal static var title: String { L10n.tr("Localizable", "Alert.registration.success.title") }
         }
+      }
+    }
+    internal enum AttributeEditor {
+      internal enum Button {
+        /// Add attribute
+        internal static var add: String { L10n.tr("Localizable", "AttributeEditor.button.add") }
+        /// Delete this attribute
+        internal static var delete: String { L10n.tr("Localizable", "AttributeEditor.button.delete") }
+        /// Discard changes
+        internal static var discard: String { L10n.tr("Localizable", "AttributeEditor.button.discard") }
+        /// Save changes
+        internal static var save: String { L10n.tr("Localizable", "AttributeEditor.button.save") }
+      }
+      internal enum TextField {
+        internal enum Placeholder {
+          /// Attribute key
+          internal static var key: String { L10n.tr("Localizable", "AttributeEditor.textField.placeholder.key") }
+          /// Attribute value
+          internal static var value: String { L10n.tr("Localizable", "AttributeEditor.textField.placeholder.value") }
+        }
+      }
+      internal enum Title {
+        /// Custom attribute
+        internal static var add: String { L10n.tr("Localizable", "AttributeEditor.title.add") }
+        /// Custom attribute
+        internal static var edit: String { L10n.tr("Localizable", "AttributeEditor.title.edit") }
       }
     }
     internal enum Auth {
@@ -67,6 +163,22 @@ internal enum L10n {
     internal enum BundlePreview {
       /// Bundle Preview
       internal static var title: String { L10n.tr("Localizable", "BundlePreview.title") }
+    }
+    internal enum Character {
+      /// See the documentation to learn more about read-only attributes.
+      internal static var infoText: String { L10n.tr("Localizable", "Character.infoText") }
+      /// Character
+      internal static var title: String { L10n.tr("Localizable", "Character.title") }
+      internal enum Buttons {
+        /// Add attribute
+        internal static var addAttribute: String { L10n.tr("Localizable", "Character.buttons.addAttribute") }
+      }
+      internal enum TabBar {
+        /// User-editable attributes
+        internal static var customAttributes: String { L10n.tr("Localizable", "Character.tabBar.customAttributes") }
+        /// Read-only attributes
+        internal static var readonlyAttributes: String { L10n.tr("Localizable", "Character.tabBar.readonlyAttributes") }
+      }
     }
     internal enum Common {
       internal enum Button {

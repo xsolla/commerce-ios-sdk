@@ -14,6 +14,7 @@
 import Foundation
 import UIKit
 import WebKit
+import XsollaSDKUtilities
 
 public protocol PaystationWebViewDelegate: AnyObject
 {
@@ -31,7 +32,10 @@ public protocol PaystationWebViewDelegate: AnyObject
 public class PaystationWebView: UIView
 {
     public weak var delegate: PaystationWebViewDelegate?
-    public var customUserAgent: String = standardUserAgent { didSet { webView.customUserAgent = customUserAgent } }
+    public var customUserAgent: String = WKWebView.defaultUserAgent
+    {
+        didSet { webView.customUserAgent = customUserAgent }
+    }
 
     private var configuration: Configuration?
 
@@ -159,12 +163,4 @@ extension PaystationWebView
             return url
         }
     }
-}
-
-// MARK: - User Agent
-
-extension PaystationWebView
-{
-    // swiftlint:disable:next line_length
-    static private let standardUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
 }

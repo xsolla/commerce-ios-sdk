@@ -31,6 +31,13 @@ protocol ViewControllerFactoryProtocol: AnyObject
     func createSocialNetworksListVC(params: SocialNetworksListVCBuildParams) -> SocialNetworksListVCProtocol
     func createWebBrowserVC(params: WebBrowserVCBuildParams) -> WebBrowserVCProtocol
     func createTableviewVC(params: TableviewVCBuildParams) -> UITableViewController
+    func createTableviewVC(params: TableviewVCBuildParams,
+                           setupTableView: ((UITableView) -> Void)?) -> UITableViewController
+    func createUserProfileVC(params: UserProfileVCBuildParams) -> UserProfileVCProtocol
+    func createUserProfileAvatarSelectorVC(params: UserProfileAvatarSelectorVCBuildParams)
+         -> UserProfileAvatarSelectorVCProtocol
+    func createCharacterVC(params: CharacterVCBuildParams) -> CharacterVCProtocol
+    func createAttributeEditorVC(params: AttributeEditorVCBuildParams) -> AttributeEditorVCProtocol
 }
 
 class ViewControllerFactory: ViewControllerFactoryProtocol
@@ -123,7 +130,10 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         
         viewController.dataSource = params.dataSource
         viewController.modalPresentationStyle = .overFullScreen
-        viewController.dismissRequest = { viewController in viewController.dismiss(animated: true, completion: nil) }
+        viewController.dismissRequestHandler =
+        { viewController in
+            viewController.dismiss(animated: true, completion: nil)
+        }
 
         commonSetup(viewController)
         return viewController
@@ -177,10 +187,10 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
     func createSideMenuContentVC(params: SideMenuContentVCBuildParams) -> SideMenuContentVCProtocol
     {
         let viewController = StoryboardScene.SideMenu.sideMenuContent.instantiate()
-        
+
         return viewController
     }
-    
+
     // MARK: - Misc
     
     func createSocialNetworksListVC(params: SocialNetworksListVCBuildParams) -> SocialNetworksListVCProtocol
@@ -199,15 +209,144 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         commonSetup(viewController)
         return viewController
     }
-    
+
     func createTableviewVC(params: TableviewVCBuildParams) -> UITableViewController
     {
-        let viewController = UITableViewController(nibName: nil, bundle: nil)
-        
+        let viewController = BaseTableViewController(nibName: nil, bundle: nil)
+
         viewController.view.backgroundColor = .xsolla_clear
         return viewController
     }
-    
+
+    func createTableviewVC(params: TableviewVCBuildParams,
+                           setupTableView: ((UITableView) -> Void)?) -> UITableViewController
+    {
+        let viewController = BaseTableViewController(nibName: nil, bundle: nil)
+
+        if let tableView = viewController.tableView { setupTableView?(tableView) }
+
+        viewController.view.backgroundColor = .xsolla_clear
+        return viewController
+    }
+
+    func createUserProfileVC(params: UserProfileVCBuildParams) -> UserProfileVCProtocol
+    {
+        let viewController = StoryboardScene.UserProfile.userProfile.instantiate()
+        viewController.formValidator = FormValidator(factory: validatorFactory)
+
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createUserProfileAvatarSelectorVC(params: UserProfileAvatarSelectorVCBuildParams)
+         -> UserProfileAvatarSelectorVCProtocol
+    {
+        let viewController = StoryboardScene.UserProfile.userProfileAvatarSelector.instantiate()
+
+        viewController.modalPresentationStyle = .overFullScreen
+        viewController.dismissRequestHandler =
+        { viewController in
+            viewController.dismiss(animated: true, completion: nil)
+        }
+
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createCharacterVC(params: CharacterVCBuildParams) -> CharacterVCProtocol
+    {
+        let viewController = StoryboardScene.Character.character.instantiate()
+        viewController.userDetailsProvider = params.userProfile
+        params.userProfile.addListener(viewController)
+
+        let customTableVCParams = UserAttributesTableVCBuildParams(dataSource: params.customDataSource)
+        let customAttributesTableVC = createCustomUserAttributesTableVC(params: customTableVCParams)
+
+        let readonlyTableVCParams = UserAttributesTableVCBuildParams(dataSource: params.readonlyDataSource)
+        let readonlyAttributesTableVC = createReadonlyUserAttributesTableVC(params: readonlyTableVCParams)
+
+        let customAttributesTabbarItem = UITabBarItem(title: params.customDataSource.title,
+                                                      image: nil,
+                                                      selectedImage: nil)
+
+        let readonlyAttributesTabbarItem = UITabBarItem(title: params.readonlyDataSource.title,
+                                                        image: nil,
+                                                        selectedImage: nil)
+
+        viewController.tabbarVC = TabbarViewController.create(with: tabbarDefaultScheme)
+        { controller in
+
+            controller.tabsLayoutStyle = .scrollableCentered
+            controller.containerTop = Shape.tabbarBottomMargin
+        }
+
+        viewController.reloadDataRequestHandler =
+        {
+            customAttributesTableVC.tableView.reloadData()
+            readonlyAttributesTableVC.tableView.reloadData()
+        }
+
+        commonSetup(viewController)
+
+        viewController.tabbarVC.setup(with:
+        [
+            .init(tabbarItem: readonlyAttributesTabbarItem, viewController: readonlyAttributesTableVC),
+            .init(tabbarItem: customAttributesTabbarItem, viewController: customAttributesTableVC)
+        ])
+        
+        return viewController
+    }
+
+    func createCustomUserAttributesTableVC(params: UserAttributesTableVCBuildParams) -> UITableViewController
+    {
+        let viewController = createTableviewVC(params: .none)
+
+        guard let tableView = viewController.tableView else { fatalError("TableView in UITableViewController is nil") }
+
+        tableView.dataSource = params.dataSource
+        tableView.delegate = params.dataSource
+        tableView.registerXib(for: UserAttributeListAddAttributeCell.self)
+        tableView.registerXib(for: UserAttributeListItemCell.self)
+        tableView.showsHorizontalScrollIndicator = false
+        tableView.showsVerticalScrollIndicator = true
+        tableView.separatorStyle = .none
+
+        return viewController
+    }
+
+    func createReadonlyUserAttributesTableVC(params: UserAttributesTableVCBuildParams) -> UITableViewController
+    {
+        let viewController = createTableviewVC(params: .none)
+
+        guard let tableView = viewController.tableView else { fatalError("TableView in UITableViewController is nil") }
+
+        tableView.dataSource = params.dataSource
+        tableView.delegate = params.dataSource
+        tableView.registerXib(for: UserAttributeListInfoCell.self)
+        tableView.registerXib(for: UserAttributeListItemCell.self)
+        tableView.showsHorizontalScrollIndicator = false
+        tableView.showsVerticalScrollIndicator = true
+        tableView.separatorStyle = .none
+
+        return viewController
+    }
+
+    func createAttributeEditorVC(params: AttributeEditorVCBuildParams) -> AttributeEditorVCProtocol
+    {
+        let viewController = StoryboardScene.Character.attributeEditor.instantiate()
+
+        viewController.modalPresentationStyle = .overFullScreen
+        viewController.dismissRequestHandler =
+        { viewController in
+            viewController.dismiss(animated: true, completion: nil)
+        }
+        
+        viewController.initialUserAttribute = params.userAttribute
+        
+        commonSetup(viewController)
+        return viewController
+    }
+
     private func commonSetup(_ viewController: BaseViewController)
     {
         viewController.view.backgroundColor = .xsolla_black
@@ -270,6 +409,8 @@ typealias RecoverPasswordVCBuildParams = EmptyParams
 typealias SideMenuContentVCBuildParams = EmptyParams
 typealias WebBrowserVCBuildParams = URL?
 typealias TableviewVCBuildParams = EmptyParams
+typealias UserProfileVCBuildParams = EmptyParams
+typealias UserProfileAvatarSelectorVCBuildParams = EmptyParams
 
 struct MainVCBuildParams
 {
@@ -299,4 +440,21 @@ struct VirtualItemsVCBuildParams
 struct BundlePreviewVCBuildParams
 {
     let dataSource: BundlePreviewDataSource
+}
+
+struct UserAttributesTableVCBuildParams
+{
+    let dataSource: UserAttributesListDataSource
+}
+
+struct CharacterVCBuildParams
+{
+    let customDataSource: UserAttributesListDataSource
+    let readonlyDataSource: UserAttributesListDataSource
+    let userProfile: UserProfileProtocol
+}
+
+struct AttributeEditorVCBuildParams
+{
+    let userAttribute: UnifiedUserAttribute?
 }

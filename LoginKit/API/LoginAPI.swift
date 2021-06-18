@@ -12,6 +12,7 @@
 // See the License for the specific language governing and permissions and
 
 // swiftlint:disable function_parameter_count
+// swiftlint:disable line_length
 
 import Foundation
 import XsollaSDKUtilities
@@ -143,11 +144,192 @@ extension LoginAPI: LoginAPIProtocol
                                                            completion: completion)
     }
     
+    // MARK: - User Account API
+    
     func getCurrentUserDetails(accessToken: String,
                                completion: @escaping (LoginAPIResult<GetCurrentUserDetailsResponse>) -> Void)
     {
         GetCurrentUserDetailsAPIProxy(configuration).getCurrentUserDetails(accessToken: accessToken,
                                                                            completion: completion)
+    }
+    
+    func updateCurrentUserDetails(accessToken: String,
+                                  birthday: String?,
+                                  firstName: String?,
+                                  lastName: String?,
+                                  gender: String?,
+                                  nickname: String?,
+                                  completion: @escaping (LoginAPIResult<UpdateCurrentUserDetailsResponse>) -> Void)
+    {
+        UpdateCurrentUserDetailsAPIProxy(configuration).updateCurrentUserDetails(accessToken: accessToken,
+                                                                                 birthday: birthday,
+                                                                                 firstName: firstName,
+                                                                                 lastName: lastName,
+                                                                                 gender: gender,
+                                                                                 nickname: nickname,
+                                                                                 completion: completion)
+    }
+    
+    func getUserEmail(accessToken: String,
+                      completion: @escaping (LoginAPIResult<GetUserEmailResponse>) -> Void)
+    {
+        GetUserEmailAPIProxy(configuration).getUserEmail(accessToken: accessToken, completion: completion)
+    }
+    
+    func deleteUserPicture(accessToken: String, completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        DeleteUserPictureAPIProxy(configuration).deleteUserPicture(accessToken: accessToken, completion: completion)
+    }
+    
+    func uploadUserPicture(accessToken: String,
+                           imageURL: URL,
+                           completion: @escaping (LoginAPIResult<UploadUserPictureResponse>) -> Void)
+    {
+        UploadUserPictureAPIProxy(configuration).uploadUserPicture(accessToken: accessToken,
+                                                                   imageURL: imageURL,
+                                                                   completion: completion)
+    }
+    
+    func getCurrentUserPhone(accessToken: String,
+                             completion: @escaping (LoginAPIResult<GetCurrentUserPhoneResponse>) -> Void)
+    {
+        GetCurrentUserPhoneAPIProxy(configuration).getCurrentUserPhone(accessToken: accessToken, completion: completion)
+    }
+    
+    func updateCurrentUserPhone(accessToken: String,
+                                phoneNumber: String,
+                                completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        UpdateCurrentUserPhoneAPIProxy(configuration).updateCurrentUserPhone(accessToken: accessToken,
+                                                                             phoneNumber: phoneNumber,
+                                                                             completion: completion)
+    }
+    
+    func deleteCurrentUserPhone(accessToken: String,
+                                phoneNumber: String,
+                                completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        DeleteCurrentUserPhoneAPIProxy(configuration).deleteCurrentUserPhone(accessToken: accessToken,
+                                                                             phoneNumber: phoneNumber,
+                                                                             completion: completion)
+    }
+    
+    // MARK: User Account: User Friends
+    
+    func getCurrentUserFriends(accessToken: String,
+                               listType: String,
+                               sortType: String,
+                               sortOrder: String,
+                               after: String?,
+                               limit: Int?,
+                               completion: @escaping (LoginAPIResult<GetCurrentUserFriendsResponse>) -> Void)
+    {
+        GetCurrentUserFriendsAPIProxy(configuration).getCurrentUserFriends(accessToken: accessToken,
+                                                                           listType: listType,
+                                                                           sortType: sortType,
+                                                                           sortOrder: sortOrder,
+                                                                           after: after,
+                                                                           limit: limit,
+                                                                           completion: completion)
+    }
+    
+    func updateCurrentUserFriends(accessToken: String,
+                                  action: String,
+                                  userID: String,
+                                  completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        UpdateCurrentUserFriendsAPIProxy(configuration).updateCurrentUserFriends(accessToken: accessToken,
+                                                                                 action: action,
+                                                                                 userID: userID,
+                                                                                 completion: completion)
+    }
+    
+    // MARK: User Account: Social Networks
+    
+    func getLinkedNetworks(accessToken: String,
+                           completion: @escaping (LoginAPIResult<GetLinkedNetworksResponse>) -> Void)
+    {
+        GetLinkedNetworksAPIProxy(configuration).getLinkedNetworks(accessToken: accessToken, completion: completion)
+    }
+    
+    func getURLToLinkSocialNetworkToAccount(
+        accessToken: String,
+        providerName: String,
+        loginURL: String,
+        completion: @escaping (LoginAPIResult<GetURLToLinkSocialNetworkToAccountResponse>) -> Void)
+    {
+        GetURLToLinkSocialNetworkToAccountAPIProxy(configuration)
+            .getURLToLinkSocialNetworkToAccount(accessToken: accessToken,
+                                                providerName: providerName,
+                                                loginURL: loginURL,
+                                                completion: completion)
+    }
+    
+    func getSocialNetworkFriends(accessToken: String,
+                                 platform: String,
+                                 offset: Int,
+                                 limit: Int,
+                                 withLoginId: Bool,
+                                 completion: @escaping (LoginAPIResult<GetSocialNetworkFriendsResponse>) -> Void)
+    {
+        GetSocialNetworkFriendsAPIProxy(configuration).getSocialNetworkFriends(accessToken: accessToken,
+                                                                               platform: platform,
+                                                                               offset: offset,
+                                                                               limit: limit,
+                                                                               withLoginId: withLoginId,
+                                                                               completion: completion)
+    }
+    
+    func updateSocialNetworkFriends(accessToken: String,
+                                    platform: String,
+                                    completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        UpdateSocialNetworkFriendsAPIProxy(configuration).updateSocialNetworkFriends(accessToken: accessToken,
+                                                                                     platform: platform,
+                                                                                     completion: completion)
+    }
+    
+    // MARK: - User Attributes
+    
+    func getClientUserAttributes(accessToken: String,
+                                 keys: [String]?,
+                                 publisherProjectId: Int?,
+                                 userId: String?,
+                                 completion: @escaping (LoginAPIResult<GetClientUserAttributesResponse>) -> Void)
+    {
+        GetClientUserAttributesAPIProxy(configuration).getClientUserAttributes(accessToken: accessToken,
+                                                                               keys: keys,
+                                                                               publisherProjectId: publisherProjectId,
+                                                                               userId: userId,
+                                                                               completion: completion)
+    }
+    
+    func getClientUserReadOnlyAttributes(accessToken: String,
+                                         keys: [String]?,
+                                         publisherProjectId: Int?,
+                                         userId: String?,
+                                         completion: @escaping (LoginAPIResult<GetClientUserReadOnlyAttributesResponse>) -> Void)
+    {
+        GetClientUserReadOnlyAttributesAPIProxy(configuration)
+            .getClientUserReadOnlyAttributes(accessToken: accessToken,
+                                             keys: keys,
+                                             publisherProjectId: publisherProjectId,
+                                             userId: userId,
+                                             completion: completion)
+    }
+    
+    func updateClientUserAttributes(accessToken: String,
+                                    attributes: [UpdateClientUserAttributesRequest.Body.Attribute]?,
+                                    publisherProjectId: Int?,
+                                    removingKeys: [String]?,
+                                    completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        UpdateClientUserAttributesAPIProxy(configuration)
+            .updateClientUserAttributes(accessToken: accessToken,
+                                        attributes: attributes,
+                                        publisherProjectId: publisherProjectId,
+                                        removingKeys: removingKeys,
+                                        completion: completion)
     }
 }
 

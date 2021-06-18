@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKInventoryKit'
-  s.version      = '0.1.0'
+  s.version      = '0.2.0'
   s.summary      = 'The official Xsolla SDK for iOS used to manage player’s inventory using the solution based on In-Game-Store.'
   s.description  = <<-DESC
                    The library contains methods for working with the Player Inventory API and allows you to implement the management of:

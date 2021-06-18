@@ -66,6 +66,46 @@
 "Common.button.buy" = "Buy now";
 "Common.button.preview" = "Preview";
 
+
+// MARK: - Account
+"Account.title" = "Account";
+"Account.saveButton" = "Save changes";
+"Account.resetPasswordButton" = "Reset password";
+"Account.datePicker.confirmButton" = "OK";
+"Account.datePicker.cancelButton" = "CANCEL";
+"Account.field.email.placeholder" = "Email";
+"Account.field.username.placeholder" = "Username";
+"Account.field.nickname.placeholder" = "Nickname";
+"Account.field.phone.placeholder" = "Phone";
+"Account.field.firstName.placeholder" = "First name";
+"Account.field.lastName.placeholder" = "Last name";
+"Account.field.birthday.placeholder" = "Birthday";
+"Account.field.gender.placeholder" = "Gender";
+"Account.field.gender.male" = "Male";
+"Account.field.gender.female" = "Female";
+"Account.field.gender.other" = "Other";
+"Account.field.gender.unspecified" = "Prefer not to answer";
+"Account.field.phone.validationError" = "Validation error";
+"AccountAvatar.title" = "Avatar";
+"AccountAvatar.removeButton.title" = "REMOVE AVATAR";
+
+// MARK: - Inventory
+
+"Character.title" = "Character";
+"Character.tabBar.readonlyAttributes" = "Read-only attributes";
+"Character.tabBar.customAttributes" = "User-editable attributes";
+"Character.buttons.addAttribute" = "Add attribute";
+"Character.infoText" = "See the documentation to learn more about read-only attributes.";
+
+"AttributeEditor.title.edit" = "Custom attribute";
+"AttributeEditor.title.add" = "Custom attribute";
+"AttributeEditor.button.save" = "Save changes";
+"AttributeEditor.button.add" = "Add attribute";
+"AttributeEditor.button.discard" = "Discard changes";
+"AttributeEditor.button.delete" = "Delete this attribute";
+"AttributeEditor.textField.placeholder.key" = "Attribute key";
+"AttributeEditor.textField.placeholder.value" = "Attribute value";
+
 // MARK: - Inventory
 
 "Inventory.title" = "My inventory";
@@ -93,3 +133,4 @@
 "Alert.registration.success.message" = "Please check your email.";
 "Alert.passwordRecover.success.title" = "Password reset success";
 "Alert.passwordRecover.success.message" = "Check your email.";
+"Alert.error.common" = "Error occured";

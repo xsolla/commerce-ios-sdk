@@ -21,6 +21,7 @@ internal enum Asset {
   internal enum Colors {
     internal static let inactiveMagenta = ColorAsset(name: "inactiveMagenta")
     internal static let inactiveWhite = ColorAsset(name: "inactiveWhite")
+    internal static let inputFieldDisabled = ColorAsset(name: "inputFieldDisabled")
     internal static let inputFieldNormal = ColorAsset(name: "inputFieldNormal")
     internal static let darkMagenta = ColorAsset(name: "darkMagenta")
     internal static let magenta = ColorAsset(name: "magenta")
@@ -55,6 +56,8 @@ internal enum Asset {
     internal static let menuProfileAvatar = ImageAsset(name: "menu-profile-avatar")
     internal static let menuStoreIcon = ImageAsset(name: "menu-store-icon")
     internal static let menuToggleIcon = ImageAsset(name: "menu-toggle-icon")
+    internal static let avatarPlaceholderLarge = ImageAsset(name: "avatar-placeholder-large")
+    internal static let avatarPlaceholder = ImageAsset(name: "avatar-placeholder")
     internal static let dismissButtonIcon = ImageAsset(name: "dismiss-button-icon")
     internal static let imagePlaceholder = ImageAsset(name: "image-placeholder")
     internal static let textfieldIsSecure = ImageAsset(name: "textfield-is-secure")

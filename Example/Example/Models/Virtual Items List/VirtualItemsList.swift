@@ -35,8 +35,8 @@ class VirtualItemsList
         }
         .catch
         { error in
-            logger.error { error }
-            self.dependencies.loadStateListener.setState(.error(nil), animated: true)
+            logger.error(.application) { error }
+            DispatchQueue.main.async { self.dependencies.loadStateListener.setState(.error(nil), animated: true) }
         }
     }
     

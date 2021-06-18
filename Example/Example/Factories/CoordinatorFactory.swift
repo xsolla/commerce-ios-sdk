@@ -18,13 +18,13 @@ import UIKit
 protocol CoordinatorFactoryProtocol
 {
     func createMainContainerCoordinator(presenter: Presenter?,
-                                        params: MainContainerCoordinator.Params) -> MainContainerCoordinatorProtocol
+                                        params: MainContainerCoordinatorBuildParameters) -> MainContainerCoordinatorProtocol
     
     func createMainContentCoordinator(presenter: Presenter?,
-                                      params: MainContentCoordinator.Params) -> MainContentCoordinatorProtocol
+                                      params: MainContentCoordinatorBuildParameters) -> MainContentCoordinatorProtocol
     
     func createAuthenticationCoordinator(presenter: Presenter?,
-                                         params: AuthenticationCoordinator.Params) -> AuthenticationCoordinatorProtocol
+                                         params: AuthenticationCoordinatorBuildParameters) -> AuthenticationCoordinatorProtocol
 }
 
 class CoordinatorFactory: CoordinatorFactoryProtocol
@@ -32,7 +32,7 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
     // MARK: - Public
     
     func createMainContainerCoordinator(presenter: Presenter?,
-                                        params: MainContainerCoordinator.Params) -> MainContainerCoordinatorProtocol
+                                        params: MainContainerCoordinatorBuildParameters) -> MainContainerCoordinatorProtocol
     {
         let coordinatorDependencies = MainContainerCoordinator.Dependencies(coordinatorFactory: self,
                                                                             viewControllerFactory: self.params.viewControllerFactory,
@@ -41,37 +41,39 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
         
         let coordinator = MainContainerCoordinator(presenter: presenter,
                                                    dependencies: coordinatorDependencies,
-                                                   params: params)
+                                                   params: .none)
         
         return coordinator
     }
     
     func createMainContentCoordinator(presenter: Presenter?,
-                                      params: MainContentCoordinator.Params) -> MainContentCoordinatorProtocol
+                                      params: MainContentCoordinatorBuildParameters) -> MainContentCoordinatorProtocol
     {
         let coordinatorDependencies = MainContentCoordinator.Dependencies(coordinatorFactory: self,
                                                                           viewControllerFactory: self.params.viewControllerFactory,
                                                                           datasourceFactory: self.params.datasourceFactory,
                                                                           modelFactory: self.params.modelFactory,
-                                                                          store: self.params.store)
+                                                                          store: self.params.store,
+                                                                          userProfile: params.userProfile)
         
         let coordinator = MainContentCoordinator(presenter: presenter,
                                                  dependencies: coordinatorDependencies,
-                                                 params: params)
+                                                 params: .none)
         
         return coordinator
     }
     
     func createAuthenticationCoordinator(presenter: Presenter?,
-                                         params: AuthenticationCoordinator.Params) -> AuthenticationCoordinatorProtocol
+                                         params: AuthenticationCoordinatorBuildParameters) -> AuthenticationCoordinatorProtocol
     {
         let coordinatorDependencies = AuthenticationCoordinator.Dependencies(coordinatorFactory: self,
                                                                              viewControllerFactory: self.params.viewControllerFactory,
-                                                                             xsollaSDK: self.params.xsollaSDK)
+                                                                             xsollaSDK: self.params.xsollaSDK,
+                                                                             loginManager: params.loginManager)
         
         let coordinator = AuthenticationCoordinator(presenter: presenter,
                                                     dependencies: coordinatorDependencies,
-                                                    params: params)
+                                                    params: .none)
         
         return coordinator
     }
@@ -96,4 +98,16 @@ extension CoordinatorFactory
         let xsollaSDK: XsollaSDKProtocol
         let store: StoreProtocol
     }
+}
+
+typealias MainContainerCoordinatorBuildParameters = EmptyParams
+
+struct AuthenticationCoordinatorBuildParameters
+{
+    let loginManager: LoginManagerProtocol
+}
+
+struct  MainContentCoordinatorBuildParameters
+{
+    let userProfile: UserProfileProtocol
 }

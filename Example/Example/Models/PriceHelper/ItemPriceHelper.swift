@@ -111,6 +111,13 @@ class ItemPriceHelper: ItemPriceHelperProtocol
     init(formatter: CurrencyFormatterProtocol)
     {
         self.formatter = formatter
+        logger.debug(.initialization, domain: .example) { String(describing: Self.self) }
+    }
+
+    deinit
+    {
+        let deinitingType = String(describing: type(of: self))
+        logger.debug(.deinitialization, domain: .example) { deinitingType }
     }
     
     // MARK: - Private

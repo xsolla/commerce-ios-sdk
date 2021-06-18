@@ -21,6 +21,7 @@ target 'Example' do
 
   pod 'PromisesSwift'
   pod 'SDWebImage'
+  pod 'IQKeyboardManager'
   
 end
 

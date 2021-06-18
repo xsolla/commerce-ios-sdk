@@ -36,8 +36,16 @@ class VirtualItemsActionHandler
         self.store = store
 
         setupDataSource()
+
+        logger.debug(.initialization, domain: .example) { String(describing: Self.self) }
     }
 
+    deinit
+    {
+        let deinitingType = String(describing: type(of: self))
+        logger.debug(.deinitialization, domain: .example) { deinitingType }
+    }
+    
     private func setupDataSource()
     {
         dataSource.itemActionHandler =

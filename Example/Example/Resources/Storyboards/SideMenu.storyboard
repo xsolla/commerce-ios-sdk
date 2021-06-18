@@ -101,24 +101,17 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fnT-xw-AGt">
                                                 <rect key="frame" x="0.0" y="44" width="414" height="80"/>
                                                 <subviews>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="menu-profile-avatar" translatesAutoresizingMaskIntoConstraints="NO" id="vP7-Fu-5Mc">
-                                                        <rect key="frame" x="16" y="20" width="40" height="40"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" secondItem="vP7-Fu-5Mc" secondAttribute="height" multiplier="1:1" id="lVF-Xo-CD8"/>
-                                                            <constraint firstAttribute="height" constant="40" id="xLq-XP-JgZ"/>
-                                                        </constraints>
-                                                    </imageView>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KO3-tg-UpI">
-                                                        <rect key="frame" x="72" y="17" width="322" height="46"/>
+                                                        <rect key="frame" x="96" y="17" width="298" height="46"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bow-8a-gMt">
-                                                                <rect key="frame" x="0.0" y="0.0" width="322" height="21"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="298" height="21"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <color key="textColor" name="white"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nHg-JN-9El">
-                                                                <rect key="frame" x="0.0" y="25" width="322" height="21"/>
+                                                                <rect key="frame" x="0.0" y="25" width="298" height="21"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <color key="textColor" name="white"/>
                                                                 <nil key="highlightedColor"/>
@@ -135,15 +128,23 @@
                                                             <constraint firstAttribute="trailing" secondItem="bow-8a-gMt" secondAttribute="trailing" id="uVt-gF-fOZ"/>
                                                         </constraints>
                                                     </view>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f0N-IQ-s6s" customClass="AvatarButtonView" customModule="Example" customModuleProvider="target">
+                                                        <rect key="frame" x="20" y="10" width="60" height="60"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="b4w-LS-PVa"/>
+                                                            <constraint firstAttribute="width" secondItem="f0N-IQ-s6s" secondAttribute="height" multiplier="1:1" id="pyw-pp-jfX"/>
+                                                        </constraints>
+                                                    </view>
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstItem="KO3-tg-UpI" firstAttribute="leading" secondItem="vP7-Fu-5Mc" secondAttribute="trailing" constant="16" id="KPG-2s-wc2"/>
-                                                    <constraint firstItem="vP7-Fu-5Mc" firstAttribute="leading" secondItem="fnT-xw-AGt" secondAttribute="leading" constant="16" id="QCD-ES-Ucx"/>
+                                                    <constraint firstItem="f0N-IQ-s6s" firstAttribute="centerY" secondItem="fnT-xw-AGt" secondAttribute="centerY" id="0oG-lO-Mtp"/>
+                                                    <constraint firstItem="f0N-IQ-s6s" firstAttribute="leading" secondItem="fnT-xw-AGt" secondAttribute="leading" constant="20" id="0r1-8N-awa"/>
+                                                    <constraint firstItem="KO3-tg-UpI" firstAttribute="leading" secondItem="f0N-IQ-s6s" secondAttribute="trailing" constant="16" id="Kug-Cq-zsq"/>
+                                                    <constraint firstItem="KO3-tg-UpI" firstAttribute="centerY" secondItem="f0N-IQ-s6s" secondAttribute="centerY" id="Lyw-o8-uXx"/>
                                                     <constraint firstAttribute="trailing" secondItem="KO3-tg-UpI" secondAttribute="trailing" constant="20" id="TcG-JA-gn7"/>
                                                     <constraint firstAttribute="height" constant="80" id="V3a-V6-1qa"/>
-                                                    <constraint firstItem="vP7-Fu-5Mc" firstAttribute="centerY" secondItem="fnT-xw-AGt" secondAttribute="centerY" id="fyv-3j-tQ9"/>
-                                                    <constraint firstItem="KO3-tg-UpI" firstAttribute="centerY" secondItem="vP7-Fu-5Mc" secondAttribute="centerY" id="vwn-TK-cnj"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -167,9 +168,9 @@
                                         <rect key="frame" x="0.0" y="124" width="414" height="772"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I5v-Bp-1nL">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="220"/>
                                                 <subviews>
-                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iuk-ZI-3FD" userLabel="Inventory Section" customClass="ExpandableMenuItemsSectionView" customModule="Example" customModuleProvider="target">
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iuk-ZI-3FD" userLabel="Character Section" customClass="ExpandableMenuItemsSectionView" customModule="Example" customModuleProvider="target">
                                                         <rect key="frame" x="20" y="20" width="394" height="40"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
@@ -177,24 +178,31 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PfV-yb-ZJi" userLabel="Store Section" customClass="ExpandableMenuItemsSectionView" customModule="Example" customModuleProvider="target">
-                                                        <rect key="frame" x="20" y="60" width="394" height="40"/>
+                                                        <rect key="frame" x="20" y="100" width="394" height="40"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" placeholder="YES" id="ygn-if-cfU"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wc0-1D-UGl" userLabel="Help Section" customClass="ExpandableMenuItemsSectionView" customModule="Example" customModuleProvider="target">
-                                                        <rect key="frame" x="20" y="100" width="394" height="40"/>
+                                                        <rect key="frame" x="20" y="140" width="394" height="40"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" placeholder="YES" id="uLL-RG-F7y"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pBt-A2-o2x" userLabel="Logout Section" customClass="ExpandableMenuItemsSectionView" customModule="Example" customModuleProvider="target">
-                                                        <rect key="frame" x="20" y="140" width="394" height="40"/>
+                                                        <rect key="frame" x="20" y="180" width="394" height="40"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" placeholder="YES" id="p6z-5m-rrv"/>
+                                                        </constraints>
+                                                    </view>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qCT-oG-SzI" userLabel="Inventory Section" customClass="ExpandableMenuItemsSectionView" customModule="Example" customModuleProvider="target">
+                                                        <rect key="frame" x="20" y="60" width="394" height="40"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="40" placeholder="YES" id="HMX-6w-5tj"/>
                                                         </constraints>
                                                     </view>
                                                 </subviews>
@@ -205,11 +213,14 @@
                                                     <constraint firstAttribute="trailing" secondItem="Wc0-1D-UGl" secondAttribute="trailing" id="6NJ-Iy-eA3"/>
                                                     <constraint firstAttribute="trailing" secondItem="pBt-A2-o2x" secondAttribute="trailing" id="A3x-uP-yqq"/>
                                                     <constraint firstItem="pBt-A2-o2x" firstAttribute="leading" secondItem="I5v-Bp-1nL" secondAttribute="leading" constant="20" id="KHr-dt-vZB"/>
-                                                    <constraint firstItem="PfV-yb-ZJi" firstAttribute="top" secondItem="iuk-ZI-3FD" secondAttribute="bottom" id="OSd-He-mkK"/>
+                                                    <constraint firstItem="PfV-yb-ZJi" firstAttribute="top" secondItem="qCT-oG-SzI" secondAttribute="bottom" id="Rcg-lp-gIR"/>
+                                                    <constraint firstItem="qCT-oG-SzI" firstAttribute="leading" secondItem="I5v-Bp-1nL" secondAttribute="leading" constant="20" id="dV2-Nn-58q"/>
                                                     <constraint firstAttribute="trailing" secondItem="PfV-yb-ZJi" secondAttribute="trailing" id="erV-Kf-uyj"/>
                                                     <constraint firstItem="iuk-ZI-3FD" firstAttribute="leading" secondItem="I5v-Bp-1nL" secondAttribute="leading" constant="20" id="fkF-F6-mbZ"/>
                                                     <constraint firstItem="iuk-ZI-3FD" firstAttribute="top" secondItem="I5v-Bp-1nL" secondAttribute="top" constant="20" id="flA-8h-gD4"/>
                                                     <constraint firstItem="Wc0-1D-UGl" firstAttribute="leading" secondItem="I5v-Bp-1nL" secondAttribute="leading" constant="20" id="lGJ-vl-3fd"/>
+                                                    <constraint firstAttribute="trailing" secondItem="qCT-oG-SzI" secondAttribute="trailing" id="oOK-pD-NWo"/>
+                                                    <constraint firstItem="qCT-oG-SzI" firstAttribute="top" secondItem="iuk-ZI-3FD" secondAttribute="bottom" id="pH1-9G-RSm"/>
                                                     <constraint firstAttribute="trailing" secondItem="iuk-ZI-3FD" secondAttribute="trailing" id="q64-kX-0Fz"/>
                                                     <constraint firstItem="Wc0-1D-UGl" firstAttribute="top" secondItem="PfV-yb-ZJi" secondAttribute="bottom" id="rBd-BZ-Gaz"/>
                                                     <constraint firstAttribute="bottom" secondItem="pBt-A2-o2x" secondAttribute="bottom" id="xmm-zw-aPJ"/>
@@ -252,10 +263,12 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="characterSection" destination="iuk-ZI-3FD" id="QoJ-Rn-eQa"/>
                         <outlet property="helpSection" destination="Wc0-1D-UGl" id="EvA-yy-HBU"/>
-                        <outlet property="inventorySection" destination="iuk-ZI-3FD" id="rvz-4v-R5u"/>
+                        <outlet property="inventorySection" destination="qCT-oG-SzI" id="HAJ-Wx-BaK"/>
                         <outlet property="logoutSection" destination="pBt-A2-o2x" id="Tm9-Ki-GvQ"/>
-                        <outlet property="profileAvatarImageView" destination="vP7-Fu-5Mc" id="MlG-uo-tmR"/>
+                        <outlet property="profileAvatarButtonView" destination="f0N-IQ-s6s" id="t2E-Zg-0ci"/>
+                        <outlet property="profileContainerView" destination="fnT-xw-AGt" id="Z4r-Pi-Srr"/>
                         <outlet property="profileEmailLabel" destination="nHg-JN-9El" id="0vr-gX-235"/>
                         <outlet property="profileUsernameLabel" destination="bow-8a-gMt" id="rS4-0k-lxL"/>
                         <outlet property="storeSection" destination="PfV-yb-ZJi" id="LGH-oa-4CI"/>
@@ -267,7 +280,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="menu-profile-avatar" width="40" height="41"/>
         <namedColor name="darkSlateBlue">
             <color red="0.17647058823529413" green="0.18431372549019609" blue="0.27843137254901962" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

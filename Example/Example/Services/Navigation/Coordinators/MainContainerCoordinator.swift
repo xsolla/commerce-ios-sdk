@@ -26,17 +26,21 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
     var onLogout: (() -> Void)?
     var onHelp: (() -> Void)?
     
-    var contentCoordinator: MainContentCoordinatorProtocol?
-    var mainVC: MainVCProtocol?
-    
+    weak var contentCoordinator: MainContentCoordinatorProtocol?
+    weak var mainVC: MainVCProtocol?
+    weak var sideMenuContentVC: SideMenuContentVCProtocol?
+    weak var userProfile: UserProfileProtocol?
+
     var currencyBalanceProvider: VirtualCurrencyBalanceProvider?
-    var currentUserInfoProvider: CurrentUserInfoProvider?
     
     override func start()
     {
         let viewController: MainVCProtocol
         var contentNavigationController: NavigationController
         let contentCoordinator: MainContentCoordinatorProtocol
+        
+        let userProfile = dependencies.modelFactory.createUserProfile(params: .none)
+        self.userProfile = userProfile
         
         do
         {
@@ -49,12 +53,12 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         {
             let factory = dependencies.coordinatorFactory
             contentCoordinator = factory.createMainContentCoordinator(presenter: contentNavigationController,
-                                                                      params: .none)
+                                                                      params: .init(userProfile: userProfile))
             contentCoordinator.reloadRequestHandler = { [weak self] in self?.currencyBalanceProvider?.requestData() }
         }
         
         startChildCoordinator(contentCoordinator) { }
-        contentCoordinator.show(screen: .inventory)
+        contentCoordinator.show(screen: .character)
         
         self.contentCoordinator = contentCoordinator
         self.mainVC = viewController
@@ -62,13 +66,12 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         self.currencyBalanceProvider = getCurrencyBalanceProvider()
         self.currencyBalanceProvider?.delegate = mainVC
         
-        self.currentUserInfoProvider = getCurrentUserInfoProvider()
-        
         pushViewController(viewController, pushMode: .replaceCurrent)
         
         viewController.sideMenuRequestHandler = { [weak self] in self?.showMenu() }
         
-        self.currentUserInfoProvider?.requestData()
+        self.userProfile?.fetchUserDetails(completion: nil)
+        self.userProfile?.addListener(self)
         self.currencyBalanceProvider?.requestData()
     }
 
@@ -83,10 +86,16 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         let sideMenuContentVC = factory.createSideMenuContentVC(params: .none)
         let sideMenuVC = factory.createSideMenuVC(params: .init(contentViewController: sideMenuContentVC))
         
-        let currentUserInfo = dependencies.xsollaSDK.currentUserInfo
+        let currentUserInfo = userProfile?.userDetails
         sideMenuContentVC.setProfileInfo(name: currentUserInfo?.nickname,
                                          email: currentUserInfo?.email,
                                          avatarUrl: URL(string: currentUserInfo?.picture ?? ""))
+        
+        sideMenuContentVC.profileMenuItemHandler =
+        { [weak self, unowned sideMenuVC] in
+            sideMenuVC.hide(animated: true)
+            self?.contentCoordinator?.show(screen: .account)
+        }
         
         sideMenuContentVC.inventoryMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
@@ -105,6 +114,12 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
             sideMenuVC.hide(animated: true)
             self?.contentCoordinator?.show(screen: .virtualCurrency)
         }
+
+        sideMenuContentVC.characterMenuItemHandler =
+        { [weak self, unowned sideMenuVC] in
+            sideMenuVC.hide(animated: true)
+            self?.contentCoordinator?.show(screen: .character)
+        }
         
         sideMenuContentVC.helpMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
@@ -118,6 +133,8 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
             self?.onLogout?()
         }
         
+        self.sideMenuContentVC = sideMenuContentVC
+        
         presentViewController(sideMenuVC, animated: false, completion: nil)
     }
     
@@ -126,10 +143,23 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         let params = VirtualCurrencyBalanceProviderBuildParams(projectId: AppConfig.projectId)
         return dependencies.modelFactory.createVirtualCurrencyBalanceProvider(params: params)
     }
-    
-    private func getCurrentUserInfoProvider() -> CurrentUserInfoProvider?
+}
+
+extension MainContainerCoordinator: UserProfileListener
+{
+    func userProfileDidUpdateDetails(_ userProfile: UserProfileProtocol)
     {
-        return dependencies.modelFactory.createCurrentUserInfoProvider(params: .empty)
+        guard let viewController = sideMenuContentVC, userProfile.state == .loaded else { return }
+        
+        let avatarURL = URL(string: userProfile.userDetails?.picture ?? "")
+        viewController.setProfileInfo(name: userProfile.userDetails?.nickname,
+                                      email: userProfile.userDetails?.email,
+                                      avatarUrl: avatarURL)
+    }
+    
+    func userProfileDidResetPassword()
+    {
+        logger.event { "User profile did send request to reset password" }
     }
 }
 

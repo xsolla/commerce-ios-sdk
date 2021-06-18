@@ -28,6 +28,13 @@ internal enum StoryboardScene {
 
     internal static let bundlePreview = SceneType<Example.BundlePreviewVC>(storyboard: BundlePreview.self, identifier: "BundlePreview")
   }
+  internal enum Character: StoryboardType {
+    internal static let storyboardName = "Character"
+
+    internal static let attributeEditor = SceneType<Example.AttributeEditorVC>(storyboard: Character.self, identifier: "AttributeEditor")
+
+    internal static let character = SceneType<Example.CharacterVC>(storyboard: Character.self, identifier: "Character")
+  }
   internal enum Inventory: StoryboardType {
     internal static let storyboardName = "Inventory"
 
@@ -49,6 +56,13 @@ internal enum StoryboardScene {
     internal static let sideMenu = SceneType<Example.SideMenuVC>(storyboard: SideMenu.self, identifier: "SideMenu")
 
     internal static let sideMenuContent = SceneType<Example.SideMenuContentVC>(storyboard: SideMenu.self, identifier: "SideMenuContent")
+  }
+  internal enum UserProfile: StoryboardType {
+    internal static let storyboardName = "UserProfile"
+
+    internal static let userProfile = SceneType<Example.UserProfileVC>(storyboard: UserProfile.self, identifier: "UserProfile")
+
+    internal static let userProfileAvatarSelector = SceneType<Example.UserProfileAvatarSelectorVC>(storyboard: UserProfile.self, identifier: "UserProfileAvatarSelector")
   }
   internal enum VirtualCurrency: StoryboardType {
     internal static let storyboardName = "VirtualCurrency"
