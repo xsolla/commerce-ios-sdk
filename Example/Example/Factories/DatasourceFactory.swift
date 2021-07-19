@@ -92,7 +92,7 @@ class DatasourceFactory: DatasourceFactoryProtocol
             case .custom: return CustomUserAttributesListDataSource(title: L10n.Character.TabBar.customAttributes,
                                                                     actionHandler: params.actionHandler)
 
-            case .readonly: return ReadonlyUserAttributesListDataSource(title: L10n.Character.TabBar.customAttributes,
+            case .readonly: return ReadonlyUserAttributesListDataSource(title: L10n.Character.TabBar.readonlyAttributes,
                                                                         actionHandler: params.actionHandler)
         }
     }

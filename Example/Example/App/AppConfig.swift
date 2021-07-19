@@ -30,7 +30,7 @@ enum AppConfig
     static let redirectURL: String = "https://login.xsolla.com/api/blank"
     
     /// URL to redirect after uccessfull payment. You can set up this in you Publisher Account cabinet.
-    static let paymentsRedirectURL: String = "xsollasdk://example.com/standard"
+    static let paymentsRedirectURL: String = "app://xsollaconfirm"
     
     static let demoUsername = "xsolla"
     static let demoPassword = "xsolla"

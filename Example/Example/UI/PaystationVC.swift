@@ -28,11 +28,6 @@ class PaystationVC: BaseViewController
     {
         super.viewDidLoad()
         setupWebView()
-    }
-    
-    override func viewDidAppear(_ animated: Bool)
-    {
-        super.viewWillAppear(animated)
         loadPaystation()
     }
     
