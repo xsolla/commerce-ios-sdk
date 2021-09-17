@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19115.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19107.5"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -174,8 +174,8 @@
                     </view>
                     <size key="freeformSize" width="414" height="896"/>
                     <connections>
+                        <outlet property="authenticationOptionsButton" destination="gtH-Ia-na6" id="SMX-6H-dnH"/>
                         <outlet property="baiduButton" destination="bR5-de-DAd" id="y0Y-Dz-IRG"/>
-                        <outlet property="demoUserLoginButton" destination="gtH-Ia-na6" id="SMX-6H-dnH"/>
                         <outlet property="facebookButton" destination="PNm-pB-Tt1" id="5yg-Ef-bHp"/>
                         <outlet property="googleButton" destination="blz-mp-xQV" id="Q0t-8Q-bjU"/>
                         <outlet property="loginButton" destination="0DK-WF-HQc" id="U2J-5J-rEW"/>
@@ -290,6 +290,109 @@
             </objects>
             <point key="canvasLocation" x="319" y="108"/>
         </scene>
+        <!--Authentication Options SelectorVC-->
+        <scene sceneID="3sK-VY-3aI">
+            <objects>
+                <viewController storyboardIdentifier="AuthenticationOptionsSelector" id="smk-3H-d8U" customClass="AuthenticationOptionsSelectorVC" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Gxb-Ms-SMq">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MNx-R1-jGX">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <subviews>
+                                    <scrollView clipsSubviews="YES" contentMode="scaleToFill" delaysContentTouches="NO" canCancelContentTouches="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VA3-Mw-7Q0">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="6Oe-y4-Vvk">
+                                                <rect key="frame" x="20" y="20" width="374" height="338"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="These variants can be set instead of “more log in options” button. You can choose one." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oxX-HP-rTc">
+                                                        <rect key="frame" x="0.0" y="0.0" width="374" height="41"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" name="lightSlateGrey"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lrf-Xp-7ug" customClass="Button" customModule="Example" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="61" width="374" height="34"/>
+                                                        <state key="normal" title="---"/>
+                                                        <connections>
+                                                            <action selector="onDemoUserButton:" destination="smk-3H-d8U" eventType="touchUpInside" id="Fa6-VN-Uox"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zqs-zx-3TM" customClass="Button" customModule="Example" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="115" width="374" height="34"/>
+                                                        <state key="normal" title="---"/>
+                                                        <connections>
+                                                            <action selector="onGuestUserButton:" destination="smk-3H-d8U" eventType="touchUpInside" id="i1a-Ie-HNG"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Il-4b-czA" customClass="Button" customModule="Example" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="169" width="374" height="34"/>
+                                                        <state key="normal" title="---"/>
+                                                        <connections>
+                                                            <action selector="onPhoneButton:" destination="smk-3H-d8U" eventType="touchUpInside" id="L6a-cU-WYE"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vei-2m-Hch" customClass="Button" customModule="Example" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="223" width="374" height="34"/>
+                                                        <state key="normal" title="---"/>
+                                                        <connections>
+                                                            <action selector="onEmailButton:" destination="smk-3H-d8U" eventType="touchUpInside" id="svI-wF-VrV"/>
+                                                        </connections>
+                                                    </button>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MR0-wr-ZT0">
+                                                        <rect key="frame" x="0.0" y="277" width="374" height="61"/>
+                                                        <string key="text">This variant can be set instead of login via username-password first screen. Click to check how it will look like in your project.</string>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" name="lightSlateGrey"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="6Oe-y4-Vvk" firstAttribute="top" secondItem="Geo-ZK-0AY" secondAttribute="top" constant="20" id="JQs-SB-aVe"/>
+                                            <constraint firstItem="6Oe-y4-Vvk" firstAttribute="leading" secondItem="Geo-ZK-0AY" secondAttribute="leading" constant="20" id="NUS-kc-31q"/>
+                                            <constraint firstItem="6Oe-y4-Vvk" firstAttribute="trailing" secondItem="Geo-ZK-0AY" secondAttribute="trailing" constant="-20" id="aY6-1m-xIg"/>
+                                            <constraint firstItem="6Oe-y4-Vvk" firstAttribute="bottom" secondItem="Geo-ZK-0AY" secondAttribute="bottom" id="lph-No-Cz8"/>
+                                            <constraint firstItem="6Oe-y4-Vvk" firstAttribute="width" secondItem="xCZ-Sn-CHm" secondAttribute="width" constant="-40" id="z8i-IX-cp4"/>
+                                        </constraints>
+                                        <viewLayoutGuide key="contentLayoutGuide" id="Geo-ZK-0AY"/>
+                                        <viewLayoutGuide key="frameLayoutGuide" id="xCZ-Sn-CHm"/>
+                                    </scrollView>
+                                </subviews>
+                                <color key="backgroundColor" name="black"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="VA3-Mw-7Q0" secondAttribute="trailing" id="CWD-GZ-Syb"/>
+                                    <constraint firstItem="VA3-Mw-7Q0" firstAttribute="top" secondItem="MNx-R1-jGX" secondAttribute="top" id="Fr2-75-Q7n"/>
+                                    <constraint firstAttribute="bottom" secondItem="VA3-Mw-7Q0" secondAttribute="bottom" id="kjt-c1-ga9"/>
+                                    <constraint firstItem="VA3-Mw-7Q0" firstAttribute="leading" secondItem="MNx-R1-jGX" secondAttribute="leading" id="r3Y-4W-bqJ"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="o00-Q9-PeV"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="MNx-R1-jGX" secondAttribute="bottom" id="Hom-JR-h63"/>
+                            <constraint firstItem="MNx-R1-jGX" firstAttribute="top" secondItem="Gxb-Ms-SMq" secondAttribute="top" id="NXC-Bu-iNJ"/>
+                            <constraint firstItem="MNx-R1-jGX" firstAttribute="leading" secondItem="Gxb-Ms-SMq" secondAttribute="leading" id="PbF-Xr-e4A"/>
+                            <constraint firstAttribute="trailing" secondItem="MNx-R1-jGX" secondAttribute="trailing" id="mbv-xk-yAG"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="demoUserButton" destination="Lrf-Xp-7ug" id="7S1-kZ-1YO"/>
+                        <outlet property="emailLoginButton" destination="Vei-2m-Hch" id="kpS-aw-wHC"/>
+                        <outlet property="guestUserButton" destination="zqs-zx-3TM" id="yQk-0p-rAb"/>
+                        <outlet property="optionsCommonInfoLabel" destination="oxX-HP-rTc" id="QID-es-HYH"/>
+                        <outlet property="passwordLoginExplanationLabel" destination="MR0-wr-ZT0" id="XUp-sh-fIV"/>
+                        <outlet property="phoneLoginButton" destination="4Il-4b-czA" id="Hd7-pb-GsZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gwK-SE-AvP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1030.4347826086957" y="781.47321428571422"/>
+        </scene>
         <!--Recover PasswordVC-->
         <scene sceneID="Drh-1X-UNH">
             <objects>
@@ -362,6 +465,9 @@
         <image name="xsolla-logo-with-text" width="77" height="100"/>
         <namedColor name="black">
             <color red="0.027450980392156862" green="0.031372549019607843" blue="0.086274509803921567" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="lightSlateGrey">
+            <color red="0.51764705882352946" green="0.55686274509803924" blue="0.69411764705882351" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

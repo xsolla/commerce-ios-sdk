@@ -16,12 +16,12 @@ import UIKit
 protocol AuthenticationMainVCProtocol: BaseViewController
 {
     var loginRequestHandler: ((LoginVCProtocol, UIView, LoginFormData) -> Void)? { get set }
-    var demoUserLoginRequestHandler: ((LoginVCProtocol, UIView) -> Void)? { get set }
     var signupRequestHandler: ((SignupVCProtocol, UIView, SignupFormData) -> Void)? { get set }
-    
+    var authenticationOptionsRequestHandler: ((LoginVCProtocol, UIView) -> Void)? { get set }
+
     var socialNetworkLoginRequestHandler: ((LoginVCProtocol, SocialNetwork) -> Void)? { get set }
     var moreSocialNetworksRequestHandler: ((LoginVCProtocol) -> Void)? { get set }
-    
+
     var privacyPolicyRequestHandler: (() -> Void)? { get set }
     var passwordRecoveryRequestHandler: (() -> Void)? { get set }
 }
@@ -29,15 +29,15 @@ protocol AuthenticationMainVCProtocol: BaseViewController
 class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
 {
     var loginRequestHandler: ((LoginVCProtocol, UIView, LoginFormData) -> Void)?
-    var demoUserLoginRequestHandler: ((LoginVCProtocol, UIView) -> Void)?
     var signupRequestHandler: ((SignupVCProtocol, UIView, SignupFormData) -> Void)?
-    
+    var authenticationOptionsRequestHandler: ((LoginVCProtocol, UIView) -> Void)?
+
     var socialNetworkLoginRequestHandler: ((LoginVCProtocol, SocialNetwork) -> Void)?
     var moreSocialNetworksRequestHandler: ((LoginVCProtocol) -> Void)?
-    
+
     var privacyPolicyRequestHandler: (() -> Void)?
     var passwordRecoveryRequestHandler: (() -> Void)?
-    
+
     var loginVC: LoginVCProtocol!
     var signupVC: SignupVCProtocol!
     var tabbarVC: TabbarViewController!
@@ -56,7 +56,7 @@ class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
         {
             fatalError("Either loginVC, signupVC, tabbarVC is not set")
         }
-        
+
         setupTabbarViewController()
     }
     
@@ -107,16 +107,18 @@ class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
     private func setupHandlers()
     {
         // swiftlint:disable line_length
+
         loginVC.loginRequestHandler = { [weak self] vc, sender, formData in self?.loginRequestHandler?(vc, sender, formData) }
-        loginVC.demoUserLoginRequestHandler = { [weak self] vc, sender in self?.demoUserLoginRequestHandler?(vc, sender) }
         loginVC.socialNetworkLoginRequestHandler = { [weak self] vc, network in self?.socialNetworkLoginRequestHandler?(vc, network) }
-        
+        loginVC.authenticationOptionsRequestHandler = { [weak self] vc, sender in self?.authenticationOptionsRequestHandler?(vc, sender) }
+
         loginVC.moreSocialNetworksRequestHandler = { [weak self] vc in self?.moreSocialNetworksRequestHandler?(vc) }
         loginVC.passwordRecoveryRequestHandler = { [weak self] in self?.passwordRecoveryRequestHandler?() }
         loginVC.privacyPolicyRequestHandler = { [weak self] in self?.privacyPolicyRequestHandler?() }
 
         signupVC.signupRequestHandler = { [weak self] vc, sender, formData in self?.signupRequestHandler?(vc, sender, formData) }
         signupVC.privacyPolicyRequestHandler = { [weak self] in self?.privacyPolicyRequestHandler?() }
+
         // swiftlint:enable line_length
     }
 }

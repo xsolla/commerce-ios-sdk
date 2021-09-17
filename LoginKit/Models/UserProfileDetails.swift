@@ -75,6 +75,16 @@ public struct UserProfileDetails
 
     /// Username.
     public var username: String?
+
+    /// Whether the user is anonymous.
+    /// The anonymous user is a user created via device ID or custom ID and doesn’t have an alternative authentication method added (e.g., username/email and password).
+    public var isAnonymous: Bool
+
+    /// Whether the user email is verified.
+    public var isLastEmailConfirmed: Bool?
+
+    /// Whether the user is anonymous. The anonymous user is a user created via device ID or custom ID and doesn’t have an alternative authentication method added (e.g., username/email and password)
+    public var isUserActive: Bool
 }
 
 public extension UserProfileDetails
@@ -98,10 +108,10 @@ public extension UserProfileDetails
         /// Group ID.
         public var id: Int
 
-        /// Shows whether the group is default or not.
+        /// Whether the group is default.
         public var isDefault: Bool
 
-        /// Shows whether the group can be deleted or not. Default groups can’t be deleted.
+        /// Whether the group can be deleted. Default groups can’t be deleted.
         public var isDeletable: Bool
 
         /// Group name.
@@ -151,8 +161,11 @@ extension UserProfileDetails
         self.registered = response.registered
         self.tag = response.tag
         self.username = response.username
+        self.isAnonymous = response.isAnonymous
+        self.isLastEmailConfirmed = response.isLastEmailConfirmed
+        self.isUserActive = response.isUserActive
     }
-    
+
     init(fromGetCurrentUserDetailsResponse response: UpdateCurrentUserDetailsResponse)
     {
         var banDetails: BanDetails?
@@ -185,5 +198,8 @@ extension UserProfileDetails
         self.registered = response.registered
         self.tag = response.tag
         self.username = response.username
+        self.isAnonymous = response.isAnonymous
+        self.isLastEmailConfirmed = response.isLastEmailConfirmed
+        self.isUserActive = response.isUserActive
     }
 }

@@ -86,7 +86,9 @@ class SignupVC: BaseViewController, SignupVCProtocol
         usernameTextField.placeholder = L10n.Form.Field.Username.placeholder
         usernameTextField.tag = 1
         usernameTextField.delegate = self
-        
+        usernameTextField.configureTextFieldDefaults()
+        usernameTextField.configureTextField { textField in textField.keyboardType = .emailAddress }
+
         formValidator.addValidator(formValidator.factory.createDefaultValidator(for: usernameTextField),
                                    withKey: usernameTextField.tag)
         
@@ -94,7 +96,9 @@ class SignupVC: BaseViewController, SignupVCProtocol
         emailTextField.placeholder = L10n.Form.Field.Email.placeholder
         emailTextField.tag = 2
         emailTextField.delegate = self
-        
+        emailTextField.configureTextFieldDefaults()
+        emailTextField.configureTextField { textField in textField.keyboardType = .emailAddress }
+
         formValidator.addValidator(formValidator.factory.createDefaultValidator(for: emailTextField),
                                    withKey: emailTextField.tag)
         
@@ -104,6 +108,7 @@ class SignupVC: BaseViewController, SignupVCProtocol
         passwordTextField.set(hintText: L10n.Form.Field.Password.hint)
         passwordTextField.tag = 3
         passwordTextField.delegate = self
+        passwordTextField.configureTextFieldDefaults()
         
         formValidator.addValidator(formValidator.factory.createPasswordValidator(for: passwordTextField),
                                    withKey: passwordTextField.tag)
@@ -113,7 +118,8 @@ class SignupVC: BaseViewController, SignupVCProtocol
         passwordConfirmTextField.secure = true
         passwordConfirmTextField.tag = 4
         passwordConfirmTextField.delegate = self
-        
+        passwordConfirmTextField.configureTextFieldDefaults()
+
         formValidator.addValidator(formValidator.factory.createPasswordValidator(for: passwordConfirmTextField),
                                    withKey: passwordConfirmTextField.tag)
     }
@@ -127,7 +133,7 @@ class SignupVC: BaseViewController, SignupVCProtocol
     private func setupPrivacyPolicyButton()
     {
         let text = L10n.Auth.Button.PrivacyPolicy.text(L10n.Auth.Button.PrivacyPolicy.linkTitle)
-        let attrText = text.attributedMutable(.link, color: .xsolla_lightSlateGrey)
+        let attrText = text.attributedMutable(.link, color: .xsolla_inactiveWhite)
 
         let attrs: Attributes = [.underlineStyle: NSUnderlineStyle.single.rawValue]
         attrText.addAttributes(attrs, toSubstring: L10n.Auth.Button.PrivacyPolicy.linkTitle)
@@ -139,11 +145,18 @@ class SignupVC: BaseViewController, SignupVCProtocol
     }
     
     // MARK: - Updates
-    
+
+    private func extraFormValidation() -> Bool
+    {
+        if passwordTextField.text != passwordConfirmTextField.text { return false }
+
+        return true
+    }
+
     private func updateSignupButton()
     {
-        let enabled = formValidator.validate()
-        
+        let enabled = formValidator.validate() && extraFormValidation()
+
         if signupButton.isEnabled != enabled { signupButton.isEnabled = enabled }
         
         signupButton.setTitle(L10n.Auth.Button.signup.capitalized, for: .normal)
@@ -207,10 +220,26 @@ class SignupVC: BaseViewController, SignupVCProtocol
 
 extension SignupVC: UITextFieldDelegate
 {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    {
+        switch textField.tag
+        {
+            case usernameTextField.tag: _ = emailTextField.becomeFirstResponder()
+            case emailTextField.tag: _ = passwordTextField.becomeFirstResponder()
+            case passwordTextField.tag: _ = passwordConfirmTextField.becomeFirstResponder()
+            case passwordConfirmTextField.tag: _ = usernameTextField.becomeFirstResponder()
+
+            default: break
+        }
+
+        return true
+    }
+
     func textFieldDidEndEditing(_ textField: UITextField)
     {
         formValidator.enableValidator(withKey: textField.tag)
         formValidator.resetValidator(withKey: textField.tag)
+        formValidator.enableErrorsForValidator(withKey: textField.tag)
         
         updateSignupButton()
     }
@@ -219,11 +248,17 @@ extension SignupVC: UITextFieldDelegate
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool
     {
+        formValidator.enableValidator(withKey: textField.tag)
         formValidator.resetValidator(withKey: textField.tag)
-        
+
+        guard let text = textField.text, let textRange = Range(range, in: text) else { return true }
+
+        let updatedText = text.replacingCharacters(in: textRange, with: string)
+        textField.text = updatedText
+
         updateSignupButton()
         
-        return true
+        return false
     }
 }
 

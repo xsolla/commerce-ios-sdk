@@ -18,8 +18,7 @@ extension APIBaseRequest
 {
     public func createMultipartBody(fileURL: URL, fileDataPartParameterName: String, boundary: String) throws -> Data
     {
-        guard let mimeType = MimeTypes.mimeType(forExtension: fileURL.pathExtension)
-        else
+        guard let mimeType = MimeTypes.mimeType(forExtension: fileURL.pathExtension) else
         {
             throw MimeTypesError.mimeTypeNotFound
         }
@@ -33,7 +32,7 @@ extension APIBaseRequest
         bodyData.appendString("--\(boundary)\(lineBreak)")
         bodyData.appendString("Content-Disposition: form-data; name=\"\(fileDataPartParameterName)\"; filename=\"\(fileName)\"")
         bodyData.appendString(lineBreak)
-        bodyData.appendString("Content-Type: mime/\(mimeType)")
+        bodyData.appendString("Content-Type: \(mimeType)")
         bodyData.appendString(lineBreak)
         bodyData.appendString(lineBreak)
         bodyData.append(fileData)

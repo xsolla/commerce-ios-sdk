@@ -63,13 +63,16 @@ class VirtualCurrencyList
     private func handleBuyAction(item: VirtualCurrencyListDatasource.Item)
     {
         logger.info { "Buy action for item: \(item.name)" }
-        
+
+        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme)
+        let paymentProjectSettings = StorePaymentProjectSettings(ui: uiSettings)
+
         dependencies.xsollaSDK.createOrder(projectId: AppConfig.projectId,
                                            itemSKU: item.sku,
                                            currency: nil,
                                            locale: nil,
                                            isSandbox: true,
-                                           paymentProjectSettings: nil,
+                                           paymentProjectSettings: paymentProjectSettings,
                                            customParameters: nil)
         { [weak self] result in
             switch result

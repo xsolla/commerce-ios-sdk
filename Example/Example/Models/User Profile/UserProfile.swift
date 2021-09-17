@@ -17,12 +17,16 @@ import XsollaSDKLoginKit
 protocol UserProfileListener: AnyObject
 {
     func userProfileDidUpdateDetails(_ userProfile: UserProfileProtocol)
+    func userProfileDidUpdateLinkedSocialNetworks(_ userProfile: UserProfileProtocol)
+    func userProfileDidUpdateConnectedDevices(_ userProfile: UserProfileProtocol)
     func userProfileDidResetPassword()
 }
 
 extension UserProfileListener
 {
     func userProfileDidUpdateDetails(_ userProfile: UserProfileProtocol) {}
+    func userProfileDidUpdateLinkedSocialNetworks(_ userProfile: UserProfileProtocol) {}
+    func userProfileDidUpdateConnectedDevices(_ userProfile: UserProfileProtocol) {}
     func userProfileDidResetPassword() {}
 }
 
@@ -31,18 +35,37 @@ protocol UserProfileDetailsProvider: AnyObject
     var userDetails: UserProfileDetails? { get }
 }
 
-protocol UserProfileProtocol: UserProfileDetailsProvider
+protocol UserProfileLinkedSocialNetworksProvider: AnyObject
+{
+    var userLinkedSocialNetworks: Set<SocialNetwork>? { get }
+}
+
+protocol UserProfileConnectedDevicesProvider: AnyObject
+{
+    var userConnectedDevices: [DeviceInfo] { get }
+}
+
+protocol UserProfileProtocol: UserProfileDetailsProvider,
+                              UserProfileLinkedSocialNetworksProvider,
+                              UserProfileConnectedDevicesProvider
 {
     var state: UserProfileState { get }
 
     func fetchUserDetails(completion: ((Result<UserProfileDetails, Error>) -> Void)?)
+    func fetchLinkedSocialNetworks(completion: ((Result<Set<SocialNetwork>, Error>) -> Void)?)
+    func fetchConnectedDevices(completion: ((Result<[DeviceInfo], Error>) -> Void)?)
+
     func updateUserDetails(with userMandatoryDetails: UserProfileMandatoryDetailsProtocol,
                            completion: ((Result<UserProfileDetails, Error>) -> Void)?)
 
     func uploadUserPicture(url: URL, completion: ((Result<String, Error>) -> Void)?)
     func removeUserPicture(completion: ((Error?) -> Void)?)
+
+    func linkDevice(deviceName name: String, deviceId: String, completion: ((Result<Void, Error>) -> Void)?)
+    func unlinkDevice(deviceId: String, completion: ((Result<Void, Error>) -> Void)?)
+
     func resetPassword(completion: ((Error?) -> Void)?)
-    
+
     @discardableResult
     func addListener(_ listener: UserProfileListener) -> UUID
     func removeListener(uuid: UUID)
@@ -64,10 +87,14 @@ class UserProfile: UserProfileProtocol
     var listeners = NSMapTable<NSString, AnyObject>(keyOptions: .copyIn, valueOptions: .weakMemory)
     
     var userDetails: UserProfileDetails?
+    var userLinkedSocialNetworks: Set<SocialNetwork>? { didSet { onUserLinkedNetworksDidUpdate() } }
+    var userConnectedDevices: [DeviceInfo] = [] { didSet { onUserConnectedDevicesDidUpdate() } }
+
+    var asyncUtility: AsyncUtility { dependencies.asyncUtility }
 
     func fetchUserDetails(completion: ((Result<UserProfileDetails, Error>) -> Void)?)
     {
-        dependencies.asyncUtility.fetchUserProfileDetails()
+        asyncUtility.fetchUserProfileDetails()
         .then
         { details in
             self.userDetails = details
@@ -85,67 +112,124 @@ class UserProfile: UserProfileProtocol
         if let phone = userMandatoryDetails.phone, !phone.isEmpty, phone != userDetails?.phone { userPhone = phone }
         
         state = .loading
-        dependencies.asyncUtility.createPromisesChain()
-            .then  { self.dependencies.asyncUtility.uploadPhone(userPhone) }
-            .then  { self.dependencies.asyncUtility.uploadMandatoryDetails(userMandatoryDetails) }
-            .then
-            { details in
-                self.userDetails = details
-                self.state = .loaded
-                completion?(.success(details))
-            }
-            .catch { error in completion?(.failure(error)) }
+        asyncUtility.createPromisesChain()
+        .then  { self.dependencies.asyncUtility.uploadPhone(userPhone) }
+        .then  { self.dependencies.asyncUtility.uploadMandatoryDetails(userMandatoryDetails) }
+        .then
+        { details in
+            self.userDetails = details
+            self.state = .loaded
+            completion?(.success(details))
+        }
+        .catch { error in completion?(.failure(error)) }
     }
 
     func uploadUserPicture(url: URL, completion: ((Result<String, Error>) -> Void)?)
     {
         state = .loading
-        dependencies.asyncUtility.uploadUserPicture(url: url)
-            .then
-            { link in
-                self.userDetails?.picture = link
-                self.state = .loaded
-                completion?(.success(link))
-            }
-            .catch  { error in completion?(.failure(error)) }
+        asyncUtility.uploadUserPicture(url: url)
+        .then
+        { link in
+            self.userDetails?.picture = link
+            self.state = .loaded
+            completion?(.success(link))
+        }
+        .catch  { error in completion?(.failure(error)) }
     }
 
     func removeUserPicture(completion: ((Error?) -> Void)?)
     {
         state = .loading
-        dependencies.asyncUtility.removeUserPicture()
-            .then
-            {
-                self.userDetails?.picture = nil
-                self.state = .loaded
-                completion?(nil)
-            }
-            .catch  { error in completion?(error) }
+        asyncUtility.removeUserPicture()
+        .then
+        {
+            self.userDetails?.picture = nil
+            self.state = .loaded
+            completion?(nil)
+        }
+        .catch { completion?($0) }
     }
     
     func resetPassword(completion: ((Error?) -> Void)?)
     {
-        guard let username = userDetails?.username
-        else
+        guard let username = userDetails?.username else
         {
-            completion?(NSError())
+            completion?(UserProfileError.missingUsername)
             return
         }
         
-        dependencies.asyncUtility.resetPassword(username: username)
-            .then
-            {
-                self.onUserProfileDidResetPassword()
-                completion?(nil)
-            }
-            .catch { error in completion?(error) }
+        asyncUtility.resetPassword(username: username)
+        .then
+        {
+            self.onUserProfileDidResetPassword()
+            completion?(nil)
+        }
+        .catch { completion?($0) }
     }
-    
+
+    func fetchLinkedSocialNetworks(completion: ((Result<Set<SocialNetwork>, Error>) -> Void)?)
+    {
+        asyncUtility.fetchUserLinkedSocialNetworks()
+        .then
+        { networks in
+
+            self.userLinkedSocialNetworks = networks
+            completion?(.success(networks))
+        }
+        .catch { completion?(.failure($0)) }
+    }
+
+    func fetchConnectedDevices(completion: ((Result<[DeviceInfo], Error>) -> Void)?)
+    {
+        asyncUtility.fetchUserConnectedDevices()
+        .then
+        { devices in
+
+            self.userConnectedDevices = devices
+            completion?(.success(devices))
+        }
+        .catch { completion?(.failure($0)) }
+    }
+
+    func linkDevice(deviceName name: String, deviceId: String, completion: ((Result<Void, Error>) -> Void)?)
+    {
+        asyncUtility.createPromisesChain()
+        .then { self.asyncUtility.linkDevice(deviceName: name, deviceId: deviceId) }
+        .then { self.asyncUtility.fetchUserConnectedDevices() }
+        .then { self.userConnectedDevices = $0; completion?(.success(())) }
+        .catch { completion?(.failure($0)) }
+    }
+
+    func unlinkDevice(deviceId: String, completion: ((Result<Void, Error>) -> Void)?)
+    {
+        asyncUtility.createPromisesChain()
+        .then { self.asyncUtility.unlinkDevice(deviceId: deviceId) }
+        .then { self.asyncUtility.fetchUserConnectedDevices() }
+        .then { self.userConnectedDevices = $0; completion?(.success(())) }
+        .catch { completion?(.failure($0)) }
+    }
+
     private func onUserDetailsDidUpdate()
     {
         for case let listener as UserProfileListener in listeners.dictionaryRepresentation().values
         {
             listener.userProfileDidUpdateDetails(self)
+        }
+    }
+
+    private func onUserLinkedNetworksDidUpdate()
+    {
+        for case let listener as UserProfileListener in listeners.dictionaryRepresentation().values
+        {
+            listener.userProfileDidUpdateLinkedSocialNetworks(self)
+        }
+    }
+
+    private func onUserConnectedDevicesDidUpdate()
+    {
+        for case let listener as UserProfileListener in listeners.dictionaryRepresentation().values
+        {
+            listener.userProfileDidUpdateConnectedDevices(self)
         }
     }
     
@@ -191,8 +275,23 @@ extension UserProfile
 
 extension UserProfile
 {
+    typealias AsyncUtility = LoginAsyncUtilityProtocol
+
     struct Dependencies
     {
-        let asyncUtility: UserProfileAsyncUtilityProtocol
+        let asyncUtility: AsyncUtility
+    }
+}
+
+enum UserProfileError: LocalizedError
+{
+    case missingUsername
+
+    public var errorDescription: String?
+    {
+        switch self
+        {
+            case .missingUsername: return L10n.UserProfileError.missingUsername
+        }
     }
 }

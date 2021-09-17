@@ -1,0 +1,106 @@
+%PDF-1.7
+
+1 0 obj
+  << >>
+endobj
+
+2 0 obj
+  << /Length 3 0 R >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+1.000000 0.000000 -0.000000 1.000000 0.000000 0.000000 cm
+0.611765 0.611765 0.635294 scn
+14.000000 6.000000 m
+8.000000 6.000000 l
+8.000000 0.000000 l
+6.000000 0.000000 l
+6.000000 6.000000 l
+0.000000 6.000000 l
+0.000000 8.000000 l
+6.000000 8.000000 l
+6.000000 14.000000 l
+8.000000 14.000000 l
+8.000000 8.000000 l
+14.000000 8.000000 l
+14.000000 6.000000 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+3 0 obj
+  392
+endobj
+
+4 0 obj
+  << /Annots []
+     /Type /Page
+     /MediaBox [ 0.000000 0.000000 14.000000 14.000000 ]
+     /Resources 1 0 R
+     /Contents 2 0 R
+     /Parent 5 0 R
+  >>
+endobj
+
+5 0 obj
+  << /Kids [ 4 0 R ]
+     /Count 1
+     /Type /Pages
+  >>
+endobj
+
+6 0 obj
+  << /Type /Catalog
+     /Pages 5 0 R
+  >>
+endobj
+
+xref
+0 7
+0000000000 65535 f
+0000000010 00000 n
+0000000034 00000 n
+0000000482 00000 n
+0000000504 00000 n
+0000000677 00000 n
+0000000751 00000 n
+trailer
+<< /ID [ (some) (id) ]
+   /Root 6 0 R
+   /Size 7
+>>
+startxref
+810
+%%EOF4 0 obj
+<< /Annots [ ] /Type /Page /MediaBox [ 0 0 14 14 ] /Resources 1 0 R /Parent
+5 0 R /Rotate 0 /Contents 2 0 R >>
+endobj
+6 0 obj
+<< /Info 8 0 R /Pages 5 0 R /Type /Catalog >>
+endobj
+7 0 obj
+<< /Producer (macOS Version 11.4 \(Build 20F71\) Quartz PDFContext, AppendMode 1.1)
+/ModDate (D:20210728122833Z00'00') >>
+endobj
+8 0 obj
+7 0 R
+endobj
+xref
+0 1
+0000000000 65535 f 
+4 1
+0000001031 00000 n 
+6 3
+0000001157 00000 n 
+0000001218 00000 n 
+0000001355 00000 n 
+trailer
+<< /ID [<736F6D65><0FC8E95BB685B2A5A3BD4C0342957A1C> ] /Root 6 0 R /Size 9 /Prev 810 >> 
+startxref
+1376
+%%EOF

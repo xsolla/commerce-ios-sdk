@@ -102,7 +102,7 @@ final class InventoryListDataSource
         
         self.dataSources = self.groups.enumerated().map
         {
-            let params = InventoryListGroupDataSourceBuildParams(groupIndex: $0.offset, dataSource: self)
+            let params = InventoryListGroupDataSourceFactoryParams(groupIndex: $0.offset, dataSource: self)
             { [weak self] action, item in
                 
                 self?.itemActionHandler?(action, item)

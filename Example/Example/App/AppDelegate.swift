@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         // INFO: [@r.mingazov] temp code - метод, который может понадобиться
         // paymentsKit.applicationDidFinishLaunchingWithOptions(launchOptions)
         setupRouting()
-        
+
         return true
     }
     

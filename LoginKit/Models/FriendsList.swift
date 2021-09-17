@@ -13,14 +13,13 @@
 
 import Foundation
 
-
 /// Information about user friends
 public struct FriendsList
 {
-    /// Value of the `after` parameter that should be passed while requesting this call for the next time.
+    /// Value of the `after` parameter that should be passed while requesting this method for the next time.
     public let nextPage: String?
 
-    /// URL of the request for using this call for the next time.
+    /// URL of the request for using this method for the next time.
     public let nextPageURL: URL?
 
     /// Friends details.

@@ -16,7 +16,7 @@ import XsollaSDKStoreKit
 
 class VirtualItemsActionHandler
 {
-    var bundlePreviewRequest: ((StoreBundle) -> Void)?
+    var bundlePreviewRequest: ((StoreBundle, BundlePreviewActionHandler?) -> Void)?
     var reloadDataRequest: (() -> Void)?
     var orderPaymentHandler: ((StoreOrderPaymentInfo) -> Void)?
 
@@ -116,5 +116,24 @@ class VirtualItemsActionHandler
         logger.info { "Preview action for item: \(item.name)" }
 
         bundlePreviewRequest?(bundle)
+        { [weak self] action in
+
+            switch action
+            {
+                case .buy: self?.handleBundleBuyRequest(for: item)
+            }
+        }
+    }
+
+    func handleBundleBuyRequest(for item: VirtualItemsListDatasource.Item)
+    {
+        if let virtualCurrency = item.virtualPrices.first
+        {
+            buy(item: item, withVirtialCurrency: virtualCurrency.sku)
+        }
+        else
+        {
+            buy(item: item)
+        }
     }
 }

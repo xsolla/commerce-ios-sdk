@@ -15,21 +15,52 @@
 
 // MARK: - Auth Screen
 
-"Auth.main.tabs.login" = "Login";
+"Auth.main.tabs.login" = "Log in";
 "Auth.main.tabs.signup" = "Sign up";
 
 "Auth.button.login" = "Log in";
 "Auth.button.loginDemo" = "Log in as demo user";
+"Auth.button.authenticationOptions" = "More log in options";
 "Auth.button.recoverPassword" = "Forgot your password?";
 "Auth.button.signup" = "Sign up";
 
 "Auth.button.privacyPolicy.text" = "By continuing, you agree to be bound by our %s.";
 "Auth.button.privacyPolicy.linkTitle" = "Privacy Policy";
 
+"Auth.loginOptions.text.intro" = "You can insert one of these in place of the \"More login options\" button:";
+"Auth.loginOptions.text.passwordLoginExplanation" = "Username/password and \"Log in with email\" authorization options are only shown together for purposes of demonstration. Availability of authorization options depends on Login project settings in Xsolla Publisher Account.";
+"Auth.loginOptions.button.logInAsDemoUser" = "Log in as demo user";
+"Auth.loginOptions.button.logInWithDeviceId" = "Log in with device ID";
+"Auth.loginOptions.button.logInWithPhone" = "Log in with phone";
+"Auth.loginOptions.button.passwordlessAuthorization" = "Log in with email";
+
+"Auth.OTP.email.start.title" = "Log in with email";
+"Auth.OTP.email.start.payloadPlaceholder" = "Email";
+"Auth.OTP.email.start.actionButton" = "Send code";
+"Auth.OTP.email.start.invalidPayload" = "Invalid email";
+"Auth.OTP.email.code.title" = "Code validation";
+"Auth.OTP.email.code.codePlaceholder" = "Enter code from email";
+"Auth.OTP.email.code.actionButton" = "Log in";
+"Auth.OTP.email.code.codeExpireIn" = "Code expired in ";
+"Auth.OTP.email.code.codeExpired" = "Code is expired";
+"Auth.OTP.email.code.resendCode" = "Resend code?";
+
+"Auth.OTP.phone.start.title" = "Log in with phone";
+"Auth.OTP.phone.start.payloadPlaceholder" = "Enter your phone";
+"Auth.OTP.phone.start.actionButton" = "Send code";
+"Auth.OTP.phone.start.invalidPayload" = "Invalid phone";
+"Auth.OTP.phone.code.title" = "Code validation";
+"Auth.OTP.phone.code.codePlaceholder" = "Enter code from SMS";
+"Auth.OTP.phone.code.actionButton" = "Log in";
+"Auth.OTP.phone.code.codeExpireIn" = "Code expired in ";
+"Auth.OTP.phone.code.codeExpired" = "Code is expired";
+"Auth.OTP.phone.code.resendCode" = "Resend code?";
+"Auth.OTP.codeRestrictionsInformation" = "Restrictions:\n1.\tThe confirmation code is valid for 3 minutes. After 3 minutes, you will need to request a new confirmation code.\n2.\tIf you fail to submit the correct confirmation code 3 times, the code becomes invalid.\n3.\tYou can't request a confirmation code more than 3 times per minute.";
+
 // MARK: - Recover Password Screen
 
 "RecoverPassword.button.resetPassword" = "Reset password";
-"RecoverPassword.button.back" = "Back to login";
+"RecoverPassword.button.back" = "Back to log in";
 
 // MARK: - Forms
 
@@ -55,7 +86,6 @@
 "Menu.item.redeemCoupon" = "Redeem a coupon";
 "Menu.item.cart" = "Cart";
 "Menu.item.account" = "Account";
-"Menu.item.help" = "Help";
 "Menu.item.logout" = "Log out";
 
 // MARK: - Common
@@ -66,28 +96,39 @@
 "Common.button.buy" = "Buy now";
 "Common.button.preview" = "Preview";
 
-
 // MARK: - Account
-"Account.title" = "Account";
-"Account.saveButton" = "Save changes";
-"Account.resetPasswordButton" = "Reset password";
-"Account.datePicker.confirmButton" = "OK";
-"Account.datePicker.cancelButton" = "CANCEL";
-"Account.field.email.placeholder" = "Email";
-"Account.field.username.placeholder" = "Username";
-"Account.field.nickname.placeholder" = "Nickname";
-"Account.field.phone.placeholder" = "Phone";
-"Account.field.firstName.placeholder" = "First name";
-"Account.field.lastName.placeholder" = "Last name";
-"Account.field.birthday.placeholder" = "Birthday";
-"Account.field.gender.placeholder" = "Gender";
-"Account.field.gender.male" = "Male";
-"Account.field.gender.female" = "Female";
-"Account.field.gender.other" = "Other";
-"Account.field.gender.unspecified" = "Prefer not to answer";
-"Account.field.phone.validationError" = "Validation error";
+
+"Profile.upgradeMessage.profile" = "Add a username and password or link a social profile to upgrade your account.";
+"Profile.upgradeMessage.menu" = "Upgrade account to save your progress";
+"Profile.confirmEmailMessage" = "Email verification required";
+
+"Profile.title" = "Account";
+"Profile.button.resetPassword" = "Reset password";
+"Profile.button.save" = "Save changes";
+"Profile.button.connectedDevices" = "Manage your devices";
+"Profile.button.addUsernamePassword" = "Add username and password";
+"Profile.datePicker.confirmButton" = "Ok";
+"Profile.datePicker.cancelButton" = "Cancel";
+"Profile.field.email.placeholder" = "Email";
+"Profile.field.username.placeholder" = "Username";
+"Profile.field.nickname.placeholder" = "Nickname";
+"Profile.field.phone.placeholder" = "Phone";
+"Profile.field.firstName.placeholder" = "First name";
+"Profile.field.lastName.placeholder" = "Last name";
+"Profile.field.birthday.placeholder" = "Birthday";
+"Profile.field.gender.placeholder" = "Gender";
+"Profile.field.gender.male" = "Male";
+"Profile.field.gender.female" = "Female";
+"Profile.field.gender.other" = "Other";
+"Profile.field.gender.unspecified" = "Prefer not to answer";
+"Profile.field.phone.validationError" = "Validation error";
+"Profile.section.socialNetworks" = "Social networks";
+"Profile.section.userInfo" = "User info";
+"Profile.section.connectedDevices" = "Connected devices";
+"Profile.section.connectedDevices.removeButton" = "Remove";
+"Profile.section.additionalUserInfo" = "Additional user info";
 "AccountAvatar.title" = "Avatar";
-"AccountAvatar.removeButton.title" = "REMOVE AVATAR";
+"AccountAvatar.removeButton.title" = "Remove avatar";
 
 // MARK: - Inventory
 
@@ -128,9 +169,62 @@
 
 // MARK: - Alerts
 
-"Alert.action.ok" = "OK";
+"Alert.action.ok" = "Ok";
+"Alert.action.cancel" = "Cancel";
 "Alert.registration.success.title" = "Successful registration";
 "Alert.registration.success.message" = "Please check your email.";
 "Alert.passwordRecover.success.title" = "Password reset success";
 "Alert.passwordRecover.success.message" = "Check your email.";
+"Alert.unlinkDevice.title" = "Remove this device?";
+"Alert.unlinkDevice.message" = "This will log you out of your account on it.";
+"Alert.unlinkDevice.confinmButton" = "Yes, remove";
 "Alert.error.common" = "Error occured";
+
+"OTPSequenceError.operationIdMismatch" = "Operation id mismatch";
+"OTPSequenceError.expiredCode" = "Expired OTP code";
+"OTPSequenceError.invalidOTPCode" = "Invalid OTP code";
+"OTPSequenceError.invalidAccessCode" = "Invalid access code";
+"OTPSequenceError.tokenNotFound" = "Token not found in response";
+"OTPSequenceError.invalidPayload" = "Invalid OTP payload";
+"OTPSequenceError.invalidOperationId" = "Invalid operation id";
+"OTPSequenceError.invalidOTPSequence" = "Invalid OTP Sequence";
+
+"RedirectUrlParsingError.unknownError" = "Unknown error";
+"RedirectUrlParsingError.networkLinkingError" = "Network linking error";
+
+"UserProfileError.missingUsername" = "Username is missing";
+
+// MARK: - Social Networks
+
+"SocialNetworks.title" = "Other social networks";
+"SocialNetworks.searchPlaceholder" = "Search social networks";
+
+"SocialNetwork.amazon" = "Amazon";
+"SocialNetwork.apple" = "Apple";
+"SocialNetwork.baidu" = "Baidu";
+"SocialNetwork.battlenet" = "Battle.net";
+"SocialNetwork.discord" = "Discord";
+"SocialNetwork.facebook" = "Facebook";
+"SocialNetwork.github" = "GitHub";
+"SocialNetwork.google" = "Google";
+"SocialNetwork.kakao" = "Kakao";
+"SocialNetwork.linkedin" = "LinkedIn";
+"SocialNetwork.mailru" = "Mail.ru";
+"SocialNetwork.microsoft" = "Microsoft";
+"SocialNetwork.msn" = "MSN";
+"SocialNetwork.naver" = "Naver";
+"SocialNetwork.ok" = "Odnoklassniki";
+"SocialNetwork.paypal" = "PayPal";
+"SocialNetwork.qq" = "QQ";
+"SocialNetwork.reddit" = "Reddit";
+"SocialNetwork.steam" = "Steam";
+"SocialNetwork.twitch" = "Twitch.tv";
+"SocialNetwork.twitter" = "Twitter";
+"SocialNetwork.vimeo" = "Vimeo";
+"SocialNetwork.vk" = "VK";
+"SocialNetwork.wechat" = "WeChat";
+"SocialNetwork.weibo" = "Weibo";
+"SocialNetwork.yahoo" = "Yahoo";
+"SocialNetwork.yandex" = "Yandex";
+"SocialNetwork.youtube" = "YouTube";
+"SocialNetwork.xbox" = "Xbox Live";

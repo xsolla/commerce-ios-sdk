@@ -83,7 +83,7 @@ class VirtualCurrencyListDatasource
         
         self.dataSources = self.groups.enumerated().map
         {
-            let params = VirtualCurrencyListGroupDataSourceBuildParams(groupIndex: $0.offset, dataSource: self)
+            let params = VirtualCurrencyListGroupDataSourceFactoryParams(groupIndex: $0.offset, dataSource: self)
             { [weak self] action, item in
                 
                 self?.itemActionHandler?(action, item)

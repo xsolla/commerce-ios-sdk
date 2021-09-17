@@ -164,6 +164,7 @@ class TabbarViewController: BaseViewController
         container.showsHorizontalScrollIndicator = false
         container.delegate = self
         container.backgroundColor = .xsolla_nightBlue
+        container.bounces = false
     }
     
     private func setupStack()

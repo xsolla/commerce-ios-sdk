@@ -18,6 +18,7 @@ protocol UserInputValidatorProtocol: AnyObject
     func validate() -> Bool
     func reset()
     var active: Bool { get set }
+    var errorsEnabled: Bool { get set }
 }
 
 extension UserInputValidatorProtocol

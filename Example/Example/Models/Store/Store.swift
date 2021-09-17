@@ -33,12 +33,16 @@ class Store: StoreProtocol
                      isSandbox: Bool,
                      completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
     {
+
+        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme)
+        let paymentProjectSettings = StorePaymentProjectSettings(ui: uiSettings)
+
         dependencies.xsollaSDK.createOrder(projectId: AppConfig.projectId,
                                            itemSKU: itemSKU,
                                            currency: currency,
                                            locale: locale,
                                            isSandbox: isSandbox,
-                                           paymentProjectSettings: nil,
+                                           paymentProjectSettings: paymentProjectSettings,
                                            customParameters: nil,
                                            completion: completion)
     }

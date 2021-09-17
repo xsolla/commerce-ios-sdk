@@ -154,7 +154,7 @@ extension XsollaSDK: XsollaSDKProtocol
     
     func generateJWT(grantType: TokenGrantType,
                      clientId: Int,
-                     refreshToken: String?,
+                     refreshToken: RefreshToken?,
                      clientSecret: String?,
                      redirectUri: String?,
                      authCode: String?,
@@ -233,6 +233,262 @@ extension XsollaSDK: XsollaSDKProtocol
         }
     }
     
+    func startAuthByEmail(oAuth2Params: OAuth2Params,
+                          email: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: ((Result<String, Error>) -> Void)?)
+    {
+        login.startAuthByEmail(oAuth2Params: oAuth2Params, email: email, linkUrl: linkUrl, sendLink: sendLink)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let operationId): completion?(.success(operationId))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func completeAuthByEmail(clientId: Int,
+                             code: String,
+                             email: String,
+                             operationId: String,
+                             completion: ((Result<String, Error>) -> Void)?)
+    {
+        login.completeAuthByEmail(clientId: clientId, code: code, email: email, operationId: operationId)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let loginUrl): completion?(.success(loginUrl))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func startAuthByPhone(oAuth2Params: OAuth2Params,
+                          phoneNumber: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: ((Result<String, Error>) -> Void)?)
+    {
+        login.startAuthByPhone(oAuth2Params: oAuth2Params,
+                               phoneNumber: phoneNumber,
+                               linkUrl: linkUrl,
+                               sendLink: sendLink)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let operationId): completion?(.success(operationId))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func completeAuthByPhone(clientId: Int,
+                             code: String,
+                             phoneNumber: String,
+                             operationId: String,
+                             completion: ((Result<String, Error>) -> Void)?)
+    {
+        login.completeAuthByPhone(clientId: clientId, code: code, phoneNumber: phoneNumber, operationId: operationId)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let loginUrl): completion?(.success(loginUrl))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    func getConfirmationCode(projectId: String,
+                             login: String,
+                             operationId: String,
+                             completion: ((Result<String, Error>) -> Void)?)
+    {
+        self.login.getConfirmationCode(projectId: projectId,
+                                       login: login,
+                                       operationId: operationId)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let code): completion?(.success(code))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    func resendConfirmationLink(clientId: Int,
+                                redirectUri: String,
+                                state: String,
+                                username: String,
+                                completion: ((Result<Void, Error>) -> Void)?)
+    {
+        self.login.resendConfirmationLink(clientId: clientId,
+                                          redirectUri: redirectUri,
+                                          state: state,
+                                          username: username)
+        { [weak self] result in
+            switch result
+            {
+                case .success: completion?(.success(()))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    func authWithDeviceId(oAuth2Params: OAuth2Params,
+                          device: String,
+                          deviceId: String,
+                          completion: ((Result<String, Error>) -> Void)?)
+    {
+        login.authWithDeviceId(oAuth2Params: oAuth2Params, device: device, deviceId: deviceId)
+        { [weak self] result in
+            switch result
+            {
+                case .success(let loginUrl): completion?(.success(loginUrl))
+                case .failure(let error): do
+                {
+                    self?.processError(error)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func getUserConnectedDevices(completion: ((Result<[DeviceInfo], Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.getUserDevices(accessToken: token)
+            { [weak self] result in
+                
+                switch result
+                {
+                    case .success(let devicesInfo): do
+                    {
+                        completion?(.success(devicesInfo))
+                    }
+                    
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func linkDeviceToAccount(device: String,
+                             deviceId: String,
+                             completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.linkDeviceToAccount(device: device, deviceId: deviceId, accessToken: token)
+            { [weak self] result in
+                switch result
+                {
+                    case .success: do
+                    {
+                        completion?(.success(()))
+                    }
+                    
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    func unlinkDeviceFromAccount(deviceId: String,
+                                 completion: ((Result<Void, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+            
+            self?.login.unlinkDeviceFromAccount(deviceId: deviceId, accessToken: token)
+            { [weak self] result in
+                switch result
+                {
+                    case .success: do
+                    {
+                        completion?(.success(()))
+                    }
+                        
+                    case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+
+    func addUsernameAndPassword(username: String,
+                                password: String,
+                                email: String,
+                                promoEmailAgreement: Bool,
+                                redirectUri: String?,
+                                completion: ((Result<Bool, Error>) -> Void)?)
+    {
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
+
+            self?.login.addUsernameAndPassword(username: username,
+                                               password: password,
+                                               email: email,
+                                               promoEmailAgreement: promoEmailAgreement,
+                                               accessToken: token,
+                                               redirectUri: redirectUri)
+            { [weak self] result in
+                switch result
+                {
+                case .success(let emailConfirmationRequired): completion?(.success(emailConfirmationRequired))
+                case .failure(let error): do
+                    {
+                        self?.processError(error)
+                        completion?(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+
     func getCurrentUserDetails(completion: ((Result<UserProfileDetails, Error>) -> Void)?)
     {
         startTokenDependentTask
@@ -483,7 +739,7 @@ extension XsollaSDK: XsollaSDKProtocol
         }
     }
     
-    func getLinkedNetworks(completion: ((Result<[UserSocialNetworkInfo], Error>) -> Void)?)
+    func getLinkedSocialNetworks(completion: ((Result<[UserSocialNetworkInfo], Error>) -> Void)?)
     {
         startTokenDependentTask
         { [weak self] token in
@@ -504,23 +760,33 @@ extension XsollaSDK: XsollaSDKProtocol
             }
         }
     }
-    
-    func getURLToLinkSocialNetworkToAccount(providerName: String,
-                                            loginURL: String,
-                                            completion: ((Result<String, Error>) -> Void)?)
+
+    func getSocialNetworkLinkingURL(for socialNetwork: SocialNetwork,
+                                    callbackURL: String,
+                                    completion: ((Result<URL, Error>) -> Void)?)
     {
         startTokenDependentTask
         { [weak self] token in
             guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
-            
+
             self?.login.getURLToLinkSocialNetworkToAccount(accessToken: token,
-                                                           providerName: providerName,
-                                                           loginURL: loginURL)
+                                                           providerName: socialNetwork.rawValue,
+                                                           loginURL: callbackURL)
             { result in
-                
+
                 switch result
                 {
-                    case .success(let urlString): completion?(.success(urlString))
+                    case .success(let string): do
+                    {
+                        guard let url = URL(string: string) else
+                        {
+                            completion?(.failure(LoginKitError.failedURLExtraction))
+                            return
+                        }
+
+                        completion?(.success(url))
+                    }
+
                     case .failure(let error): do
                     {
                         self?.processError(error)
@@ -530,27 +796,7 @@ extension XsollaSDK: XsollaSDKProtocol
             }
         }
     }
-    
-    func startSocialNetworkLinking(toProvider providerName: String,
-                                   loginURL: String,
-                                   presenter: Presenter,
-                                   completion: ((Result<Void, Error>) -> Void)?)
-    {
-        startTokenDependentTask
-        { token in
-            guard let token = token else { completion?(.failure(LoginKitError.invalidToken)); return }
-            
-            let viewController = SocialNetworkLinkingVC()
-            presenter.present(viewController, animated: true, completion: nil)
-            
-            viewController.startLinking(toProvider: providerName, withAccessToken: token, loginURL: loginURL)
-            { (result, vc) in
-                vc.dismiss(animated: true, completion: nil)
-                completion?(result)
-            }
-        }
-    }
-    
+
     func getClientUserAttributes(keys: [String]?,
                                  publisherProjectId: Int?,
                                  userId: String?,

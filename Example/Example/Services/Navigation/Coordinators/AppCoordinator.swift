@@ -59,7 +59,17 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
     private func getAuthenticationCoordinator() -> Coordinator
     {
         let factory = dependencies.factories.coordinatorFactory
-        let params = AuthenticationCoordinatorBuildParameters(loginManager: dependencies.loginManager)
+
+        let loginAsyncUtilityParams = LoginAsyncUtilsFactoryParams(clientId: AppConfig.loginClientId,
+                                                                   redirectURL: AppConfig.redirectUrl,
+                                                                   scope: AppConfig.defaultLoginScope)
+
+        let loginAsyncUtility =
+            dependencies.factories.asyncUtilsFactory.createLoginAsyncUtils(params: loginAsyncUtilityParams)
+
+        let params = AuthenticationCoordinatorFactoryParams(loginManager: dependencies.loginManager,
+                                                            loginAsyncUtility: loginAsyncUtility)
+        
         let coordinator = factory.createAuthenticationCoordinator(presenter: presenter, params: params)
         
         return coordinator
@@ -79,6 +89,12 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
 extension AppCoordinator: LoginManagerDelegate
 {
     func loginManager(_ loginManager: LoginManagerProtocol, didInvalidateAccessToken withError: LoginManagerError?)
+    {
+        childCoordinators = []
+        start()
+    }
+
+    func loginManagerDidLogin(_ loginManager: LoginManagerProtocol)
     {
         childCoordinators = []
         start()

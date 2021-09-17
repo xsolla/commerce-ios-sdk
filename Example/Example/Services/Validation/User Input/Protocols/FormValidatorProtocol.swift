@@ -24,4 +24,6 @@ protocol FormValidatorProtocol: AnyObject
     
     func resetValidator(withKey key: Int)
     func enableValidator(withKey key: Int)
+    func enableErrorsForValidator(withKey key: Int)
+    func disableErrorsForValidator(withKey key: Int)
 }

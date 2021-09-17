@@ -14,75 +14,19 @@ internal enum L10n {
 
   /// Update bundle if you need to change the app language
   static var bundle: Bundle?
-    internal enum Account {
-      /// Reset password
-      internal static var resetPasswordButton: String { L10n.tr("Localizable", "Account.resetPasswordButton") }
-      /// Save changes
-      internal static var saveButton: String { L10n.tr("Localizable", "Account.saveButton") }
-      /// Account
-      internal static var title: String { L10n.tr("Localizable", "Account.title") }
-      internal enum DatePicker {
-        /// CANCEL
-        internal static var cancelButton: String { L10n.tr("Localizable", "Account.datePicker.cancelButton") }
-        /// OK
-        internal static var confirmButton: String { L10n.tr("Localizable", "Account.datePicker.confirmButton") }
-      }
-      internal enum Field {
-        internal enum Birthday {
-          /// Birthday
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.birthday.placeholder") }
-        }
-        internal enum Email {
-          /// Email
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.email.placeholder") }
-        }
-        internal enum FirstName {
-          /// First name
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.firstName.placeholder") }
-        }
-        internal enum Gender {
-          /// Female
-          internal static var female: String { L10n.tr("Localizable", "Account.field.gender.female") }
-          /// Male
-          internal static var male: String { L10n.tr("Localizable", "Account.field.gender.male") }
-          /// Other
-          internal static var other: String { L10n.tr("Localizable", "Account.field.gender.other") }
-          /// Gender
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.gender.placeholder") }
-          /// Prefer not to answer
-          internal static var unspecified: String { L10n.tr("Localizable", "Account.field.gender.unspecified") }
-        }
-        internal enum LastName {
-          /// Last name
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.lastName.placeholder") }
-        }
-        internal enum Nickname {
-          /// Nickname
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.nickname.placeholder") }
-        }
-        internal enum Phone {
-          /// Phone
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.phone.placeholder") }
-          /// Validation error
-          internal static var validationError: String { L10n.tr("Localizable", "Account.field.phone.validationError") }
-        }
-        internal enum Username {
-          /// Username
-          internal static var placeholder: String { L10n.tr("Localizable", "Account.field.username.placeholder") }
-        }
-      }
-    }
     internal enum AccountAvatar {
       /// Avatar
       internal static var title: String { L10n.tr("Localizable", "AccountAvatar.title") }
       internal enum RemoveButton {
-        /// REMOVE AVATAR
+        /// Remove avatar
         internal static var title: String { L10n.tr("Localizable", "AccountAvatar.removeButton.title") }
       }
     }
     internal enum Alert {
       internal enum Action {
-        /// OK
+        /// Cancel
+        internal static var cancel: String { L10n.tr("Localizable", "Alert.action.cancel") }
+        /// Ok
         internal static var ok: String { L10n.tr("Localizable", "Alert.action.ok") }
       }
       internal enum Error {
@@ -104,6 +48,14 @@ internal enum L10n {
           /// Successful registration
           internal static var title: String { L10n.tr("Localizable", "Alert.registration.success.title") }
         }
+      }
+      internal enum UnlinkDevice {
+        /// Yes, remove
+        internal static var confinmButton: String { L10n.tr("Localizable", "Alert.unlinkDevice.confinmButton") }
+        /// This will log you out of your account on it.
+        internal static var message: String { L10n.tr("Localizable", "Alert.unlinkDevice.message") }
+        /// Remove this device?
+        internal static var title: String { L10n.tr("Localizable", "Alert.unlinkDevice.title") }
       }
     }
     internal enum AttributeEditor {
@@ -133,7 +85,65 @@ internal enum L10n {
       }
     }
     internal enum Auth {
+      internal enum Otp {
+        /// Restrictions:\n1.	The confirmation code is valid for 3 minutes. After 3 minutes, you will need to request a new confirmation code.\n2.	If you fail to submit the correct confirmation code 3 times, the code becomes invalid.\n3.	You can't request a confirmation code more than 3 times per minute.
+        internal static var codeRestrictionsInformation: String { L10n.tr("Localizable", "Auth.OTP.codeRestrictionsInformation") }
+        internal enum Email {
+          internal enum Code {
+            /// Log in
+            internal static var actionButton: String { L10n.tr("Localizable", "Auth.OTP.email.code.actionButton") }
+            /// Code is expired
+            internal static var codeExpired: String { L10n.tr("Localizable", "Auth.OTP.email.code.codeExpired") }
+            /// Code expired in 
+            internal static var codeExpireIn: String { L10n.tr("Localizable", "Auth.OTP.email.code.codeExpireIn") }
+            /// Enter code from email
+            internal static var codePlaceholder: String { L10n.tr("Localizable", "Auth.OTP.email.code.codePlaceholder") }
+            /// Resend code?
+            internal static var resendCode: String { L10n.tr("Localizable", "Auth.OTP.email.code.resendCode") }
+            /// Code validation
+            internal static var title: String { L10n.tr("Localizable", "Auth.OTP.email.code.title") }
+          }
+          internal enum Start {
+            /// Send code
+            internal static var actionButton: String { L10n.tr("Localizable", "Auth.OTP.email.start.actionButton") }
+            /// Invalid email
+            internal static var invalidPayload: String { L10n.tr("Localizable", "Auth.OTP.email.start.invalidPayload") }
+            /// Email
+            internal static var payloadPlaceholder: String { L10n.tr("Localizable", "Auth.OTP.email.start.payloadPlaceholder") }
+            /// Log in with email
+            internal static var title: String { L10n.tr("Localizable", "Auth.OTP.email.start.title") }
+          }
+        }
+        internal enum Phone {
+          internal enum Code {
+            /// Log in
+            internal static var actionButton: String { L10n.tr("Localizable", "Auth.OTP.phone.code.actionButton") }
+            /// Code is expired
+            internal static var codeExpired: String { L10n.tr("Localizable", "Auth.OTP.phone.code.codeExpired") }
+            /// Code expired in 
+            internal static var codeExpireIn: String { L10n.tr("Localizable", "Auth.OTP.phone.code.codeExpireIn") }
+            /// Enter code from SMS
+            internal static var codePlaceholder: String { L10n.tr("Localizable", "Auth.OTP.phone.code.codePlaceholder") }
+            /// Resend code?
+            internal static var resendCode: String { L10n.tr("Localizable", "Auth.OTP.phone.code.resendCode") }
+            /// Code validation
+            internal static var title: String { L10n.tr("Localizable", "Auth.OTP.phone.code.title") }
+          }
+          internal enum Start {
+            /// Send code
+            internal static var actionButton: String { L10n.tr("Localizable", "Auth.OTP.phone.start.actionButton") }
+            /// Invalid phone
+            internal static var invalidPayload: String { L10n.tr("Localizable", "Auth.OTP.phone.start.invalidPayload") }
+            /// Enter your phone
+            internal static var payloadPlaceholder: String { L10n.tr("Localizable", "Auth.OTP.phone.start.payloadPlaceholder") }
+            /// Log in with phone
+            internal static var title: String { L10n.tr("Localizable", "Auth.OTP.phone.start.title") }
+          }
+        }
+      }
       internal enum Button {
+        /// More log in options
+        internal static var authenticationOptions: String { L10n.tr("Localizable", "Auth.button.authenticationOptions") }
         /// Log in
         internal static var login: String { L10n.tr("Localizable", "Auth.button.login") }
         /// Log in as demo user
@@ -151,9 +161,27 @@ internal enum L10n {
           }
         }
       }
+      internal enum LoginOptions {
+        internal enum Button {
+          /// Log in as demo user
+          internal static var logInAsDemoUser: String { L10n.tr("Localizable", "Auth.loginOptions.button.logInAsDemoUser") }
+          /// Log in with device ID
+          internal static var logInWithDeviceId: String { L10n.tr("Localizable", "Auth.loginOptions.button.logInWithDeviceId") }
+          /// Log in with phone
+          internal static var logInWithPhone: String { L10n.tr("Localizable", "Auth.loginOptions.button.logInWithPhone") }
+          /// Log in with email
+          internal static var passwordlessAuthorization: String { L10n.tr("Localizable", "Auth.loginOptions.button.passwordlessAuthorization") }
+        }
+        internal enum Text {
+          /// You can insert one of these in place of the "More login options" button:
+          internal static var intro: String { L10n.tr("Localizable", "Auth.loginOptions.text.intro") }
+          /// Username/password and "Log in with email" authorization options are only shown together for purposes of demonstration. Availability of authorization options depends on Login project settings in Xsolla Publisher Account.
+          internal static var passwordLoginExplanation: String { L10n.tr("Localizable", "Auth.loginOptions.text.passwordLoginExplanation") }
+        }
+      }
       internal enum Main {
         internal enum Tabs {
-          /// Login
+          /// Log in
           internal static var login: String { L10n.tr("Localizable", "Auth.main.tabs.login") }
           /// Sign up
           internal static var signup: String { L10n.tr("Localizable", "Auth.main.tabs.signup") }
@@ -260,8 +288,6 @@ internal enum L10n {
         internal static var character: String { L10n.tr("Localizable", "Menu.item.character") }
         /// My friends
         internal static var friends: String { L10n.tr("Localizable", "Menu.item.friends") }
-        /// Help
-        internal static var help: String { L10n.tr("Localizable", "Menu.item.help") }
         /// My inventory
         internal static var inventory: String { L10n.tr("Localizable", "Menu.item.inventory") }
         /// Log out
@@ -278,13 +304,193 @@ internal enum L10n {
         internal static var virtualItems: String { L10n.tr("Localizable", "Menu.item.virtualItems") }
       }
     }
+    internal enum OTPSequenceError {
+      /// Expired OTP code
+      internal static var expiredCode: String { L10n.tr("Localizable", "OTPSequenceError.expiredCode") }
+      /// Invalid access code
+      internal static var invalidAccessCode: String { L10n.tr("Localizable", "OTPSequenceError.invalidAccessCode") }
+      /// Invalid operation id
+      internal static var invalidOperationId: String { L10n.tr("Localizable", "OTPSequenceError.invalidOperationId") }
+      /// Invalid OTP code
+      internal static var invalidOTPCode: String { L10n.tr("Localizable", "OTPSequenceError.invalidOTPCode") }
+      /// Invalid OTP Sequence
+      internal static var invalidOTPSequence: String { L10n.tr("Localizable", "OTPSequenceError.invalidOTPSequence") }
+      /// Invalid OTP payload
+      internal static var invalidPayload: String { L10n.tr("Localizable", "OTPSequenceError.invalidPayload") }
+      /// Operation id mismatch
+      internal static var operationIdMismatch: String { L10n.tr("Localizable", "OTPSequenceError.operationIdMismatch") }
+      /// Token not found in response
+      internal static var tokenNotFound: String { L10n.tr("Localizable", "OTPSequenceError.tokenNotFound") }
+    }
+    internal enum Profile {
+      /// Email verification required
+      internal static var confirmEmailMessage: String { L10n.tr("Localizable", "Profile.confirmEmailMessage") }
+      /// Account
+      internal static var title: String { L10n.tr("Localizable", "Profile.title") }
+      internal enum Button {
+        /// Add username and password
+        internal static var addUsernamePassword: String { L10n.tr("Localizable", "Profile.button.addUsernamePassword") }
+        /// Manage your devices
+        internal static var connectedDevices: String { L10n.tr("Localizable", "Profile.button.connectedDevices") }
+        /// Reset password
+        internal static var resetPassword: String { L10n.tr("Localizable", "Profile.button.resetPassword") }
+        /// Save changes
+        internal static var save: String { L10n.tr("Localizable", "Profile.button.save") }
+      }
+      internal enum DatePicker {
+        /// Cancel
+        internal static var cancelButton: String { L10n.tr("Localizable", "Profile.datePicker.cancelButton") }
+        /// Ok
+        internal static var confirmButton: String { L10n.tr("Localizable", "Profile.datePicker.confirmButton") }
+      }
+      internal enum Field {
+        internal enum Birthday {
+          /// Birthday
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.birthday.placeholder") }
+        }
+        internal enum Email {
+          /// Email
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.email.placeholder") }
+        }
+        internal enum FirstName {
+          /// First name
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.firstName.placeholder") }
+        }
+        internal enum Gender {
+          /// Female
+          internal static var female: String { L10n.tr("Localizable", "Profile.field.gender.female") }
+          /// Male
+          internal static var male: String { L10n.tr("Localizable", "Profile.field.gender.male") }
+          /// Other
+          internal static var other: String { L10n.tr("Localizable", "Profile.field.gender.other") }
+          /// Gender
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.gender.placeholder") }
+          /// Prefer not to answer
+          internal static var unspecified: String { L10n.tr("Localizable", "Profile.field.gender.unspecified") }
+        }
+        internal enum LastName {
+          /// Last name
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.lastName.placeholder") }
+        }
+        internal enum Nickname {
+          /// Nickname
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.nickname.placeholder") }
+        }
+        internal enum Phone {
+          /// Phone
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.phone.placeholder") }
+          /// Validation error
+          internal static var validationError: String { L10n.tr("Localizable", "Profile.field.phone.validationError") }
+        }
+        internal enum Username {
+          /// Username
+          internal static var placeholder: String { L10n.tr("Localizable", "Profile.field.username.placeholder") }
+        }
+      }
+      internal enum Section {
+        /// Additional user info
+        internal static var additionalUserInfo: String { L10n.tr("Localizable", "Profile.section.additionalUserInfo") }
+        /// Connected devices
+        internal static var connectedDevices: String { L10n.tr("Localizable", "Profile.section.connectedDevices") }
+        /// Social networks
+        internal static var socialNetworks: String { L10n.tr("Localizable", "Profile.section.socialNetworks") }
+        /// User info
+        internal static var userInfo: String { L10n.tr("Localizable", "Profile.section.userInfo") }
+        internal enum ConnectedDevices {
+          /// Remove
+          internal static var removeButton: String { L10n.tr("Localizable", "Profile.section.connectedDevices.removeButton") }
+        }
+      }
+      internal enum UpgradeMessage {
+        /// Upgrade account to save your progress
+        internal static var menu: String { L10n.tr("Localizable", "Profile.upgradeMessage.menu") }
+        /// Add a username and password or link a social profile to upgrade your account.
+        internal static var profile: String { L10n.tr("Localizable", "Profile.upgradeMessage.profile") }
+      }
+    }
     internal enum RecoverPassword {
       internal enum Button {
-        /// Back to login
+        /// Back to log in
         internal static var back: String { L10n.tr("Localizable", "RecoverPassword.button.back") }
         /// Reset password
         internal static var resetPassword: String { L10n.tr("Localizable", "RecoverPassword.button.resetPassword") }
       }
+    }
+    internal enum RedirectUrlParsingError {
+      /// Network linking error
+      internal static var networkLinkingError: String { L10n.tr("Localizable", "RedirectUrlParsingError.networkLinkingError") }
+      /// Unknown error
+      internal static var unknownError: String { L10n.tr("Localizable", "RedirectUrlParsingError.unknownError") }
+    }
+    internal enum SocialNetwork {
+      /// Amazon
+      internal static var amazon: String { L10n.tr("Localizable", "SocialNetwork.amazon") }
+      /// Apple
+      internal static var apple: String { L10n.tr("Localizable", "SocialNetwork.apple") }
+      /// Baidu
+      internal static var baidu: String { L10n.tr("Localizable", "SocialNetwork.baidu") }
+      /// Battle.net
+      internal static var battlenet: String { L10n.tr("Localizable", "SocialNetwork.battlenet") }
+      /// Discord
+      internal static var discord: String { L10n.tr("Localizable", "SocialNetwork.discord") }
+      /// Facebook
+      internal static var facebook: String { L10n.tr("Localizable", "SocialNetwork.facebook") }
+      /// GitHub
+      internal static var github: String { L10n.tr("Localizable", "SocialNetwork.github") }
+      /// Google
+      internal static var google: String { L10n.tr("Localizable", "SocialNetwork.google") }
+      /// Kakao
+      internal static var kakao: String { L10n.tr("Localizable", "SocialNetwork.kakao") }
+      /// LinkedIn
+      internal static var linkedin: String { L10n.tr("Localizable", "SocialNetwork.linkedin") }
+      /// Mail.ru
+      internal static var mailru: String { L10n.tr("Localizable", "SocialNetwork.mailru") }
+      /// Microsoft
+      internal static var microsoft: String { L10n.tr("Localizable", "SocialNetwork.microsoft") }
+      /// MSN
+      internal static var msn: String { L10n.tr("Localizable", "SocialNetwork.msn") }
+      /// Naver
+      internal static var naver: String { L10n.tr("Localizable", "SocialNetwork.naver") }
+      /// Odnoklassniki
+      internal static var ok: String { L10n.tr("Localizable", "SocialNetwork.ok") }
+      /// PayPal
+      internal static var paypal: String { L10n.tr("Localizable", "SocialNetwork.paypal") }
+      /// QQ
+      internal static var qq: String { L10n.tr("Localizable", "SocialNetwork.qq") }
+      /// Reddit
+      internal static var reddit: String { L10n.tr("Localizable", "SocialNetwork.reddit") }
+      /// Steam
+      internal static var steam: String { L10n.tr("Localizable", "SocialNetwork.steam") }
+      /// Twitch.tv
+      internal static var twitch: String { L10n.tr("Localizable", "SocialNetwork.twitch") }
+      /// Twitter
+      internal static var twitter: String { L10n.tr("Localizable", "SocialNetwork.twitter") }
+      /// Vimeo
+      internal static var vimeo: String { L10n.tr("Localizable", "SocialNetwork.vimeo") }
+      /// VK
+      internal static var vk: String { L10n.tr("Localizable", "SocialNetwork.vk") }
+      /// WeChat
+      internal static var wechat: String { L10n.tr("Localizable", "SocialNetwork.wechat") }
+      /// Weibo
+      internal static var weibo: String { L10n.tr("Localizable", "SocialNetwork.weibo") }
+      /// Xbox Live
+      internal static var xbox: String { L10n.tr("Localizable", "SocialNetwork.xbox") }
+      /// Yahoo
+      internal static var yahoo: String { L10n.tr("Localizable", "SocialNetwork.yahoo") }
+      /// Yandex
+      internal static var yandex: String { L10n.tr("Localizable", "SocialNetwork.yandex") }
+      /// YouTube
+      internal static var youtube: String { L10n.tr("Localizable", "SocialNetwork.youtube") }
+    }
+    internal enum SocialNetworks {
+      /// Search social networks
+      internal static var searchPlaceholder: String { L10n.tr("Localizable", "SocialNetworks.searchPlaceholder") }
+      /// Other social networks
+      internal static var title: String { L10n.tr("Localizable", "SocialNetworks.title") }
+    }
+    internal enum UserProfileError {
+      /// Username is missing
+      internal static var missingUsername: String { L10n.tr("Localizable", "UserProfileError.missingUsername") }
     }
     internal enum VirtualCurrency {
       /// Virtual currency

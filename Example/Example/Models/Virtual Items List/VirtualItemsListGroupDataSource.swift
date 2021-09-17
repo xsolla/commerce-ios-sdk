@@ -66,15 +66,15 @@ class VirtualItemsListGroupDataSource: NSObject, TableViewDataSource
     func virtualItemCellModel(for item: Item) -> VirtualItemCell.Model
     {
         let model = VirtualItemCell.Model(image: getImage(for: item),
-                                              title: getTitle(for: item),
-                                              price: getPrice(for: item),
-                                              discountedPrice: getDiscountedPrice(for: item),
-                                              discount: getDiscount(for: item),
-                                              description: getDescription(for: item),
-                                              expirationPeriod: getExpirationPeriod(for: item),
-                                              action: getAction(for: item),
-                                              extraAction: getExtraAction(for: item),
-                                              currencyImage: getPriceCurrencyImage(for: item))
+                                          title: getTitle(for: item),
+                                          price: getPrice(for: item),
+                                          discountedPrice: getDiscountedPrice(for: item),
+                                          discount: getDiscount(for: item),
+                                          description: getDescription(for: item),
+                                          expirationPeriod: getExpirationPeriod(for: item),
+                                          action: getAction(for: item),
+                                          extraAction: getExtraAction(for: item),
+                                          currencyImage: getPriceCurrencyImage(for: item))
         return model
     }
     

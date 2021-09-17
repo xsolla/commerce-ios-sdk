@@ -19,6 +19,7 @@ class BaseStringValidator: UserInputValidatorProtocol
     var cachedResult: Bool?
     var active: Bool = false
     var inactiveStateResult: Bool = false
+    var errorsEnabled: Bool = false
     
     func validate() -> Bool
     {
@@ -40,7 +41,7 @@ class BaseStringValidator: UserInputValidatorProtocol
     {
         cachedResult = nil
     }
-    
+
     func cache(_ result: Bool)
     {
         cachedResult = result
@@ -48,7 +49,7 @@ class BaseStringValidator: UserInputValidatorProtocol
     
     func error(_ string: String?)
     {
-        target.setError(text: string)
+        if errorsEnabled { target.setError(text: string) }
     }
     
     init(target: StringUserInputValidatable)

@@ -28,6 +28,8 @@ public enum APIError<ErrorModel: APIDecodableErrorModelProtocol>: Error
     case notFound(String, ErrorModel?)
     /// 405 Method Not Allowed
     case methodNotAllowed(String, ErrorModel?)
+    /// 408 Method Not Allowed
+    case requestTimeout(String, ErrorModel?)
     /// 422 Unprocessable Entity
     case parameters(String, ErrorModel?)
 

@@ -29,7 +29,7 @@ class PhoneNumberValidator: BaseStringValidator
         }
         else
         {
-            target.setError(text: L10n.Account.Field.Phone.validationError)
+            target.setError(text: L10n.Profile.Field.Phone.validationError)
         }
         
         return isValid

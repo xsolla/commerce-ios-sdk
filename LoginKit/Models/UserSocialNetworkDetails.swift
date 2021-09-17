@@ -17,19 +17,19 @@ import Foundation
 public struct UserSocialNetworkInfo
 {
     /// User's full name.
-    let userFullName: String?
+    public let userFullName: String?
 
     /// User's nickname.
-    let userNickname: String?
+    public let userNickname: String?
 
     /// User's picture URL.
-    let userPictureURL: URL?
+    public let userPictureURL: URL?
 
     /// Social network name.
-    let socialNetworkName: String
+    public let socialNetworkName: String
 
     /// Social network ID.
-    let socialNetworkId: String
+    public let socialNetworkId: String
 }
 
 extension UserSocialNetworkInfo

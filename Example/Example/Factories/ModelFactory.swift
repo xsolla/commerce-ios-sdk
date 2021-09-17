@@ -25,6 +25,7 @@ protocol ModelFactoryProtocol
     func createVirtualCurrencyBalanceProvider(params: VirtualCurrencyBalanceProviderBuildParams) -> VirtualCurrencyBalanceProvider
     func createUserProfile(params: UserProfileBuildParams) -> UserProfile
     func createUserCharacter(params: UserCharacterBuildParams) -> UserCharacter
+    func createSocialNetworksList(params: SocialNetworksListParams) -> SocialNetworksListProtocol
 }
 
 class ModelFactory: ModelFactoryProtocol
@@ -65,7 +66,7 @@ class ModelFactory: ModelFactoryProtocol
     
     func createUserProfile(params: UserProfileBuildParams) -> UserProfile
     {
-        return UserProfile(dependencies: .init(asyncUtility: UserProfileAsyncUtility(api: self.params.xsollaSDK)))
+        return UserProfile(dependencies: .init(asyncUtility: params.asyncUtility))
     }
 
     func createUserCharacter(params: UserCharacterBuildParams) -> UserCharacter
@@ -80,6 +81,14 @@ class ModelFactory: ModelFactoryProtocol
                                                       readonlyAttributesDataSource: params.readonlyAttributesDataSource)
 
         return UserCharacter(dependencies: dependencies)
+    }
+    
+    func createSocialNetworksList(params: SocialNetworksListParams) -> SocialNetworksListProtocol
+    {
+        let socialNetworksList = SocialNetworksList()
+        socialNetworksList.setup(socialNetworks: params.socialNetworks)
+        
+        return socialNetworksList
     }
 
     // MARK: - Initialization
@@ -141,4 +150,12 @@ struct UserCharacterBuildParams
     let readonlyAttributesDataSource: UserAttributesListDataSource
 }
 
-typealias UserProfileBuildParams = EmptyParams
+struct SocialNetworksListParams
+{
+    let socialNetworks: [SocialNetwork]
+}
+
+struct UserProfileBuildParams
+{
+    let asyncUtility: LoginAsyncUtilityProtocol
+}

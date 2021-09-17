@@ -163,7 +163,7 @@ class VirtualItemsListDatasource
         
         self.dataSources = self.groups.enumerated().map
         {
-            let params = VirtualItemsListGroupDataSourceBuildParams(groupIndex: $0.offset, dataSource: self)
+            let params = VirtualItemsListGroupDataSourceFactoryParams(groupIndex: $0.offset, dataSource: self)
             { [weak self] action, item in
                 
                 self?.itemActionHandler?(action, item)

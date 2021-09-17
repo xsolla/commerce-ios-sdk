@@ -15,6 +15,8 @@ internal enum StoryboardScene {
   internal enum Authentication: StoryboardType {
     internal static let storyboardName = "Authentication"
 
+    internal static let authenticationOptionsSelector = SceneType<Example.AuthenticationOptionsSelectorVC>(storyboard: Authentication.self, identifier: "AuthenticationOptionsSelector")
+
     internal static let login = SceneType<Example.LoginVC>(storyboard: Authentication.self, identifier: "Login")
 
     internal static let main = SceneType<Example.AuthenticationMainVC>(storyboard: Authentication.self, identifier: "Main")
@@ -22,6 +24,13 @@ internal enum StoryboardScene {
     internal static let recoverPassword = SceneType<Example.RecoverPasswordVC>(storyboard: Authentication.self, identifier: "RecoverPassword")
 
     internal static let signup = SceneType<Example.SignupVC>(storyboard: Authentication.self, identifier: "Signup")
+  }
+  internal enum AuthenticationOTP: StoryboardType {
+    internal static let storyboardName = "AuthenticationOTP"
+
+    internal static let otpInputCode = SceneType<Example.OTPInputCodeVC>(storyboard: AuthenticationOTP.self, identifier: "OTPInputCode")
+
+    internal static let otpStart = SceneType<Example.OTPStartVC>(storyboard: AuthenticationOTP.self, identifier: "OTPStart")
   }
   internal enum BundlePreview: StoryboardType {
     internal static let storyboardName = "BundlePreview"
@@ -57,8 +66,17 @@ internal enum StoryboardScene {
 
     internal static let sideMenuContent = SceneType<Example.SideMenuContentVC>(storyboard: SideMenu.self, identifier: "SideMenuContent")
   }
+  internal enum SocialNetworksList: StoryboardType {
+    internal static let storyboardName = "SocialNetworksList"
+
+    internal static let socialNetworksList = SceneType<Example.SocialNetworksListVC>(storyboard: SocialNetworksList.self, identifier: "SocialNetworksList")
+  }
   internal enum UserProfile: StoryboardType {
     internal static let storyboardName = "UserProfile"
+
+    internal static let connectedDevicesList = SceneType<Example.ConnectedDevicesListVC>(storyboard: UserProfile.self, identifier: "ConnectedDevicesList")
+
+    internal static let upgradeAccount = SceneType<Example.UpgradeAccountVC>(storyboard: UserProfile.self, identifier: "UpgradeAccount")
 
     internal static let userProfile = SceneType<Example.UserProfileVC>(storyboard: UserProfile.self, identifier: "UserProfile")
 

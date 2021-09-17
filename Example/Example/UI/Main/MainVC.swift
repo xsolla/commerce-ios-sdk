@@ -17,13 +17,21 @@ protocol MainVCProtocol: BaseViewController, VirtualCurrencyBalanceProviderDeleg
 {
     var sideMenuRequestHandler: (() -> Void)? { get set }
     var addCurrencyHandler: (() -> Void)? { get set }
+    func setBalanceView(visible: Bool)
 }
 
 class MainVC: BaseViewController, MainVCProtocol
 {
     // MainVCProtocol
+
     var sideMenuRequestHandler: (() -> Void)?
     var addCurrencyHandler: (() -> Void)?
+
+    func setBalanceView(visible: Bool)
+    {
+        balanceViewIsVisible = visible
+        if isViewLoaded { updateCurrencyBalanceView() }
+    }
 
     @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var menuButton: UIButton!
@@ -35,7 +43,9 @@ class MainVC: BaseViewController, MainVCProtocol
     
     private var currency1Balance: VirtualCurrencyBalance?
     private var currency2Balance: VirtualCurrencyBalance?
-    
+
+    private var balanceViewIsVisible: Bool = true
+
     func embedNavigationController(_ controller: NavigationController)
     {
         contentNavigationController = controller
@@ -80,8 +90,10 @@ class MainVC: BaseViewController, MainVCProtocol
     private func updateCurrencyBalanceView()
     {
         guard isViewLoaded else { return }
+
         balanceView.currency1Balance = currency1Balance
         balanceView.currency2Balance = currency2Balance
+        balanceView.isHidden = !balanceViewIsVisible
     }
     
     // MARK: - Handlers

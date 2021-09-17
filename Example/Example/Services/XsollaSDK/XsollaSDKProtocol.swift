@@ -46,7 +46,7 @@ protocol XsollaSDKProtocol
     
     func generateJWT(grantType: TokenGrantType,
                      clientId: Int,
-                     refreshToken: String?,
+                     refreshToken: RefreshToken?,
                      clientSecret: String?,
                      redirectUri: String?,
                      authCode: String?,
@@ -66,6 +66,62 @@ protocol XsollaSDKProtocol
                        loginUrl: String?,
                        completion: ((Result<Void, Error>) -> Void)?)
     
+    func startAuthByEmail(oAuth2Params: OAuth2Params,
+                          email: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: ((Result<String, Error>) -> Void)?)
+    
+    func completeAuthByEmail(clientId: Int,
+                             code: String,
+                             email: String,
+                             operationId: String,
+                             completion: ((Result<String, Error>) -> Void)?)
+    
+    func startAuthByPhone(oAuth2Params: OAuth2Params,
+                          phoneNumber: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: ((Result<String, Error>) -> Void)?)
+    
+    func completeAuthByPhone(clientId: Int,
+                             code: String,
+                             phoneNumber: String,
+                             operationId: String,
+                             completion: ((Result<String, Error>) -> Void)?)
+
+    func getConfirmationCode(projectId: String,
+                             login: String,
+                             operationId: String,
+                             completion: ((Result<String, Error>) -> Void)?)
+
+    func resendConfirmationLink(clientId: Int,
+                                redirectUri: String,
+                                state: String,
+                                username: String,
+                                completion: ((Result<Void, Error>) -> Void)?)
+
+    func authWithDeviceId(oAuth2Params: OAuth2Params,
+                          device: String,
+                          deviceId: String,
+                          completion: ((Result<String, Error>) -> Void)?)
+    
+    func getUserConnectedDevices(completion: ((Result<[DeviceInfo], Error>) -> Void)?)
+    
+    func linkDeviceToAccount(device: String,
+                             deviceId: String,
+                             completion: ((Result<Void, Error>) -> Void)?)
+    
+    func unlinkDeviceFromAccount(deviceId: String,
+                                 completion: ((Result<Void, Error>) -> Void)?)
+
+    func addUsernameAndPassword(username: String,
+                                password: String,
+                                email: String,
+                                promoEmailAgreement: Bool,
+                                redirectUri: String?,
+                                completion: ((Result<Bool, Error>) -> Void)?)
+
     func getCurrentUserDetails(completion: ((Result<UserProfileDetails, Error>) -> Void)?)
     
     func updateCurrentUserDetails(birthday: Date?,
@@ -98,16 +154,11 @@ protocol XsollaSDKProtocol
                                   userID: String,
                                   completion: ((Result<Void, Error>) -> Void)?)
     
-    func getLinkedNetworks(completion: ((Result<[UserSocialNetworkInfo], Error>) -> Void)?)
+    func getLinkedSocialNetworks(completion: ((Result<[UserSocialNetworkInfo], Error>) -> Void)?)
     
-    func getURLToLinkSocialNetworkToAccount(providerName: String,
-                                            loginURL: String,
-                                            completion: ((Result<String, Error>) -> Void)?)
-    
-    func startSocialNetworkLinking(toProvider providerName: String,
-                                   loginURL: String,
-                                   presenter: Presenter,
-                                   completion: ((Result<Void, Error>) -> Void)?)
+    func getSocialNetworkLinkingURL(for socialNetwork: SocialNetwork,
+                                    callbackURL: String,
+                                    completion: ((Result<URL, Error>) -> Void)?)
     
     func getClientUserAttributes(keys: [String]?,
                                  publisherProjectId: Int?,

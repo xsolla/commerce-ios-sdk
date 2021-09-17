@@ -47,6 +47,16 @@ class FormValidator: FormValidatorProtocol
         validators[key]?.active = true
     }
     
+    func enableErrorsForValidator(withKey key: Int)
+    {
+        validators[key]?.errorsEnabled = true
+    }
+
+    func disableErrorsForValidator(withKey key: Int)
+    {
+        validators[key]?.errorsEnabled = false
+    }
+
     init(factory: UserInputValidatorFactoryProtocol)
     {
         self.factory = factory

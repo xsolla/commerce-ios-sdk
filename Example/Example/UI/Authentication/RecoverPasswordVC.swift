@@ -83,7 +83,7 @@ class RecoverPasswordVC: BaseViewController, RecoverPasswordVCProtocol
     
     private func setupMiscButton()
     {
-        miscButton.setTitleColor(.xsolla_lightSlateGrey, for: .normal)
+        miscButton.setTitleColor(.xsolla_inactiveWhite, for: .normal)
         miscButton.titleLabel?.font = .xolla_button
         miscButton.setTitle(L10n.RecoverPassword.Button.back, for: .normal)
     }

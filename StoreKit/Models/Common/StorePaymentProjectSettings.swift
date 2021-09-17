@@ -11,12 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing and permissions and
 
-// swiftlint:disable redundant_string_enum_value
-
 import Foundation
 
 /// Custom project settings.
-public struct StorePaymentProjectSettings
+public struct StorePaymentProjectSettings: Encodable
 {
     public let ui: UISettings
 
@@ -30,7 +28,7 @@ extension StorePaymentProjectSettings
 {
     public struct UISettings: Encodable
     {
-        /// Payment UI theme. Can be `default` or `defaultDark`.
+        /// Payment UI theme. Can be `default`, `defaultDark` or `ps4-default-dark`.
         public let theme: Theme
 
         public init(theme: Theme)
@@ -42,28 +40,10 @@ extension StorePaymentProjectSettings
 
 extension StorePaymentProjectSettings.UISettings
 {
-    public enum Theme: String
+    public enum Theme: String, Encodable
     {
         case `default` = "default"
         case defaultDark = "default_dark"
-    }
-}
-
-extension StorePaymentProjectSettings: Encodable
-{
-
-}
-
-extension StorePaymentProjectSettings.UISettings.Theme: Encodable
-{
-    enum CodingKeys: String, CodingKey
-    {
-        case theme = "theme"
-    }
-
-    public func encode(to encoder: Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(rawValue, forKey: .theme)
+        case ps4DefaultDark = "ps4-default-dark"
     }
 }

@@ -18,5 +18,6 @@ struct Factories
     let coordinatorFactory: CoordinatorFactoryProtocol
     let viewControllerFactory: ViewControllerFactoryProtocol
     let datasourceFactory: DatasourceFactoryProtocol
-    let modelFactoryProtocol: ModelFactoryProtocol
+    let modelFactory: ModelFactoryProtocol
+    let asyncUtilsFactory: AsyncUtilsFactoryProtocol
 }

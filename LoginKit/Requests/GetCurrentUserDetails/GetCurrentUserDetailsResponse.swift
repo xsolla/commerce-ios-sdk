@@ -27,6 +27,9 @@ struct GetCurrentUserDetailsResponse: Decodable
     let gender: String?
     let groups: [Group]
     let id: String
+    let isAnonymous: Bool
+    var isLastEmailConfirmed: Bool?
+    var isUserActive: Bool
     let lastLogin: Date
     let lastName: String?
     let name: String?
@@ -36,7 +39,7 @@ struct GetCurrentUserDetailsResponse: Decodable
     let registered: Date
     let tag: String?
     let username: String?
-    
+
     enum CodingKeys: String, CodingKey
     {
         case ban = "ban"
@@ -49,6 +52,9 @@ struct GetCurrentUserDetailsResponse: Decodable
         case gender = "gender"
         case groups = "groups"
         case id = "id"
+        case isAnonymous = "is_anonymous"
+        case isLastEmailConfirmed = "is_last_email_confirmed"
+        case isUserActive = "is_user_active"
         case lastLogin = "last_login"
         case lastName = "last_name"
         case name = "name"
@@ -72,6 +78,9 @@ struct GetCurrentUserDetailsResponse: Decodable
         gender = try container.decodeIfPresent(String.self, forKey: .gender)
         groups = try container.decode([Group].self, forKey: .groups)
         id = try container.decode(String.self, forKey: .id)
+        isAnonymous = try container.decode(Bool.self, forKey: .isAnonymous)
+        isLastEmailConfirmed = try container.decodeIfPresent(Bool.self, forKey: .isLastEmailConfirmed)
+        isUserActive = try container.decode(Bool.self, forKey: .isUserActive)
         lastName = try container.decodeIfPresent(String.self, forKey: .lastName)
         name = try container.decodeIfPresent(String.self, forKey: .name)
         nickname = try container.decodeIfPresent(String.self, forKey: .nickname)

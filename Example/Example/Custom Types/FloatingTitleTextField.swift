@@ -12,12 +12,13 @@
 // See the License for the specific language governing and permissions and
 
 import MaterialComponents.MaterialTextFields
+import UIKit
 
 //@IBDesignable
 class FloatingTitleTextField: UIView
 {
     var text: String? { textInput.text }
-    
+
     override var tag: Int { get { textInput.tag } set { textInput.tag = newValue } }
 
     weak var delegate: UITextFieldDelegate? { didSet { delegateProxy.delegate = delegate } }
@@ -185,7 +186,27 @@ class FloatingTitleTextField: UIView
         
         rightButton.setImage(image, for: .normal)
     }
-    
+
+    override func becomeFirstResponder() -> Bool
+    {
+        return textInput.becomeFirstResponder()
+    }
+
+    override func resignFirstResponder() -> Bool
+    {
+        return textInput.resignFirstResponder()
+    }
+
+    override var canBecomeFirstResponder: Bool
+    {
+        return textInput.canBecomeFirstResponder
+    }
+
+    override var isFirstResponder: Bool
+    {
+        return textInput.isFirstResponder
+    }
+
     // MARK: - Lifecicle
     
     override func layoutSubviews()
@@ -277,4 +298,30 @@ extension FloatingTitleTextField: StringUserInputValidatable
 extension FloatingTitleTextField
 {
     private class DelegateProxy: TextFieldDelegateProxy {}
+}
+
+extension FloatingTitleTextField
+{
+    func configureTextField(_ configure: ((UITextField) -> Void)) { configure(textInput) }
+
+    @discardableResult
+    func configureTextFieldDefaults() -> FloatingTitleTextField
+    {
+        configureTextField(defaultConfigure)
+
+        return self
+    }
+
+    var defaultConfigure: (UITextField) -> Void
+    {
+        { textField in
+
+            textField.autocorrectionType = .no
+            textField.autocapitalizationType = .none
+            textField.smartDashesType = .no
+            textField.smartQuotesType = .no
+            textField.spellCheckingType = .no
+            textField.returnKeyType = .next
+        }
+    }
 }

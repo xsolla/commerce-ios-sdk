@@ -16,11 +16,17 @@ import UIKit
 class BaseViewController: UIViewController
 {
     var navigationBarIsHidden: Bool? { nil }
+    var onNavigationBarBackButton: (BaseViewController) -> Void =
+    { viewController in
+        viewController.navigationController?.popViewController(animated: true)
+    }
     
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
+
+        setupNavigationBar(navigationItem: navigationItem)
+
         if let navigationBarIsHidden = navigationBarIsHidden
         {
             navigationController?.setNavigationBarHidden(navigationBarIsHidden, animated: true)
@@ -49,5 +55,22 @@ class BaseViewController: UIViewController
     {
         let deinitingType = String(describing: type(of: self))
         logger.debug(.deinitialization, domain: .example) { deinitingType }
+    }
+
+    func setupNavigationBar(navigationItem: UINavigationItem)
+    {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: Asset.Images.navigationBackIcon.image,
+                                                           style: .plain,
+                                                           target: self,
+                                                           action: #selector(popToPrevious))
+
+        navigationController?.navigationBar.barTintColor = .xsolla_black
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+
+    @objc func popToPrevious()
+    {
+        onNavigationBarBackButton(self)
     }
 }

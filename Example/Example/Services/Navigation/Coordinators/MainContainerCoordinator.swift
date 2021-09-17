@@ -16,7 +16,6 @@ import UIKit
 protocol MainContainerCoordinatorProtocol: Coordinator, Finishable
 {
     var onLogout: (() -> Void)? { get set }
-    var onHelp: (() -> Void)? { get set }
 }
 
 class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Dependencies,
@@ -38,8 +37,14 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         let viewController: MainVCProtocol
         var contentNavigationController: NavigationController
         let contentCoordinator: MainContentCoordinatorProtocol
-        
-        let userProfile = dependencies.modelFactory.createUserProfile(params: .none)
+
+        let params = LoginAsyncUtilsFactoryParams(clientId: AppConfig.loginClientId,
+                                                  redirectURL: AppConfig.redirectUrl,
+                                                  scope: AppConfig.defaultLoginScope)
+
+        let loginAsyncUtility = dependencies.asyncUtilsFactory.createLoginAsyncUtils(params: params)
+
+        let userProfile = dependencies.modelFactory.createUserProfile(params: .init(asyncUtility: loginAsyncUtility))
         self.userProfile = userProfile
         
         do
@@ -52,27 +57,37 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         do
         {
             let factory = dependencies.coordinatorFactory
+
+            let params = MainContentCoordinatorFactoryParams(userProfile: userProfile,
+                                                             loginAsyncUtility: loginAsyncUtility)
+
             contentCoordinator = factory.createMainContentCoordinator(presenter: contentNavigationController,
-                                                                      params: .init(userProfile: userProfile))
+                                                                      params: params)
+
             contentCoordinator.reloadRequestHandler = { [weak self] in self?.currencyBalanceProvider?.requestData() }
         }
-        
-        startChildCoordinator(contentCoordinator) { }
-        contentCoordinator.show(screen: .character)
         
         self.contentCoordinator = contentCoordinator
         self.mainVC = viewController
         
         self.currencyBalanceProvider = getCurrencyBalanceProvider()
         self.currencyBalanceProvider?.delegate = mainVC
-        
-        pushViewController(viewController, pushMode: .replaceCurrent)
-        
+
         viewController.sideMenuRequestHandler = { [weak self] in self?.showMenu() }
-        
+        viewController.addCurrencyHandler =
+        { [weak self] in
+            self?.mainVC?.setBalanceView(visible: true)
+            self?.contentCoordinator?.show(screen: .virtualCurrency)
+        }
+
         self.userProfile?.fetchUserDetails(completion: nil)
         self.userProfile?.addListener(self)
         self.currencyBalanceProvider?.requestData()
+
+        startChildCoordinator(contentCoordinator) { }
+        showScreen(.account)
+
+        pushViewController(viewController, pushMode: .replaceCurrent)
     }
 
     // MARK: - Private
@@ -85,46 +100,56 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
 
         let sideMenuContentVC = factory.createSideMenuContentVC(params: .none)
         let sideMenuVC = factory.createSideMenuVC(params: .init(contentViewController: sideMenuContentVC))
-        
+
+        let message: String? = userProfile?.userDetails.flatMap
+        { details in
+
+            if details.email.nilIfEmpty != nil && details.isLastEmailConfirmed != true
+            {
+                return L10n.Profile.confirmEmailMessage
+            }
+            else if details.isAnonymous == true && details.email.nilIfEmpty == nil
+            {
+                return L10n.Profile.UpgradeMessage.profile
+            }
+
+            return nil
+        }
+
         let currentUserInfo = userProfile?.userDetails
         sideMenuContentVC.setProfileInfo(name: currentUserInfo?.nickname,
                                          email: currentUserInfo?.email,
-                                         avatarUrl: URL(string: currentUserInfo?.picture ?? ""))
+                                         avatarUrl: URL(string: currentUserInfo?.picture ?? ""),
+                                         message: message)
         
         sideMenuContentVC.profileMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
             sideMenuVC.hide(animated: true)
-            self?.contentCoordinator?.show(screen: .account)
+            self?.showScreen(.account)
         }
         
         sideMenuContentVC.inventoryMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
             sideMenuVC.hide(animated: true)
-            self?.contentCoordinator?.show(screen: .inventory)
+            self?.showScreen(.inventory)
         }
         
         sideMenuContentVC.virtualItemsMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
             sideMenuVC.hide(animated: true)
-            self?.contentCoordinator?.show(screen: .virtualItems)
+            self?.showScreen(.virtualItems)
         }
         
         sideMenuContentVC.virtualCurrencyMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
             sideMenuVC.hide(animated: true)
-            self?.contentCoordinator?.show(screen: .virtualCurrency)
+            self?.showScreen(.virtualCurrency)
         }
 
         sideMenuContentVC.characterMenuItemHandler =
         { [weak self, unowned sideMenuVC] in
             sideMenuVC.hide(animated: true)
-            self?.contentCoordinator?.show(screen: .character)
-        }
-        
-        sideMenuContentVC.helpMenuItemHandler =
-        { [weak self, unowned sideMenuVC] in
-            sideMenuVC.hide(animated: true)
-            self?.onHelp?()
+            self?.showScreen(.character)
         }
         
         sideMenuContentVC.logoutMenuItemHandler =
@@ -137,7 +162,33 @@ class MainContainerCoordinator: BaseCoordinator<MainContainerCoordinator.Depende
         
         presentViewController(sideMenuVC, animated: false, completion: nil)
     }
-    
+
+    private func showScreen(_ screen: MainContentCoordinator.Screen)
+    {
+        switch screen
+        {
+            case .account:
+                mainVC?.setBalanceView(visible: false)
+                contentCoordinator?.show(screen: .account)
+
+            case .character:
+                mainVC?.setBalanceView(visible: true)
+                contentCoordinator?.show(screen: .character)
+
+            case .inventory:
+                mainVC?.setBalanceView(visible: true)
+                contentCoordinator?.show(screen: .inventory)
+
+            case .virtualCurrency:
+                mainVC?.setBalanceView(visible: true)
+                contentCoordinator?.show(screen: .virtualCurrency)
+
+            case .virtualItems:
+                mainVC?.setBalanceView(visible: true)
+                contentCoordinator?.show(screen: .virtualItems)
+        }
+    }
+
     private func getCurrencyBalanceProvider() -> VirtualCurrencyBalanceProvider?
     {
         let params = VirtualCurrencyBalanceProviderBuildParams(projectId: AppConfig.projectId)
@@ -150,11 +201,14 @@ extension MainContainerCoordinator: UserProfileListener
     func userProfileDidUpdateDetails(_ userProfile: UserProfileProtocol)
     {
         guard let viewController = sideMenuContentVC, userProfile.state == .loaded else { return }
-        
-        let avatarURL = URL(string: userProfile.userDetails?.picture ?? "")
-        viewController.setProfileInfo(name: userProfile.userDetails?.nickname,
-                                      email: userProfile.userDetails?.email,
-                                      avatarUrl: avatarURL)
+
+        let message = userProfile.userDetails.flatMap { $0.isAnonymous ? L10n.Profile.UpgradeMessage.menu : nil }
+
+        let currentUserInfo = userProfile.userDetails
+        viewController.setProfileInfo(name: currentUserInfo?.nickname,
+                                      email: currentUserInfo?.email,
+                                      avatarUrl: URL(string: currentUserInfo?.picture ?? ""),
+                                      message: message)
     }
     
     func userProfileDidResetPassword()
@@ -171,6 +225,7 @@ extension MainContainerCoordinator
         let viewControllerFactory: ViewControllerFactoryProtocol
         let modelFactory: ModelFactoryProtocol
         let xsollaSDK: XsollaSDKProtocol
+        let asyncUtilsFactory: AsyncUtilsFactoryProtocol
     }
     
     typealias Params = EmptyParams

@@ -12,19 +12,23 @@
 // See the License for the specific language governing and permissions and
 
 // swiftlint:disable line_length
+// swiftlint:disable type_name
 
 import UIKit
 
 protocol CoordinatorFactoryProtocol
 {
     func createMainContainerCoordinator(presenter: Presenter?,
-                                        params: MainContainerCoordinatorBuildParameters) -> MainContainerCoordinatorProtocol
+                                        params: MainContainerCoordinatorFactoryParams) -> MainContainerCoordinatorProtocol
     
     func createMainContentCoordinator(presenter: Presenter?,
-                                      params: MainContentCoordinatorBuildParameters) -> MainContentCoordinatorProtocol
+                                      params: MainContentCoordinatorFactoryParams) -> MainContentCoordinatorProtocol
     
     func createAuthenticationCoordinator(presenter: Presenter?,
-                                         params: AuthenticationCoordinatorBuildParameters) -> AuthenticationCoordinatorProtocol
+                                         params: AuthenticationCoordinatorFactoryParams) -> AuthenticationCoordinatorProtocol
+
+    func createAuthenticationOTPCoordinator(presenter: Presenter?,
+                                            params: AuthenticationOTPCoordinatorFactoryParams) -> AuthenticationOTPCoordinatorProtocol
 }
 
 class CoordinatorFactory: CoordinatorFactoryProtocol
@@ -32,12 +36,13 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
     // MARK: - Public
     
     func createMainContainerCoordinator(presenter: Presenter?,
-                                        params: MainContainerCoordinatorBuildParameters) -> MainContainerCoordinatorProtocol
+                                        params: MainContainerCoordinatorFactoryParams) -> MainContainerCoordinatorProtocol
     {
         let coordinatorDependencies = MainContainerCoordinator.Dependencies(coordinatorFactory: self,
                                                                             viewControllerFactory: self.params.viewControllerFactory,
                                                                             modelFactory: self.params.modelFactory,
-                                                                            xsollaSDK: self.params.xsollaSDK)
+                                                                            xsollaSDK: self.params.xsollaSDK,
+                                                                            asyncUtilsFactory: self.params.asyncUtilsFactory)
         
         let coordinator = MainContainerCoordinator(presenter: presenter,
                                                    dependencies: coordinatorDependencies,
@@ -47,37 +52,104 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
     }
     
     func createMainContentCoordinator(presenter: Presenter?,
-                                      params: MainContentCoordinatorBuildParameters) -> MainContentCoordinatorProtocol
+                                      params: MainContentCoordinatorFactoryParams) -> MainContentCoordinatorProtocol
     {
         let coordinatorDependencies = MainContentCoordinator.Dependencies(coordinatorFactory: self,
                                                                           viewControllerFactory: self.params.viewControllerFactory,
                                                                           datasourceFactory: self.params.datasourceFactory,
+                                                                          asyncUtilsFactory: self.params.asyncUtilsFactory,
                                                                           modelFactory: self.params.modelFactory,
                                                                           store: self.params.store,
                                                                           userProfile: params.userProfile)
         
         let coordinator = MainContentCoordinator(presenter: presenter,
                                                  dependencies: coordinatorDependencies,
-                                                 params: .none)
+                                                 params: .init(loginAsyncUtility: params.loginAsyncUtility))
         
         return coordinator
     }
     
     func createAuthenticationCoordinator(presenter: Presenter?,
-                                         params: AuthenticationCoordinatorBuildParameters) -> AuthenticationCoordinatorProtocol
+                                         params: AuthenticationCoordinatorFactoryParams) -> AuthenticationCoordinatorProtocol
     {
         let coordinatorDependencies = AuthenticationCoordinator.Dependencies(coordinatorFactory: self,
                                                                              viewControllerFactory: self.params.viewControllerFactory,
                                                                              xsollaSDK: self.params.xsollaSDK,
-                                                                             loginManager: params.loginManager)
-        
+                                                                             loginManager: params.loginManager,
+                                                                             loginAsyncUtility: params.loginAsyncUtility,
+                                                                             modelFactory: self.params.modelFactory)
+
         let coordinator = AuthenticationCoordinator(presenter: presenter,
                                                     dependencies: coordinatorDependencies,
                                                     params: .none)
         
         return coordinator
     }
-    
+
+    func createAuthenticationOTPCoordinator(presenter: Presenter?,
+                                            params: AuthenticationOTPCoordinatorFactoryParams) -> AuthenticationOTPCoordinatorProtocol
+    {
+        let otpSequence: OTPSequenceProtocol =
+        {
+            switch params.otpType
+            {
+                case .email: return OTPEmailSequence(sdk: self.params.xsollaSDK)
+                case .phone: return OTPPhoneSequence(sdk: self.params.xsollaSDK)
+            }
+        }()
+
+        var configuration: OTPSequenceConfiguration =
+        {
+            switch params.otpType
+            {
+                case .email: return OTPSequenceConfiguration.email
+                case .phone: return OTPSequenceConfiguration.phone
+            }
+        }()
+
+        configuration.configurePayloadTextField =
+        { textField in
+
+            textField.autocorrectionType = .no
+            textField.autocapitalizationType = .none
+            textField.smartDashesType = .no
+            textField.smartQuotesType = .no
+            textField.spellCheckingType = .no
+
+            switch params.otpType
+            {
+                case .email: textField.keyboardType = .default
+                case .phone: textField.keyboardType = .phonePad
+            }
+        }
+
+        configuration.configureCodeTextField =
+        { textField in
+
+            textField.keyboardType = .numberPad
+
+            textField.autocorrectionType = .no
+            textField.autocapitalizationType = .none
+            textField.smartDashesType = .no
+            textField.smartQuotesType = .no
+            textField.spellCheckingType = .no
+        }
+
+        let coordinatorDependencies = AuthenticationOTPCoordinator.Dependencies(coordinatorFactory: self,
+                                                                                viewControllerFactory: self.params.viewControllerFactory,
+                                                                                xsollaSDK: self.params.xsollaSDK,
+                                                                                loginAsyncUtility: params.loginAsyncUtility,
+                                                                                loginManager: params.loginManager,
+                                                                                otpSequence: otpSequence,
+                                                                                configuration: configuration)
+
+        let coordinator = AuthenticationOTPCoordinator(presenter: presenter,
+                                                       dependencies: coordinatorDependencies,
+                                                       params: .none)
+
+        return coordinator
+    }
+
     // MARK: - Private
     
     private let params: Params
@@ -93,6 +165,7 @@ extension CoordinatorFactory
     struct Params
     {
         let viewControllerFactory: ViewControllerFactoryProtocol
+        let asyncUtilsFactory: AsyncUtilsFactoryProtocol
         let datasourceFactory: DatasourceFactoryProtocol
         let modelFactory: ModelFactoryProtocol
         let xsollaSDK: XsollaSDKProtocol
@@ -100,14 +173,29 @@ extension CoordinatorFactory
     }
 }
 
-typealias MainContainerCoordinatorBuildParameters = EmptyParams
+typealias MainContainerCoordinatorFactoryParams = EmptyParams
 
-struct AuthenticationCoordinatorBuildParameters
+struct AuthenticationCoordinatorFactoryParams
 {
     let loginManager: LoginManagerProtocol
+    let loginAsyncUtility: LoginAsyncUtilityProtocol
 }
 
-struct  MainContentCoordinatorBuildParameters
+struct  MainContentCoordinatorFactoryParams
 {
     let userProfile: UserProfileProtocol
+    let loginAsyncUtility: LoginAsyncUtilityProtocol
+}
+
+struct  AuthenticationOTPCoordinatorFactoryParams
+{
+    let otpType: OTPType
+    let loginManager: LoginManagerProtocol
+    let loginAsyncUtility: LoginAsyncUtilityProtocol
+
+    enum OTPType
+    {
+        case phone
+        case email
+    }
 }

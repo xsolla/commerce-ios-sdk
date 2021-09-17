@@ -14,37 +14,47 @@
 import UIKit
 import MaterialComponents.MaterialTabs_TabBarViewTheming
 
+// swiftlint:disable type_name
+
 protocol ViewControllerFactoryProtocol: AnyObject
 {
-    func createAuthenticationMainVC(params: AuthenticationMainVCBuildParams) -> AuthenticationMainVCProtocol
-    func createSignupVC(params: SignupVCBuildParams) -> SignupVCProtocol
-    func createLoginVC(params: LoginVCBuildParams) -> LoginVCProtocol
-    func createRecoverPasswordVC(params: RecoverPasswordVCBuildParams) -> RecoverPasswordVCProtocol
-    func createMainVC(params: MainVCBuildParams) -> MainVCProtocol
+    func createAuthenticationMainVC(params: AuthenticationMainVCFactoryParams) -> AuthenticationMainVCProtocol
+    func createSignupVC(params: SignupVCFactoryParams) -> SignupVCProtocol
+    func createLoginVC(params: LoginVCFactoryParams) -> LoginVCProtocol
+    func createRecoverPasswordVC(params: RecoverPasswordVCFactoryParams) -> RecoverPasswordVCProtocol
+    func createMainVC(params: MainVCFactoryParams) -> MainVCProtocol
     func createMainVCContentNavigationController() -> NavigationController
-    func createVirtualItemsVC(params: VirtualItemsVCBuildParams) -> VirtualItemsVCProtocol
-    func createBundlePreviewVC(params: BundlePreviewVCBuildParams) -> BundlePreviewVCProtocol
-    func createVirtualCurrencyVC(params: VirtualCurrencyVCBuildParams) -> VirtualCurrencyVCProtocol
-    func createInventoryVC(params: InventoryVCBuildParams) -> InventoryVCProtocol
-    func createSideMenuVC(params: SideMenuVCBuildParams) -> SideMenuVCProtocol
-    func createSideMenuContentVC(params: SideMenuContentVCBuildParams) -> SideMenuContentVCProtocol
-    func createSocialNetworksListVC(params: SocialNetworksListVCBuildParams) -> SocialNetworksListVCProtocol
-    func createWebBrowserVC(params: WebBrowserVCBuildParams) -> WebBrowserVCProtocol
-    func createTableviewVC(params: TableviewVCBuildParams) -> UITableViewController
-    func createTableviewVC(params: TableviewVCBuildParams,
+    func createVirtualItemsVC(params: VirtualItemsVCFactoryParams) -> VirtualItemsVCProtocol
+    func createBundlePreviewVC(params: BundlePreviewVCFactoryParams) -> BundlePreviewVCProtocol
+    func createVirtualCurrencyVC(params: VirtualCurrencyVCFactoryParams) -> VirtualCurrencyVCProtocol
+    func createInventoryVC(params: InventoryVCFactoryParams) -> InventoryVCProtocol
+    func createSideMenuVC(params: SideMenuVCFactoryParams) -> SideMenuVCProtocol
+    func createSideMenuContentVC(params: SideMenuContentVCFactoryParams) -> SideMenuContentVCProtocol
+    func createSocialNetworksListVC(params: SocialNetworksListVCFactoryParams) -> SocialNetworksListVCProtocol
+    func createWebBrowserVC(params: WebBrowserVCFactoryParams) -> WebBrowserVCProtocol
+    func createTableviewVC(params: TableviewVCFactoryParams) -> UITableViewController
+    func createTableviewVC(params: TableviewVCFactoryParams,
                            setupTableView: ((UITableView) -> Void)?) -> UITableViewController
-    func createUserProfileVC(params: UserProfileVCBuildParams) -> UserProfileVCProtocol
-    func createUserProfileAvatarSelectorVC(params: UserProfileAvatarSelectorVCBuildParams)
+    func createUserProfileVC(params: UserProfileVCFactoryParams) -> UserProfileVCProtocol
+    func createUserProfileAvatarSelectorVC(params: UserProfileAvatarSelectorVCFactoryParams)
          -> UserProfileAvatarSelectorVCProtocol
-    func createCharacterVC(params: CharacterVCBuildParams) -> CharacterVCProtocol
-    func createAttributeEditorVC(params: AttributeEditorVCBuildParams) -> AttributeEditorVCProtocol
+    func createUpgradeAccountVC(params: UpgradeAccountVCFactoryParams) -> UpgradeAccountVCProtocol
+    func createCharacterVC(params: CharacterVCFactoryParams) -> CharacterVCProtocol
+    func createAttributeEditorVC(params: AttributeEditorVCFactoryParams) -> AttributeEditorVCProtocol
+    func createAuthenticationOptionsVC(params: AuthenticationOptionsVCFactoryParams) -> AuthenticationOptionsVCProtocol
+    func createOTPStartVC(params: OTPStartVCFactoryParams) -> OTPStartVCProtocol
+    func createOTPInputCodeVC(params: OTPInputCodeVCFactoryParams) -> OTPInputCodeVCProtocol
+    func createDevicesListVC(params: DevicesListVCFactoryParams) -> ConnectedDevicesListVCProtocol
+    func createWebFlowURLCallbackListenableVC(params: WebFlowURLCallbackListenableVCFactoryParams)
+         -> WebFlowURLCallbackListenableVCProtocol
 }
 
 class ViewControllerFactory: ViewControllerFactoryProtocol
 {
+
     // MARK: - Authentication
     
-    func createAuthenticationMainVC(params: AuthenticationMainVCBuildParams) -> AuthenticationMainVCProtocol
+    func createAuthenticationMainVC(params: AuthenticationMainVCFactoryParams) -> AuthenticationMainVCProtocol
     {
         let viewController = StoryboardScene.Authentication.main.instantiate()
 
@@ -61,7 +71,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createSignupVC(params: SignupVCBuildParams) -> SignupVCProtocol
+    func createSignupVC(params: SignupVCFactoryParams) -> SignupVCProtocol
     {
         let viewController = StoryboardScene.Authentication.signup.instantiate()
         viewController.formValidator = FormValidator(factory: validatorFactory)
@@ -70,7 +80,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createLoginVC(params: LoginVCBuildParams) -> LoginVCProtocol
+    func createLoginVC(params: LoginVCFactoryParams) -> LoginVCProtocol
     {
         let viewController = StoryboardScene.Authentication.login.instantiate()
         viewController.formValidator = FormValidator(factory: validatorFactory)
@@ -79,7 +89,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createRecoverPasswordVC(params: RecoverPasswordVCBuildParams) -> RecoverPasswordVCProtocol
+    func createRecoverPasswordVC(params: RecoverPasswordVCFactoryParams) -> RecoverPasswordVCProtocol
     {
         let viewController = StoryboardScene.Authentication.recoverPassword.instantiate()
         viewController.formValidator = FormValidator(factory: validatorFactory)
@@ -87,10 +97,36 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         commonSetup(viewController)
         return viewController
     }
-    
+
+    func createAuthenticationOptionsVC(params: AuthenticationOptionsVCFactoryParams) -> AuthenticationOptionsVCProtocol
+    {
+        let viewController = StoryboardScene.Authentication.authenticationOptionsSelector.instantiate()
+
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createOTPStartVC(params: OTPStartVCFactoryParams) -> OTPStartVCProtocol
+    {
+        let viewController = StoryboardScene.AuthenticationOTP.otpStart.instantiate()
+        viewController.configuration = params.configuration
+
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createOTPInputCodeVC(params: OTPInputCodeVCFactoryParams) -> OTPInputCodeVCProtocol
+    {
+        let viewController = StoryboardScene.AuthenticationOTP.otpInputCode.instantiate()
+        viewController.configuration = params.configuration
+
+        commonSetup(viewController)
+        return viewController
+    }
+
     // MARK: - Main
     
-    func createMainVC(params: MainVCBuildParams) -> MainVCProtocol
+    func createMainVC(params: MainVCFactoryParams) -> MainVCProtocol
     {
         let viewController = StoryboardScene.Main.main.instantiate()
         viewController.embedNavigationController(params.navigationController)
@@ -106,7 +142,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return navigationController
     }
     
-    func createVirtualItemsVC(params: VirtualItemsVCBuildParams) -> VirtualItemsVCProtocol
+    func createVirtualItemsVC(params: VirtualItemsVCFactoryParams) -> VirtualItemsVCProtocol
     {
         let viewController = StoryboardScene.VirtualItems.virtualItems.instantiate()
         
@@ -124,7 +160,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createBundlePreviewVC(params: BundlePreviewVCBuildParams) -> BundlePreviewVCProtocol
+    func createBundlePreviewVC(params: BundlePreviewVCFactoryParams) -> BundlePreviewVCProtocol
     {
         let viewController = StoryboardScene.BundlePreview.bundlePreview.instantiate()
         
@@ -139,7 +175,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createVirtualCurrencyVC(params: VirtualCurrencyVCBuildParams) -> VirtualCurrencyVCProtocol
+    func createVirtualCurrencyVC(params: VirtualCurrencyVCFactoryParams) -> VirtualCurrencyVCProtocol
     {
         let viewController = StoryboardScene.VirtualCurrency.virtualCurrency.instantiate()
         
@@ -157,7 +193,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createInventoryVC(params: InventoryVCBuildParams) -> InventoryVCProtocol
+    func createInventoryVC(params: InventoryVCFactoryParams) -> InventoryVCProtocol
     {
         let viewController = StoryboardScene.Inventory.inventory.instantiate()
         
@@ -175,7 +211,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createSideMenuVC(params: SideMenuVCBuildParams) -> SideMenuVCProtocol
+    func createSideMenuVC(params: SideMenuVCFactoryParams) -> SideMenuVCProtocol
     {
         let viewController = StoryboardScene.SideMenu.sideMenu.instantiate()
         viewController.modalPresentationStyle = .overFullScreen
@@ -184,7 +220,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
     
-    func createSideMenuContentVC(params: SideMenuContentVCBuildParams) -> SideMenuContentVCProtocol
+    func createSideMenuContentVC(params: SideMenuContentVCFactoryParams) -> SideMenuContentVCProtocol
     {
         let viewController = StoryboardScene.SideMenu.sideMenuContent.instantiate()
 
@@ -193,16 +229,15 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
 
     // MARK: - Misc
     
-    func createSocialNetworksListVC(params: SocialNetworksListVCBuildParams) -> SocialNetworksListVCProtocol
+    func createSocialNetworksListVC(params: SocialNetworksListVCFactoryParams) -> SocialNetworksListVCProtocol
     {
-        let viewController = SocialNetworksListVC()
-        viewController.dataSource = SocialNetworksListDataSource.init(socialNetworks: params)
+        let viewController = StoryboardScene.SocialNetworksList.socialNetworksList.instantiate()
         
         commonSetup(viewController)
         return viewController
     }
     
-    func createWebBrowserVC(params: WebBrowserVCBuildParams) -> WebBrowserVCProtocol
+    func createWebBrowserVC(params: WebBrowserVCFactoryParams) -> WebBrowserVCProtocol
     {
         let viewController = WebBrowserVC(initialURL: params)
         
@@ -210,7 +245,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createTableviewVC(params: TableviewVCBuildParams) -> UITableViewController
+    func createTableviewVC(params: TableviewVCFactoryParams) -> UITableViewController
     {
         let viewController = BaseTableViewController(nibName: nil, bundle: nil)
 
@@ -218,7 +253,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createTableviewVC(params: TableviewVCBuildParams,
+    func createTableviewVC(params: TableviewVCFactoryParams,
                            setupTableView: ((UITableView) -> Void)?) -> UITableViewController
     {
         let viewController = BaseTableViewController(nibName: nil, bundle: nil)
@@ -229,7 +264,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createUserProfileVC(params: UserProfileVCBuildParams) -> UserProfileVCProtocol
+    func createUserProfileVC(params: UserProfileVCFactoryParams) -> UserProfileVCProtocol
     {
         let viewController = StoryboardScene.UserProfile.userProfile.instantiate()
         viewController.formValidator = FormValidator(factory: validatorFactory)
@@ -238,7 +273,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createUserProfileAvatarSelectorVC(params: UserProfileAvatarSelectorVCBuildParams)
+    func createUserProfileAvatarSelectorVC(params: UserProfileAvatarSelectorVCFactoryParams)
          -> UserProfileAvatarSelectorVCProtocol
     {
         let viewController = StoryboardScene.UserProfile.userProfileAvatarSelector.instantiate()
@@ -253,16 +288,24 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createCharacterVC(params: CharacterVCBuildParams) -> CharacterVCProtocol
+    func createUpgradeAccountVC(params: UpgradeAccountVCFactoryParams) -> UpgradeAccountVCProtocol
+    {
+        let viewController = StoryboardScene.UserProfile.upgradeAccount.instantiate()
+
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createCharacterVC(params: CharacterVCFactoryParams) -> CharacterVCProtocol
     {
         let viewController = StoryboardScene.Character.character.instantiate()
         viewController.userDetailsProvider = params.userProfile
         params.userProfile.addListener(viewController)
 
-        let customTableVCParams = UserAttributesTableVCBuildParams(dataSource: params.customDataSource)
+        let customTableVCParams = UserAttributesTableVCFactoryParams(dataSource: params.customDataSource)
         let customAttributesTableVC = createCustomUserAttributesTableVC(params: customTableVCParams)
 
-        let readonlyTableVCParams = UserAttributesTableVCBuildParams(dataSource: params.readonlyDataSource)
+        let readonlyTableVCParams = UserAttributesTableVCFactoryParams(dataSource: params.readonlyDataSource)
         let readonlyAttributesTableVC = createReadonlyUserAttributesTableVC(params: readonlyTableVCParams)
 
         let customAttributesTabbarItem = UITabBarItem(title: params.customDataSource.title,
@@ -297,7 +340,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createCustomUserAttributesTableVC(params: UserAttributesTableVCBuildParams) -> UITableViewController
+    func createCustomUserAttributesTableVC(params: UserAttributesTableVCFactoryParams) -> UITableViewController
     {
         let viewController = createTableviewVC(params: .none)
 
@@ -314,7 +357,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createReadonlyUserAttributesTableVC(params: UserAttributesTableVCBuildParams) -> UITableViewController
+    func createReadonlyUserAttributesTableVC(params: UserAttributesTableVCFactoryParams) -> UITableViewController
     {
         let viewController = createTableviewVC(params: .none)
 
@@ -331,7 +374,7 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         return viewController
     }
 
-    func createAttributeEditorVC(params: AttributeEditorVCBuildParams) -> AttributeEditorVCProtocol
+    func createAttributeEditorVC(params: AttributeEditorVCFactoryParams) -> AttributeEditorVCProtocol
     {
         let viewController = StoryboardScene.Character.attributeEditor.instantiate()
 
@@ -346,6 +389,35 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         commonSetup(viewController)
         return viewController
     }
+    
+    func createDevicesListVC(params: DevicesListVCFactoryParams) -> ConnectedDevicesListVCProtocol
+    {
+        let viewController = StoryboardScene.UserProfile.connectedDevicesList.instantiate()
+        
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createWebFlowURLCallbackListenableVC(params: WebFlowURLCallbackListenableVCFactoryParams)
+         -> WebFlowURLCallbackListenableVCProtocol
+    {
+        let webViewController = WebFlowURLCallbackListenableVC(nibName: nil, bundle: nil)
+
+        webViewController.configureMainView
+        { view in
+            view.backgroundColor = .xsolla_nightBlue
+        }
+
+        webViewController.configureDismissButton
+        { button in
+
+            button.setTitle(nil, for: .normal)
+            button.setImage(Asset.Images.dismissButtonIcon.image, for: .normal)
+            button.tintColor = .xsolla_inactiveWhite
+        }
+
+        return webViewController
+    }
 
     private func commonSetup(_ viewController: BaseViewController)
     {
@@ -359,8 +431,8 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         let scheme = MDCContainerScheme()
         
         scheme.colorScheme.surfaceColor = .xsolla_black
-        scheme.colorScheme.primaryColor = .xsolla_magenta
-        scheme.colorScheme.onSurfaceColor = .xsolla_lightSlateGrey
+        scheme.colorScheme.primaryColor = .xsolla_white
+        scheme.colorScheme.onSurfaceColor = .xsolla_inactiveWhite
         scheme.colorScheme.onBackgroundColor = .xsolla_clear
 
         scheme.typographyScheme.button = .xolla_button
@@ -373,9 +445,9 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         let scheme = MDCContainerScheme()
         
         scheme.colorScheme.surfaceColor = .xsolla_clear
-        scheme.colorScheme.primaryColor = .xsolla_magenta
-        scheme.colorScheme.onSurfaceColor = .xsolla_lightSlateGrey
-        scheme.colorScheme.onBackgroundColor = .xsolla_lightSlateGrey
+        scheme.colorScheme.primaryColor = .xsolla_white
+        scheme.colorScheme.onSurfaceColor = .xsolla_inactiveWhite
+        scheme.colorScheme.onBackgroundColor = .xsolla_inactiveWhite
         
         scheme.typographyScheme.button = .xolla_button
         
@@ -401,60 +473,78 @@ extension ViewControllerFactory
     typealias Params = EmptyParams
 }
 
-typealias AuthenticationMainVCBuildParams = EmptyParams
-typealias SocialNetworksListVCBuildParams = [SocialNetwork]
-typealias SignupVCBuildParams = EmptyParams
-typealias LoginVCBuildParams = EmptyParams
-typealias RecoverPasswordVCBuildParams = EmptyParams
-typealias SideMenuContentVCBuildParams = EmptyParams
-typealias WebBrowserVCBuildParams = URL?
-typealias TableviewVCBuildParams = EmptyParams
-typealias UserProfileVCBuildParams = EmptyParams
-typealias UserProfileAvatarSelectorVCBuildParams = EmptyParams
+typealias AuthenticationMainVCFactoryParams = EmptyParams
+typealias SocialNetworksListVCFactoryParams = EmptyParams
+typealias SignupVCFactoryParams = EmptyParams
+typealias LoginVCFactoryParams = EmptyParams
+typealias RecoverPasswordVCFactoryParams = EmptyParams
+typealias SideMenuContentVCFactoryParams = EmptyParams
+typealias WebBrowserVCFactoryParams = URL?
+typealias TableviewVCFactoryParams = EmptyParams
+typealias UserProfileVCFactoryParams = EmptyParams
+typealias UserProfileAvatarSelectorVCFactoryParams = EmptyParams
+typealias UpgradeAccountVCFactoryParams = EmptyParams
+typealias DevicesListVCFactoryParams = EmptyParams
+typealias WebFlowURLCallbackListenableVCFactoryParams = EmptyParams
 
-struct MainVCBuildParams
+struct MainVCFactoryParams
 {
     let navigationController: NavigationController
 }
 
-struct SideMenuVCBuildParams
+struct SideMenuVCFactoryParams
 {
     let contentViewController: BaseViewController
 }
 
-struct InventoryVCBuildParams
+struct InventoryVCFactoryParams
 {
     let dataSource: InventoryListDataSourceProtocol
 }
 
-struct VirtualCurrencyVCBuildParams
+struct VirtualCurrencyVCFactoryParams
 {
     let dataSource: VirtualCurrencyListDataSourceProtocol
 }
 
-struct VirtualItemsVCBuildParams
+struct VirtualItemsVCFactoryParams
 {
     let dataSource: VirtualItemsListDataSourceProtocol
 }
 
-struct BundlePreviewVCBuildParams
+struct BundlePreviewVCFactoryParams
 {
     let dataSource: BundlePreviewDataSource
 }
 
-struct UserAttributesTableVCBuildParams
+struct UserAttributesTableVCFactoryParams
 {
     let dataSource: UserAttributesListDataSource
 }
 
-struct CharacterVCBuildParams
+struct CharacterVCFactoryParams
 {
     let customDataSource: UserAttributesListDataSource
     let readonlyDataSource: UserAttributesListDataSource
     let userProfile: UserProfileProtocol
 }
 
-struct AttributeEditorVCBuildParams
+struct AttributeEditorVCFactoryParams
 {
     let userAttribute: UnifiedUserAttribute?
+}
+
+struct AuthenticationOptionsVCFactoryParams
+{
+
+}
+
+struct OTPStartVCFactoryParams
+{
+    let configuration: OTPSequenceConfiguration
+}
+
+struct OTPInputCodeVCFactoryParams
+{
+    let configuration: OTPSequenceConfiguration
 }

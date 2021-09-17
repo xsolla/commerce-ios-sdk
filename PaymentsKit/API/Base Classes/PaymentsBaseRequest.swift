@@ -12,6 +12,7 @@
 // See the License for the specific language governing and permissions and
 
 import Foundation
+import UIKit
 import XsollaSDKUtilities
 
 class PaymentsBaseRequest<ParamsType: RequestParams>: APIBaseRequest
@@ -31,4 +32,47 @@ class PaymentsBaseRequest<ParamsType: RequestParams>: APIBaseRequest
         let deinitingType = String(describing: type(of: self))
         logger.debug(.deinitialization, domain: .paymentsKit) { deinitingType }
     }
+    
+    override var headers: APIBaseRequest.HTTPHeaders
+    {
+        var headers = defaultHeaders
+
+        headers.merge(authHeaders) { (_, new) in new }
+        headers.merge(specialHeaders) { (_, new) in new }
+        headers.merge(analyticsHeaders) { (_, new) in new }
+
+        return headers
+    }
+    
+    override var queryParameters: APIBaseRequest.QueryParameters
+    {
+        var parameters = defaultParameters
+
+        parameters.merge(specialQueryParameters) { (_, new) in new }
+        parameters.merge(analyticsQueryParams) { (_, new) in new }
+
+        return parameters
+    }
+    
+    // MARK: Analytics Parameters
+    
+    var analyticsQueryParams: APIBaseRequest.QueryParameters
+    {
+        ["engine": "ios",
+         "engine_v": iOSVersion,
+         "sdk": "payments",
+         "sdk_v": kitVersion ?? ""]
+    }
+    
+    var analyticsHeaders: APIBaseRequest.QueryParameters
+    {
+        ["X-ENGINE": "IOS",
+         "X-ENGINE-V": iOSVersion.uppercased(),
+         "X-SDK": "PAYMENTS",
+         "X-SDK-V": kitVersion?.uppercased() ?? ""]
+    }
+    
+    private var iOSVersion: String { UIDevice.current.systemVersion }
+    
+    private var kitVersion: String? { PaymentsKit.version }
 }

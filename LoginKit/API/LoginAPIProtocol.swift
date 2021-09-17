@@ -73,6 +73,65 @@ protocol LoginAPIProtocol
                        loginUrl: String?,
                        completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     
+    func startAuthByEmail(oAuth2Params: OAuth2Params,
+                          email: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: @escaping (LoginAPIResult<StartAuthByEmailResponse>) -> Void)
+    
+    func completeAuthByEmail(clientId: Int,
+                             code: String,
+                             email: String,
+                             operationId: String,
+                             completion: @escaping (LoginAPIResult<CompleteAuthByEmailResponse>) -> Void)
+    
+    func startAuthByPhone(oAuth2Params: OAuth2Params,
+                          phoneNumber: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: @escaping (LoginAPIResult<StartAuthByPhoneResponse>) -> Void)
+    
+    func completeAuthByPhone(clientId: Int,
+                             code: String,
+                             operationId: String,
+                             phoneNumber: String,
+                             completion: @escaping (LoginAPIResult<CompleteAuthByPhoneResponse>) -> Void)
+
+    func getConfirmationCode(projectId: String,
+                             login: String,
+                             operationId: String,
+                             completion: @escaping (LoginAPIResult<String>) -> Void)
+
+    func resendConfirmationLink(clientId: Int,
+                                redirectUri: String,
+                                state: String,
+                                username: String,
+                                completion: @escaping (LoginAPIResult<Void>) -> Void)
+
+    func authWithDeviceId(oAuth2Params: OAuth2Params,
+                          device: String,
+                          deviceId: String,
+                          completion: @escaping (LoginAPIResult<AuthWithDeviceIdResponse>) -> Void)
+    
+    func getUserDevices(accessToken: String, completion: @escaping (LoginAPIResult<GetUserDevicesResponse>) -> Void)
+    
+    func linkDeviceToAccount(device: String,
+                             deviceId: String,
+                             accessToken: String,
+                             completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    
+    func unlinkDeviceFromAccount(deviceId: String,
+                                 accessToken: String,
+                                 completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+
+    func addUsernameAndPassword(accessToken: String,
+                                username: String,
+                                password: String,
+                                email: String,
+                                promoEmailAgreement: Bool,
+                                redirectUri: String?,
+                                completion: @escaping (LoginAPIResult<AddUsernameAndPasswordResponse>) -> Void)
+
     // MARK: - User Account: User Profile
     
     func getCurrentUserDetails(accessToken: String,

@@ -144,6 +144,130 @@ extension LoginAPI: LoginAPIProtocol
                                                            completion: completion)
     }
     
+    func startAuthByEmail(oAuth2Params: OAuth2Params,
+                          email: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: @escaping (LoginAPIResult<StartAuthByEmailResponse>) -> Void)
+    {
+        StartAuthByEmailAPIProxy(configuration).startAuthByEmail(oAuth2Params: oAuth2Params,
+                                                                 email: email,
+                                                                 linkUrl: linkUrl,
+                                                                 sendLink: sendLink,
+                                                                 completion: completion)
+    }
+    
+    func completeAuthByEmail(clientId: Int,
+                             code: String,
+                             email: String,
+                             operationId: String,
+                             completion: @escaping (LoginAPIResult<CompleteAuthByEmailResponse>) -> Void)
+    {
+        CompleteAuthByEmailAPIProxy(configuration).completeAuthByEmail(clientId: clientId,
+                                                                       code: code,
+                                                                       email: email,
+                                                                       operationId: operationId,
+                                                                       completion: completion)
+    }
+    
+    func startAuthByPhone(oAuth2Params: OAuth2Params,
+                          phoneNumber: String,
+                          linkUrl: String?,
+                          sendLink: Bool,
+                          completion: @escaping (LoginAPIResult<StartAuthByPhoneResponse>) -> Void)
+    {
+        StartAuthByPhoneAPIProxy(configuration).startAuthByPhone(oAuth2Params: oAuth2Params,
+                                                                 phoneNumber: phoneNumber,
+                                                                 linkUrl: linkUrl,
+                                                                 sendLink: sendLink,
+                                                                 completion: completion)
+    }
+    
+    func completeAuthByPhone(clientId: Int,
+                             code: String,
+                             operationId: String,
+                             phoneNumber: String,
+                             completion: @escaping (LoginAPIResult<CompleteAuthByPhoneResponse>) -> Void)
+    {
+        CompleteAuthByPhoneAPIProxy(configuration).completeAuthByPhone(clientId: clientId,
+                                                                       code: code,
+                                                                       operationId: operationId,
+                                                                       phoneNumber: phoneNumber,
+                                                                       completion: completion)
+    }
+
+    func getConfirmationCode(projectId: String,
+                             login: String,
+                             operationId: String,
+                             completion: @escaping (LoginAPIResult<String>) -> Void)
+    {
+        GetConfirmationCodeAPIProxy(configuration).getConfirmationCode(projectId: projectId,
+                                                                       login: login,
+                                                                       operationId: operationId,
+                                                                       completion: completion)
+    }
+
+    func resendConfirmationLink(clientId: Int,
+                                redirectUri: String,
+                                state: String,
+                                username: String,
+                                completion: @escaping (LoginAPIResult<Void>) -> Void)
+    {
+        ResendConfirmationLinkAPIProxy(configuration).resendConfirmationLink(clientId: clientId,
+                                                                             redirectUri: redirectUri,
+                                                                             state: state,
+                                                                             username: username,
+                                                                             completion: completion)
+    }
+
+    func authWithDeviceId(oAuth2Params: OAuth2Params,
+                          device: String,
+                          deviceId: String,
+                          completion: @escaping (LoginAPIResult<AuthWithDeviceIdResponse>) -> Void)
+    {
+        AuthWithDeviceIdAPIProxy(configuration).authWithDeviceId(oAuth2Params: oAuth2Params, device: device, deviceId: deviceId, completion: completion)
+    }
+    
+    func getUserDevices(accessToken: String, completion: @escaping (LoginAPIResult<GetUserDevicesResponse>) -> Void)
+    {
+        GetUserDevicesAPIProxy(configuration).getUserDevices(accessToken: accessToken, completion: completion)
+    }
+    
+    func linkDeviceToAccount(device: String,
+                             deviceId: String,
+                             accessToken: String,
+                             completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        LinkDeviceToAccountAPIProxy(configuration).linkDeviceToAccount(device: device,
+                                                                       deviceId: deviceId,
+                                                                       accessToken: accessToken,
+                                                                       completion: completion)
+    }
+    
+    func unlinkDeviceFromAccount(deviceId: String,
+                                 accessToken: String,
+                                 completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+    {
+        UnlinkDeviceFromAccountAPIProxy(configuration).unlinkDeviceFromAccount(deviceId: deviceId,
+                                                                               accessToken: accessToken,
+                                                                               completion: completion)
+    }
+
+    func addUsernameAndPassword(accessToken: String,
+                                username: String,
+                                password: String,
+                                email: String,
+                                promoEmailAgreement: Bool,
+                                redirectUri: String?,
+                                completion: @escaping (LoginAPIResult<AddUsernameAndPasswordResponse>) -> Void)
+    {
+        AddUsernameAndPasswordAPIProxy(configuration).addUsernameAndPassword(accessToken: accessToken,
+                                                                             username: username,
+                                                                             password: password,
+                                                                             email: email,
+                                                                             completion: completion)
+    }
+
     // MARK: - User Account API
     
     func getCurrentUserDetails(accessToken: String,

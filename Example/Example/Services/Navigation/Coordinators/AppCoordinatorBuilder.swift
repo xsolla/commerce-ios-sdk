@@ -39,22 +39,26 @@ extension AppCoordinator
         let xsollaSDK = XsollaSDK(accessTokenProvider: LoginManager.shared)
         xsollaSDK.authorizationErrorDelegate = LoginManager.shared
         
+        let asyncUtilsFactory = AsyncUtilsFactory(api: xsollaSDK)
+
         let modelFactory = ModelFactory(params: .init(xsollaSDK: xsollaSDK, dataSourceFactory: datasourceFactory))
-        
+
         let store = Store(dependencies: .init(xsollaSDK: xsollaSDK))
-        
+
         let coordinatorFactoryParams = CoordinatorFactory.Params(viewControllerFactory: viewControllerFactory,
+                                                                 asyncUtilsFactory: asyncUtilsFactory,
                                                                  datasourceFactory: datasourceFactory,
                                                                  modelFactory: modelFactory,
                                                                  xsollaSDK: xsollaSDK,
                                                                  store: store)
-        
+
         let coordinatorFactory = CoordinatorFactory(params: coordinatorFactoryParams)
-        
+
         let factories = Factories(coordinatorFactory: coordinatorFactory,
                                   viewControllerFactory: viewControllerFactory,
                                   datasourceFactory: datasourceFactory,
-                                  modelFactoryProtocol: modelFactory)
+                                  modelFactory: modelFactory,
+                                  asyncUtilsFactory: asyncUtilsFactory)
         
         return factories
     }()

@@ -20,29 +20,30 @@ import XsollaSDKLoginKit
 
 protocol DatasourceFactoryProtocol
 {
-    func createInventoryListDatasource(params: InventoryListDatasourceBuildParams) -> InventoryListDataSource
-    func createVirtualCurrencyListDatasource(params: VirtualCurrencyListDatasourceBuildParams) -> VirtualCurrencyListDatasource
-    func createVirtualCurrencyListGroupDataSource(params: VirtualCurrencyListGroupDataSourceBuildParams) -> VirtualCurrencyListGroupDataSource
-    func createVirtualItemsListDatasource(params: VirtualItemsListDatasourceBuildParams) -> VirtualItemsListDatasource
-    func createVirtualItemsListGroupDataSource(params: VirtualItemsListGroupDataSourceBuildParams) -> VirtualItemsListGroupDataSource
-    func createInventoryListGroupDataSource(params: InventoryListGroupDataSourceBuildParams) -> InventoryListGroupDataSource
-    func createBundlePreviewDataSource(params: BundlePreviewDataSourceBuildParams) -> BundlePreviewDataSource
-    func createUserAttributesListDataSource(params: UserAttributesListDataSourceBuildParams) -> UserAttributesListDataSource
+    func createInventoryListDatasource(params: InventoryListDatasourceFactoryParams) -> InventoryListDataSource
+    func createVirtualCurrencyListDatasource(params: VirtualCurrencyListDatasourceFactoryParams) -> VirtualCurrencyListDatasource
+    func createVirtualCurrencyListGroupDataSource(params: VirtualCurrencyListGroupDataSourceFactoryParams) -> VirtualCurrencyListGroupDataSource
+    func createVirtualItemsListDatasource(params: VirtualItemsListDatasourceFactoryParams) -> VirtualItemsListDatasource
+    func createVirtualItemsListGroupDataSource(params: VirtualItemsListGroupDataSourceFactoryParams) -> VirtualItemsListGroupDataSource
+    func createInventoryListGroupDataSource(params: InventoryListGroupDataSourceFactoryParams) -> InventoryListGroupDataSource
+    func createBundlePreviewDataSource(params: BundlePreviewDataSourceFactoryParams) -> BundlePreviewDataSource
+    func createUserAttributesListDataSource(params: UserAttributesListDataSourceFactoryParams) -> UserAttributesListDataSource
+    func createConnectedDevicesListDataSource(params: ConnectedDevicesListDataSourceFactoryParams) -> ConnectedDevicesListDataSourceProtocol
 }
 
 class DatasourceFactory: DatasourceFactoryProtocol
 {
-    func createInventoryListDatasource(params: InventoryListDatasourceBuildParams) -> InventoryListDataSource
+    func createInventoryListDatasource(params: InventoryListDatasourceFactoryParams) -> InventoryListDataSource
     {
         return InventoryListDataSource(dependencies: .init(dataSourceFactory: self))
     }
     
-    func createVirtualCurrencyListDatasource(params: VirtualCurrencyListDatasourceBuildParams) -> VirtualCurrencyListDatasource
+    func createVirtualCurrencyListDatasource(params: VirtualCurrencyListDatasourceFactoryParams) -> VirtualCurrencyListDatasource
     {
         return VirtualCurrencyListDatasource(dependencies: .init(dataSourceFactory: self))
     }
     
-    func createVirtualCurrencyListGroupDataSource(params: VirtualCurrencyListGroupDataSourceBuildParams) -> VirtualCurrencyListGroupDataSource
+    func createVirtualCurrencyListGroupDataSource(params: VirtualCurrencyListGroupDataSourceFactoryParams) -> VirtualCurrencyListGroupDataSource
     {
         let dataSource = VirtualCurrencyListGroupDataSource(groupIndex: params.groupIndex,
                                                             dataSource: params.dataSource,
@@ -52,12 +53,12 @@ class DatasourceFactory: DatasourceFactoryProtocol
         return dataSource
     }
     
-    func createVirtualItemsListDatasource(params: VirtualItemsListDatasourceBuildParams) -> VirtualItemsListDatasource
+    func createVirtualItemsListDatasource(params: VirtualItemsListDatasourceFactoryParams) -> VirtualItemsListDatasource
     {
         return VirtualItemsListDatasource(dependencies: .init(dataSourceFactory: self))
     }
     
-    func createVirtualItemsListGroupDataSource(params: VirtualItemsListGroupDataSourceBuildParams) -> VirtualItemsListGroupDataSource
+    func createVirtualItemsListGroupDataSource(params: VirtualItemsListGroupDataSourceFactoryParams) -> VirtualItemsListGroupDataSource
     {
         let dataSource = VirtualItemsListGroupDataSource(groupIndex: params.groupIndex,
                                                          dataSource: params.dataSource,
@@ -68,7 +69,7 @@ class DatasourceFactory: DatasourceFactoryProtocol
         return dataSource
     }
     
-    func createInventoryListGroupDataSource(params: InventoryListGroupDataSourceBuildParams) -> InventoryListGroupDataSource
+    func createInventoryListGroupDataSource(params: InventoryListGroupDataSourceFactoryParams) -> InventoryListGroupDataSource
     {
         let dataSource = InventoryListGroupDataSource(groupIndex: params.groupIndex,
                                                       dataSource: params.dataSource)
@@ -78,14 +79,14 @@ class DatasourceFactory: DatasourceFactoryProtocol
         return dataSource
     }
     
-    func createBundlePreviewDataSource(params: BundlePreviewDataSourceBuildParams) -> BundlePreviewDataSource
+    func createBundlePreviewDataSource(params: BundlePreviewDataSourceFactoryParams) -> BundlePreviewDataSource
     {
         let dataSource = BundlePreviewDataSource(bundle: params.bundle, priceHelper: self.params.priceHelper)
         
         return dataSource
     }
 
-    func createUserAttributesListDataSource(params: UserAttributesListDataSourceBuildParams) -> UserAttributesListDataSource
+    func createUserAttributesListDataSource(params: UserAttributesListDataSourceFactoryParams) -> UserAttributesListDataSource
     {
         switch params.type
         {
@@ -95,6 +96,29 @@ class DatasourceFactory: DatasourceFactoryProtocol
             case .readonly: return ReadonlyUserAttributesListDataSource(title: L10n.Character.TabBar.readonlyAttributes,
                                                                         actionHandler: params.actionHandler)
         }
+    }
+
+    func createConnectedDevicesListDataSource(params: ConnectedDevicesListDataSourceFactoryParams) -> ConnectedDevicesListDataSourceProtocol
+    {
+        let titleAttrs = Style.heading2.attributes(withColor: .xsolla_white)
+        let descAttrs = Style.description.attributes(withColor: .xsolla_inactiveWhite)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale.current
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+
+        let removable = params.removable
+
+        let deviceItems = params.devices.map
+        {
+            ConnectedDevicesListItem(attributedTitle: $0.modelName.attributed(titleAttrs),
+                                     attributedDescription: dateFormatter.string(from: $0.lastUsedAt).attributed(descAttrs),
+                                     deviceId: String($0.xsollaDeviceId),
+                                     removable: removable)
+        }
+
+        return ConnectedDevicesListDataSource(items: deviceItems)
     }
     
     // MARK: - Initialization
@@ -115,37 +139,37 @@ extension DatasourceFactory
     }
 }
 
-typealias InventoryListDatasourceBuildParams = EmptyParams
-typealias VirtualCurrencyListDatasourceBuildParams = EmptyParams
-typealias VirtualItemsListDatasourceBuildParams = EmptyParams
+typealias InventoryListDatasourceFactoryParams = EmptyParams
+typealias VirtualCurrencyListDatasourceFactoryParams = EmptyParams
+typealias VirtualItemsListDatasourceFactoryParams = EmptyParams
 
-struct VirtualCurrencyListGroupDataSourceBuildParams
+struct VirtualCurrencyListGroupDataSourceFactoryParams
 {
     let groupIndex: VirtualCurrencyListDatasource.GroupIndex
     let dataSource: VirtualCurrencyListDataSourceProtocol
     let actionHandler: VirtualCurrencyListGroupDataSource.ActionHandler?
 }
 
-struct VirtualItemsListGroupDataSourceBuildParams
+struct VirtualItemsListGroupDataSourceFactoryParams
 {
     let groupIndex: VirtualItemsListDatasource.GroupIndex
     let dataSource: VirtualItemsListDataSourceProtocol
     let actionHandler: VirtualItemsListGroupDataSource.ActionHandler?
 }
 
-struct InventoryListGroupDataSourceBuildParams
+struct InventoryListGroupDataSourceFactoryParams
 {
     let groupIndex: InventoryListDataSource.GroupIndex
     let dataSource: InventoryListDataSource
     let actionHandler: InventoryListGroupDataSource.ActionHandler?
 }
 
-struct BundlePreviewDataSourceBuildParams
+struct BundlePreviewDataSourceFactoryParams
 {
     let bundle: StoreBundle
 }
 
-struct UserAttributesListDataSourceBuildParams
+struct UserAttributesListDataSourceFactoryParams
 {
     let type: AttributeType
     let actionHandler: UserAttributesListDataSource.ActionHandler
@@ -165,4 +189,10 @@ struct UserAttributesListDataSourceBuildParams
     {
         Self(type: .readonly, actionHandler: actionHandler)
     }
+}
+
+struct ConnectedDevicesListDataSourceFactoryParams
+{
+    let devices: [DeviceInfo]
+    let removable: Bool
 }

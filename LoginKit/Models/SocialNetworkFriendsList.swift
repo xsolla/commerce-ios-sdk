@@ -13,7 +13,6 @@
 
 import Foundation
 
-
 /// Friends list from a social network
 public struct SocialNetworkFriendsList
 {
@@ -32,7 +31,7 @@ public struct SocialNetworkFriendsList
     /// Total number of friends that you can get.
     public let totalCount: Int
 
-    /// Shows whether the social friends are from your game.
+    /// Whether the social friends are from your game.
     public let withLoginId: Bool?
 }
 

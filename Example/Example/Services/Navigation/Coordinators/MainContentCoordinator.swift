@@ -26,6 +26,10 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
 {
     var reloadRequestHandler: (() -> Void)?
 
+    // MARK: - Async
+
+    var loginAsync: LoginAsyncUtilityProtocol { params.loginAsyncUtility }
+
     // MARK: - Models
     
     private var inventoryList: InventoryList?
@@ -63,7 +67,25 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
             self?.showUserProfileAvatarSelectorVC()
         }
 
-        viewController.saveButtonHandler =
+        viewController.upgradeProfileRequestHandler =
+        { [weak self] controller in
+
+            self?.showUpgradeAccountVC(profileVC: controller, profile: userProfile)
+        }
+
+        viewController.manageDevicesRequestHandler =
+        { [weak self] controller in
+
+            self?.showDevicesListVC(userProfile)
+        }
+
+        viewController.linkSocialNetworkRequestHandler =
+        { [weak self] controller, network in
+
+            self?.linkSocialNetwork(network, for: userProfile, in: controller)
+        }
+
+        viewController.saveProfileDataRequestHandler =
         { [weak self] controller in
 
             controller.setState(.loading(nil), animated: true)
@@ -74,7 +96,7 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
                 if case .success(let details) = result
                 {
                     controller.setState(.normal, animated: true)
-                    controller.setup(userProfileDetails: details)
+                    controller.setup(profileDetails: details)
                 }
 
                 if case .failure(let error) = result
@@ -95,27 +117,200 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
             }
         }
 
-        viewController.setState(.loading(nil), animated: true)
+        fetchUserProfile(userProfile, in: viewController)
 
-        let controller = viewController
+        pushViewController(viewController, pushMode: .replaceCurrent)
+    }
 
-        userProfile.fetchUserDetails
+    func fetchUserProfile(_ profile: UserProfileProtocol, in viewController: UserProfileVCProtocol? = nil)
+    {
+        viewController?.setState(.loading(nil), animated: true)
+
+        profile.fetchUserDetails
         { [weak self] result in
 
             if case .success(let details) = result
             {
-                controller.setState(.normal, animated: true)
-                controller.setup(userProfileDetails: details)
+                viewController?.setState(.normal, animated: true)
+                viewController?.setup(profileDetails: details)
+
+                self?.fetchUserLinkedSocialNetworks(profile, in: viewController)
             }
 
             if case .failure(let error) = result
             {
-                controller.setState(.error(nil), animated: true)
-                self?.showErrorAlert(error: error, in: controller)
+                viewController?.setState(.error(nil), animated: true)
+                if let viewController = viewController { self?.showErrorAlert(error: error, in: viewController) }
+            }
+        }
+    }
+
+    func fetchUserLinkedSocialNetworks(_ profile: UserProfileProtocol, in viewController: UserProfileVCProtocol? = nil)
+    {
+        profile.fetchLinkedSocialNetworks
+        { [weak self] result in
+
+            if case .success(let networks) = result
+            {
+                viewController?.setup(linkedSocialNetworks: networks)
+
+                self?.fetchUserConnectedDevices(profile, in: viewController)
+            }
+
+            if case .failure(let error) = result
+            {
+                viewController?.setState(.error(nil), animated: true)
+                if let viewController = viewController { self?.showErrorAlert(error: error, in: viewController) }
+            }
+        }
+    }
+
+    func fetchUserConnectedDevices(_ profile: UserProfileProtocol, in viewController: UserProfileVCProtocol? = nil)
+    {
+        profile.fetchConnectedDevices
+        { [weak self] result in
+
+            if case .success(let devices) = result
+            {
+                viewController?.setup(connectedDevices: devices)
+            }
+
+            if case .failure(let error) = result
+            {
+                viewController?.setState(.error(nil), animated: true)
+                if let viewController = viewController { self?.showErrorAlert(error: error, in: viewController) }
+            }
+        }
+    }
+
+    // MARK: - Social networks
+
+    func linkSocialNetwork(_ network: SocialNetwork,
+                           for userProfile: UserProfileProtocol,
+                           in viewController: UserProfileVCProtocol? = nil)
+    {
+        viewController?.setState(.loading(nil), animated: true)
+
+        loginAsync.getSocialNetworksLinkingURL(for: network, callbackUrl: AppConfig.redirectUrl)
+        .then
+        { url in
+            viewController?.setState(.normal, animated: true)
+            self.linkSocialNetwork(with: url, for: userProfile, in: viewController)
+        }
+        .catch
+        { error in
+            viewController?.setState(.error(nil), animated: true)
+            if let viewController = viewController { self.showErrorAlert(error: error, in: viewController) }
+        }
+    }
+
+    func linkSocialNetwork(with url: URL,
+                           for userProfile: UserProfileProtocol,
+                           in viewController: UserProfileVCProtocol? = nil)
+    {
+        let webViewController = dependencies.viewControllerFactory.createWebFlowURLCallbackListenableVC(params: .none)
+        let request = URLRequest(url: url)
+        let callbackUrl = URL(string: AppConfig.redirectUrl)!
+
+        webViewController.startFlow(with: request, callbackUrl: callbackUrl)
+        { [weak self, weak webViewController] result in
+
+            webViewController?.dismiss(animated: true, completion: nil)
+
+            var socialNetworkLiningError: Error?
+
+            // Finging network errors reported by WKView
+            if case .failure(let error) = result
+            {
+                socialNetworkLiningError = error
+            }
+
+            // Finding errors reported by Xsolla Login (parsed from url query)
+            if case .success(let url) = result
+            {
+                socialNetworkLiningError = self?.loginAsync.getRedirectUrlParsingError(redirectUrl: url.absoluteString)
+            }
+
+            if let error = socialNetworkLiningError
+            {
+                viewController?.setState(.error(nil), animated: true)
+                if let viewController = viewController { self?.showErrorAlert(error: error, in: viewController) }
+            }
+            else
+            {
+                viewController?.setState(.normal, animated: true)
+                self?.fetchUserProfile(userProfile, in: viewController)
+                self?.fetchUserLinkedSocialNetworks(userProfile, in: viewController)
             }
         }
 
-        pushViewController(viewController, pushMode: .replaceCurrent)
+        presentViewController(webViewController, completion: nil)
+    }
+
+    func showDevicesListVC(_ profile: UserProfileProtocol)
+    {
+        if currentViewController is ConnectedDevicesListVCProtocol { return }
+
+        let viewController = dependencies.viewControllerFactory.createDevicesListVC(params: .none)
+        
+        viewController.removeDeviceHandler =
+        { [weak self, weak viewController, weak profile] deviceItem in
+            guard let profile = profile, let viewController = viewController else { return }
+
+            self?.showUnlinkDeviceAlert(in: viewController)
+            {
+                self?.handleUnlinkDevice(deviceId: deviceItem.deviceId,
+                                         viewController: viewController,
+                                         profile: profile)
+            }
+        }
+
+        viewController.setup(with: getConnectedDevicesListDataSource(for: profile))
+
+        pushViewController(viewController, pushMode: .push)
+    }
+    
+    func handleUnlinkDevice(deviceId: String,
+                            viewController: ConnectedDevicesListVCProtocol,
+                            profile: UserProfileProtocol)
+    {
+        viewController.setState(.loading(nil), animated: true)
+
+        profile.unlinkDevice(deviceId: deviceId)
+        { [weak self, weak profile, weak viewController] result in
+            guard let self = self, let profile = profile, let viewController = viewController else { return }
+            
+            if case .success = result
+            {
+                if profile.userConnectedDevices.isEmpty
+                {
+                    self.userProfileVC?.setup(connectedDevices: [])
+                    self.popViewController()
+                }
+
+                viewController.setState(.normal, animated: true)
+                viewController.setup(with: self.getConnectedDevicesListDataSource(for: profile))
+            }
+
+            if case .failure(let error) = result
+            {
+                viewController.setState(.error(nil), animated: true)
+                self.showErrorAlert(error: error, in: viewController)
+            }
+        }
+    }
+
+    func getConnectedDevicesListDataSource(for profile: UserProfileProtocol) -> ConnectedDevicesListDataSourceProtocol
+    {
+        let factory = self.dependencies.datasourceFactory
+        let removable = profile.userDetails.map { !$0.isAnonymous } ?? false
+        let params =
+            ConnectedDevicesListDataSourceFactoryParams(devices: profile.userConnectedDevices,
+                                                        removable: removable)
+
+        let dataSource = factory.createConnectedDevicesListDataSource(params: params)
+
+        return dataSource
     }
 
     func showUserProfileAvatarSelectorVC()
@@ -183,16 +378,57 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
 
     func updateUserProfileVC()
     {
-        guard
-            let userDetails = dependencies.userProfile.userDetails,
-            let controllers = presenter?.viewControllers
-        else
-            { return }
+        guard let userDetails = dependencies.userProfile.userDetails else { return }
 
-        for viewController in controllers where viewController is UserProfileVCProtocol
+        userProfileVC?.setup(profileDetails: userDetails)
+    }
+
+    private var userProfileVC: UserProfileVCProtocol?
+    {
+        guard let controllers = presenter?.viewControllers else { return nil }
+
+        for viewController in controllers
         {
-            (viewController as? UserProfileVCProtocol)?.setup(userProfileDetails: userDetails)
+            if let viewController = viewController as? UserProfileVCProtocol { return viewController }
         }
+
+        return nil
+    }
+
+    func showUpgradeAccountVC(profileVC: UserProfileVCProtocol, profile: UserProfileProtocol)
+    {
+        if currentViewController is UpgradeAccountVCProtocol { return }
+
+        let viewController = dependencies.viewControllerFactory.createUpgradeAccountVC(params: .none)
+
+        viewController.actionRequestHandler = 
+        { [weak self] viewController, button in
+
+            let model = viewController.model
+
+            viewController.setState(.loading(nil), animated: true)
+
+            self?.loginAsync.upgradeAccount(withUsername: model.username,
+                                            password: model.password,
+                                            email: model.email,
+                                            promoEmailAgreement: false)
+            .then
+            { _ in
+
+                guard let self = self else { return }
+
+                self.popViewController()
+                self.fetchUserProfile(profile, in: profileVC)
+            }
+            .catch
+            { error in
+                viewController.setState(.error(nil), animated: true)
+                self?.showErrorAlert(error: error, in: viewController)
+            }
+
+        }
+
+        pushViewController(viewController, pushMode: .push)
     }
     
     func showInventoryScreen()
@@ -203,7 +439,7 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
         
         let dataSource = dependencies.datasourceFactory.createInventoryListDatasource(params: .none)
         
-        let params = InventoryVCBuildParams(dataSource: dataSource)
+        let params = InventoryVCFactoryParams(dataSource: dataSource)
         let viewController = dependencies.viewControllerFactory.createInventoryVC(params: params)
         
         let inventoryList =
@@ -247,12 +483,12 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
                                                                                     virtualItemsList: virtualItemsList,
                                                                                     store: dependencies.store))
         self.virtualItemsActionHandler?.bundlePreviewRequest =
-        { [weak self] bundle in guard let self = self else { return }
+        { [weak self] bundle, actionHandler in guard let self = self else { return }
             
             let bundleDataSource =
                 self.dependencies.datasourceFactory.createBundlePreviewDataSource(params: .init(bundle: bundle))
             
-            self.previewBundle(dataSource: bundleDataSource)
+            self.previewBundle(dataSource: bundleDataSource, actionHandler: actionHandler)
         }
         
         self.virtualItemsActionHandler?.reloadDataRequest =
@@ -272,10 +508,12 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
         pushViewController(viewController, pushMode: .replaceCurrent)
     }
     
-    func previewBundle(dataSource: BundlePreviewDataSource)
+    func previewBundle(dataSource: BundlePreviewDataSource, actionHandler: BundlePreviewActionHandler?)
     {
         let viewController =
             dependencies.viewControllerFactory.createBundlePreviewVC(params: .init(dataSource: dataSource))
+
+        viewController.actionHandler = actionHandler
         
         presentViewController(viewController, completion: nil)
     }
@@ -338,7 +576,7 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
             datasourceFactory.createUserAttributesListDataSource(params: .readonly(actionHandler: actionHandler))
 
         // View controller
-        let characterVCdParams = CharacterVCBuildParams(customDataSource: customDataSource,
+        let characterVCdParams = CharacterVCFactoryParams(customDataSource: customDataSource,
                                                             readonlyDataSource: readonlyDataSource,
                                                             userProfile: dependencies.userProfile)
         let viewController = dependencies.viewControllerFactory.createCharacterVC(params: characterVCdParams)
@@ -438,6 +676,21 @@ class MainContentCoordinator: BaseCoordinator<MainContentCoordinator.Dependencie
         alert.addAction(UIAlertAction(title: L10n.Alert.Action.ok, style: .default, handler: nil))
         viewController.present(alert, animated: true, completion: nil)
     }
+
+    func showUnlinkDeviceAlert(in viewController: UIViewController, confirmationHandler: @escaping () -> Void)
+    {
+        let alert = UIAlertController(title: L10n.Alert.UnlinkDevice.title,
+                                      message: L10n.Alert.UnlinkDevice.message,
+                                      preferredStyle: UIAlertController.Style.alert)
+
+        alert.addAction(UIAlertAction(title: L10n.Alert.UnlinkDevice.confinmButton,
+                                      style: .destructive,
+                                      handler: { _ in confirmationHandler() }))
+
+        alert.addAction(UIAlertAction(title: L10n.Alert.Action.cancel, style: .default, handler: nil ))
+
+        viewController.present(alert, animated: true, completion: nil)
+    }
     
     override init(presenter: Presenter?, dependencies: Dependencies, params: Params)
     {
@@ -485,10 +738,14 @@ extension MainContentCoordinator
         let coordinatorFactory: CoordinatorFactoryProtocol
         let viewControllerFactory: ViewControllerFactoryProtocol
         let datasourceFactory: DatasourceFactoryProtocol
+        let asyncUtilsFactory: AsyncUtilsFactoryProtocol
         let modelFactory: ModelFactoryProtocol
         let store: StoreProtocol
         let userProfile: UserProfileProtocol
     }
 
-    typealias Params = EmptyParams
+    struct Params
+    {
+        let loginAsyncUtility: LoginAsyncUtilityProtocol
+    }
 }

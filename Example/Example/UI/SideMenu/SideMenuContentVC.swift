@@ -13,6 +13,7 @@
 
 import UIKit
 import SDWebImage
+import XsollaSDKLoginKit
 
 protocol SideMenuContentVCProtocol: BaseViewController
 {
@@ -21,10 +22,9 @@ protocol SideMenuContentVCProtocol: BaseViewController
     var inventoryMenuItemHandler: (() -> Void)? { get set }
     var virtualItemsMenuItemHandler: (() -> Void)? { get set }
     var virtualCurrencyMenuItemHandler: (() -> Void)? { get set }
-    var helpMenuItemHandler: (() -> Void)? { get set }
     var logoutMenuItemHandler: (() -> Void)? { get set }
     
-    func setProfileInfo(name: String?, email: String?, avatarUrl: URL?)
+    func setProfileInfo(name: String?, email: String?, avatarUrl: URL?, message: String?)
 }
 
 class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
@@ -34,42 +34,46 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
     var inventoryMenuItemHandler: (() -> Void)?
     var virtualItemsMenuItemHandler: (() -> Void)?
     var virtualCurrencyMenuItemHandler: (() -> Void)?
-    var helpMenuItemHandler: (() -> Void)?
     var logoutMenuItemHandler: (() -> Void)?
     
-    func setProfileInfo(name: String?, email: String?, avatarUrl: URL?)
+    func setProfileInfo(name: String?, email: String?, avatarUrl: URL?, message: String?)
     {
         self.profileName = name
         self.profileEmail = email
+        self.profileMessage = message
         self.profileAvatarURL = avatarUrl
         updateProfileInfo()
     }
     
     private var profileName: String?
     private var profileEmail: String?
+    private var profileMessage: String?
     private var profileAvatarURL: URL?
     
     @IBOutlet private weak var profileContainerView: UIView!
     @IBOutlet private weak var profileAvatarButtonView: AvatarButtonView!
+    @IBOutlet private weak var profileMessageLabel: UILabel!
     @IBOutlet private weak var profileUsernameLabel: UILabel!
     @IBOutlet private weak var profileEmailLabel: UILabel!
     @IBOutlet private weak var characterSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var inventorySection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var storeSection: ExpandableMenuItemsSectionView!
-    @IBOutlet private weak var helpSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var logoutSection: ExpandableMenuItemsSectionView!
+    @IBOutlet private weak var versionInfoLabel: UILabel!
     
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
         
-        setupProfileSection()
         setupCharacterSection()
         setupInventorySection()
         setupStoreSection()
-        setupHelpSection()
+        setupProfileSection()
         setupLogoutSection()
         updateProfileInfo()
+
+        let version = "SDK version: \(LoginKit.version)"
+        versionInfoLabel.attributedText = version.attributed(.notification, color: .xsolla_onSurfaceDisabled)
     }
 
     func setupProfileSection()
@@ -132,17 +136,6 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
         section.expand(animated: false)
     }
     
-    func setupHelpSection()
-    {
-        let section = helpSection!
-        
-        let title = L10n.Menu.Item.help
-        let sectionTitle = MenuItemView(title: title, image: Asset.Images.menuHelpIcon.image, height: 40)
-        
-        section.setup(withTitleView: ExpandableMenuItemsSectionView.View(view: sectionTitle,
-                                                                         tapHandler: helpMenuItemHandler), items: [])
-    }
-    
     func setupLogoutSection()
     {
         let section = logoutSection!
@@ -157,15 +150,34 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
     func updateProfileInfo()
     {
         guard isViewLoaded else { return }
-        
-        profileUsernameLabel.attributedText = profileName?.attributed(.button, color: .xsolla_onSurfaceHigh)
-        profileEmailLabel.attributedText = profileEmail?.attributed(.link, color: .xsolla_lightSlateGrey)
 
         profileAvatarButtonView.primaryImage = Asset.Images.avatarPlaceholder.image
+        profileAvatarButtonView.isUserInteractionEnabled = false
 
         SDWebImageDownloader.shared.downloadImage(with: profileAvatarURL)
         { [weak self] (image, _, _, _) in
             self?.profileAvatarButtonView.primaryImage = image ?? Asset.Images.avatarPlaceholder.image
+        }
+
+        if profileMessage != nil
+        {
+            profileUsernameLabel.isHidden = true
+            profileEmailLabel.isHidden = true
+            profileMessageLabel.isHidden = false
+
+            profileMessageLabel.attributedText = profileMessage?.attributed(.link, color: .xsolla_magenta)
+            profileUsernameLabel.attributedText = nil
+            profileEmailLabel.attributedText = nil
+        }
+        else
+        {
+            profileUsernameLabel.isHidden = false
+            profileEmailLabel.isHidden = false
+            profileMessageLabel.isHidden = true
+
+            profileMessageLabel.attributedText = nil
+            profileUsernameLabel.attributedText = profileName?.attributed(.button, color: .xsolla_onSurfaceHigh)
+            profileEmailLabel.attributedText = profileEmail?.attributed(.link, color: .xsolla_lightSlateGrey)
         }
     }
 }

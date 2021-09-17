@@ -39,6 +39,7 @@ extension UIColor
     static let xsolla_inputFieldDisabled =   Asset.Colors.inputFieldDisabled.color
     static let xsolla_inactiveMagenta =      Asset.Colors.inactiveMagenta.color
     static let xsolla_inactiveWhite =        Asset.Colors.inactiveWhite.color
+    static let xsolla_inactiveWhite50 =      Asset.Colors.inactiveWhite.color.withAlphaComponent(0.5)
 
     // Other Colors
     static let xsolla_clear =                UIColor.clear

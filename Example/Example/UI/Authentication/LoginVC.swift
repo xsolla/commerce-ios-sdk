@@ -16,7 +16,7 @@ import UIKit
 protocol LoginVCProtocol: BaseViewController, LoadStatable
 {
     var loginRequestHandler: ((LoginVCProtocol, UIView, LoginFormData) -> Void)? { get set }
-    var demoUserLoginRequestHandler: ((LoginVCProtocol, UIView) -> Void)? { get set }
+    var authenticationOptionsRequestHandler: ((LoginVCProtocol, UIView) -> Void)? { get set }
     var socialNetworkLoginRequestHandler: ((LoginVCProtocol, SocialNetwork) -> Void)? { get set }
     var moreSocialNetworksRequestHandler: ((LoginVCProtocol) -> Void)? { get set }
     var privacyPolicyRequestHandler: (() -> Void)? { get set }
@@ -27,12 +27,12 @@ class LoginVC: BaseViewController, LoginVCProtocol
 {
     // LoginVCProtocol
     var loginRequestHandler: ((LoginVCProtocol, UIView, LoginFormData) -> Void)?
-    var demoUserLoginRequestHandler: ((LoginVCProtocol, UIView) -> Void)?
+    var authenticationOptionsRequestHandler: ((LoginVCProtocol, UIView) -> Void)?
     var socialNetworkLoginRequestHandler: ((LoginVCProtocol, SocialNetwork) -> Void)?
     var moreSocialNetworksRequestHandler: ((LoginVCProtocol) -> Void)?
     var privacyPolicyRequestHandler: (() -> Void)?
     var passwordRecoveryRequestHandler: (() -> Void)?
-    
+
     /// Form validator, needs to be set before view load
     var formValidator: FormValidatorProtocol!
     
@@ -44,7 +44,7 @@ class LoginVC: BaseViewController, LoginVCProtocol
     
     @IBOutlet private weak var passwordRecoverButton: UIButton!
     @IBOutlet private weak var loginButton: Button!
-    @IBOutlet private weak var demoUserLoginButton: Button!
+    @IBOutlet private weak var authenticationOptionsButton: Button!
     @IBOutlet private weak var googleButton: Button!
     @IBOutlet private weak var facebookButton: Button!
     @IBOutlet private weak var baiduButton: Button!
@@ -77,10 +77,10 @@ class LoginVC: BaseViewController, LoginVCProtocol
         loginRequestHandler?(self, loginButton, formData)
     }
     
-    private func performDemoUserLogin()
+    private func showAuthenticationOptions()
     {
-        logger.event(.common, domain: .example) { "Login as demo pressed" }
-        demoUserLoginRequestHandler?(self, demoUserLoginButton)
+        logger.event(.common, domain: .example) { "Show authentication options pressed" }
+        authenticationOptionsRequestHandler?(self, authenticationOptionsButton)
     }
     
     private func performPasswordRecovery()
@@ -116,7 +116,7 @@ class LoginVC: BaseViewController, LoginVCProtocol
         super.viewWillAppear(animated)
     
         updateLoginButton()
-        updateLoginDemoUserButton()
+        updateAuthenticationOptionsButton()
     }
     
     // MARK: - Setup UI
@@ -132,7 +132,9 @@ class LoginVC: BaseViewController, LoginVCProtocol
         usernameTextField.placeholder = L10n.Form.Field.Username.placeholder
         usernameTextField.tag = 1
         usernameTextField.delegate = self
-        
+        usernameTextField.configureTextFieldDefaults()
+        usernameTextField.configureTextField { textField in textField.keyboardType = .emailAddress }
+
         formValidator.addValidator(formValidator.factory.createDefaultValidator(for: usernameTextField),
                                    withKey: usernameTextField.tag)
     }
@@ -143,8 +145,9 @@ class LoginVC: BaseViewController, LoginVCProtocol
         passwordTextField.secure = true
         passwordTextField.tag = 2
         passwordTextField.delegate = self
+        passwordTextField.configureTextFieldDefaults()
         
-        formValidator.addValidator(formValidator.factory.createDefaultValidator(for: passwordTextField),
+        formValidator.addValidator(formValidator.factory.createPasswordValidator(for: passwordTextField),
                                    withKey: passwordTextField.tag)
     }
     
@@ -156,7 +159,7 @@ class LoginVC: BaseViewController, LoginVCProtocol
     
     private func setupDemoUserLoginButton()
     {
-        demoUserLoginButton.setupAppearance(config: Button.largeOutlined)
+        authenticationOptionsButton.setupAppearance(config: Button.largeOutlined)
     }
     
     private func setupPasswordRecoverButton()
@@ -172,12 +175,17 @@ class LoginVC: BaseViewController, LoginVCProtocol
         facebookButton.setupAppearance(config: Button.largeOutlined)
         baiduButton.setupAppearance(config: Button.largeOutlined)
         moreButton.setupAppearance(config: Button.largeOutlined)
+
+        googleButton.setImage(Asset.Images.socialGoogleIcon.tinted(.xsolla_inactiveWhite), for: .normal)
+        facebookButton.setImage(Asset.Images.socialFacebookIcon.tinted(.xsolla_inactiveWhite), for: .normal)
+        baiduButton.setImage(Asset.Images.socialBaiduIcon.tinted(.xsolla_inactiveWhite), for: .normal)
+        moreButton.setImage(Asset.Images.socialMoreIcon.tinted(.xsolla_inactiveWhite), for: .normal)
     }
     
     private func setupPrivacyPolicyButton()
     {
         let text = L10n.Auth.Button.PrivacyPolicy.text(L10n.Auth.Button.PrivacyPolicy.linkTitle)
-        let attrText = text.attributedMutable(.link, color: .xsolla_lightSlateGrey)
+        let attrText = text.attributedMutable(.link, color: .xsolla_inactiveWhite)
 
         let attrs: Attributes = [.underlineStyle: NSUnderlineStyle.single.rawValue]
         attrText.addAttributes(attrs, toSubstring: L10n.Auth.Button.PrivacyPolicy.linkTitle)
@@ -201,11 +209,11 @@ class LoginVC: BaseViewController, LoginVCProtocol
         loginButton.setAttributedTitle(attributedTitle, for: .normal)
     }
     
-    private func updateLoginDemoUserButton()
+    private func updateAuthenticationOptionsButton()
     {
-        demoUserLoginButton.isEnabled = true
-        let attributedTitle = L10n.Auth.Button.loginDemo.attributed(.button, color: .xsolla_lightSlateGrey)
-        demoUserLoginButton.setAttributedTitle(attributedTitle, for: .normal)
+        authenticationOptionsButton.isEnabled = true
+        let attributedTitle = L10n.Auth.Button.authenticationOptions.attributed(.button, color: .xsolla_inactiveWhite)
+        authenticationOptionsButton.setAttributedTitle(attributedTitle, for: .normal)
     }
     
     // MARK: - Button Handlers
@@ -222,7 +230,7 @@ class LoginVC: BaseViewController, LoginVCProtocol
     
     @IBAction private func onDemoUserLoginButton(_ sender: UIButton)
     {
-        performDemoUserLogin()
+        showAuthenticationOptions()
     }
     
     @IBAction private func onGoogleButton(_ sender: Button)
@@ -256,13 +264,13 @@ class LoginVC: BaseViewController, LoginVCProtocol
                 hideActivityIndicator()
                 
                 updateLoginButton()
-                updateLoginDemoUserButton()
+                updateAuthenticationOptionsButton()
             }
             
             case .loading(let view): do
             {
                 loginButton.isEnabled = false
-                demoUserLoginButton.isEnabled = false
+                authenticationOptionsButton.isEnabled = false
                 
                 if view === loginButton
                 {
@@ -270,10 +278,10 @@ class LoginVC: BaseViewController, LoginVCProtocol
                     showActivityIndicator(for: loginButton)
                 }
                 
-                if view === demoUserLoginButton
+                if view === authenticationOptionsButton
                 {
-                    demoUserLoginButton.setTitle(nil, for: .normal)
-                    showActivityIndicator(for: demoUserLoginButton)
+                    authenticationOptionsButton.setTitle(nil, for: .normal)
+                    showActivityIndicator(for: authenticationOptionsButton)
                 }
             }
         }
@@ -304,10 +312,24 @@ class LoginVC: BaseViewController, LoginVCProtocol
 
 extension LoginVC: UITextFieldDelegate
 {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    {
+        switch textField.tag
+        {
+            case usernameTextField.tag: _ = passwordTextField.becomeFirstResponder()
+            case passwordTextField.tag: _ = usernameTextField.becomeFirstResponder()
+
+            default: break
+        }
+
+        return true
+    }
+
     func textFieldDidEndEditing(_ textField: UITextField)
     {
         formValidator.enableValidator(withKey: textField.tag)
         formValidator.resetValidator(withKey: textField.tag)
+        formValidator.enableErrorsForValidator(withKey: textField.tag)
         
         updateLoginButton()
     }
@@ -316,11 +338,17 @@ extension LoginVC: UITextFieldDelegate
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool
     {
+        formValidator.enableValidator(withKey: textField.tag)
         formValidator.resetValidator(withKey: textField.tag)
-        
+
+        guard let text = textField.text, let textRange = Range(range, in: text) else { return true }
+
+        let updatedText = text.replacingCharacters(in: textRange, with: string)
+        textField.text = updatedText
+
         updateLoginButton()
         
-        return true
+        return false
     }
 }
 
