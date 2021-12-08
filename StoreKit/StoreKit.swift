@@ -45,24 +45,45 @@ extension StoreKit
     /**
      Gets an items groups list for building a catalog.
      - Parameters:
-        - projectId: Project ID
-        - completion: List of `StoreItemGroup` on success.
+        - projectId: Project ID.
+        - completion: List of `StoreItemGroup` in case of success.
      */
     public func getItemGroups(projectId: Int, completion: @escaping StoreKitCompletion<[StoreItemGroup]>)
     {
         api.getItemGroups(projectId: projectId)
         { result in
 
-            switch result
+            if case .success(let response) = result
             {
-                case .success(let responseModel): do
-                {
-                    let itemGroups = responseModel.groups.map { StoreItemGroup(fromAPIResponse: $0) }
-                    completion(.success(itemGroups))
-                }
-
-                case .failure(let error): completion(.failure(error.processed))
+                let itemGroups = response.groups.map { StoreItemGroup(fromResponse: $0) }
+                completion(.success(itemGroups))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+        }
+    }
+
+    /**
+     Gets a list of all virtual items for searching on client-side.
+     - Parameters:
+       - projectId: Project ID.
+       - locale: Response language. Two-letter lowercase language code per ISO 639-1.
+       - completion: Completion with `Result`: **StoreAllVirtualItems** on success and Error on failure.
+     */
+    public func getAllVirtualItems(projectId: Int,
+                                   locale: String?,
+                                   completion: @escaping StoreKitCompletion<[StoreVirtualItemShort]>)
+    {
+        api.getAllVirtualItems(projectId: projectId, locale: locale)
+        { result in
+
+            if case .success(let response) = result
+            {
+                let virtualItems = response.items.map { StoreVirtualItemShort(fromResponse: $0) }
+                completion(.success(virtualItems))
+            }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
@@ -70,8 +91,8 @@ extension StoreKit
      Gets a virtual items list for building a catalog.
      - Parameters:
         - projectId: Project ID
-        - filterParams: Instance of `StoreFilterParams`
-        - completion: List of `StoreVirtualItem` on success.
+        - filterParams: Instance of **StoreFilterParams**.
+        - completion: List of `StoreVirtualItem` in case of success.
      */
     public func getVirtualItems(projectId: Int,
                                 filterParams: StoreFilterParams,
@@ -79,25 +100,23 @@ extension StoreKit
     {
         api.getVirtualItems(projectId: projectId, filterParams: filterParams)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let virtualItems = responseModel.items.map { StoreVirtualItem(fromGetVirtualItemsResponse: $0) }
-                    completion(.success(virtualItems))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .success(let response) = result
+            {
+                let virtualItems = response.items.map { StoreVirtualItem(fromResponse: $0) }
+                completion(.success(virtualItems))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
     /**
      Gets a virtual currency list for building a catalog.
      - Parameters:
-        - projectId: Project ID
-        - filterParams: Instance of `StoreFilterParams`
-        - completion: List of `StoreVirtualCurrency` on completion.
+        - projectId: Project ID.
+        - filterParams: Instance of **StoreFilterParams**.
+        - completion: List of `StoreVirtualCurrency` in case of success.
      */
     public func getVirtualCurrency(projectId: Int,
                                    filterParams: StoreFilterParams,
@@ -105,25 +124,23 @@ extension StoreKit
     {
         api.getVirtualCurrency(projectId: projectId, filterParams: filterParams)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let virtualCurrencies = responseModel.items.map { StoreVirtualCurrency(fromAPIResponse: $0) }
-                    completion(.success(virtualCurrencies))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .success(let response) = result
+            {
+                let virtualCurrencies = response.items.map { StoreVirtualCurrency(fromResponse: $0) }
+                completion(.success(virtualCurrencies))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
     /**
      Gets a virtual currency packages list for building a catalog.
      - Parameters:
-        - projectId: Project ID
-        - filterParams: Instance of `StoreFilterParams`
-        - completion: List of `StoreCurrencyPackage` on completion.
+        - projectId: Project ID.
+        - filterParams: Instance of **StoreFilterParams**.
+        - completion: List of **StoreCurrencyPackage** in case of success.
      */
     public func getVirtualCurrencyPackages(projectId: Int,
                                            filterParams: StoreFilterParams,
@@ -131,26 +148,24 @@ extension StoreKit
     {
         api.getVirtualCurrencyPackages(projectId: projectId, filterParams: filterParams)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let packages = responseModel.items.map { StoreCurrencyPackage(fromAPIResponse: $0) }
-                    completion(.success(packages))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .success(let response) = result
+            {
+                let packages = response.items.map { StoreCurrencyPackage(fromResponse: $0) }
+                completion(.success(packages))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
     /**
      Gets an items list from the specified group for building a catalog.
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - externalId: Group external ID.
-        - filterParams: Instance of `StoreFilterParams`
-        - completion: List of `StoreVirtualItem` on completion.
+        - filterParams: Instance of **StoreFilterParams**.
+        - completion: List of `StoreVirtualItem` in case of success.
      */
     public func getItemsOfGroup(projectId: Int,
                                 externalId: String,
@@ -161,25 +176,23 @@ extension StoreKit
                             externalId: externalId,
                             filterParams: filterParams)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let items = responseModel.items.map { StoreVirtualItem(fromGetItemsOfGroupResponse: $0) }
-                    completion(.success(items))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .success(let response) = result
+            {
+                let items = response.items.map { StoreVirtualItem(fromResponse: $0) }
+                completion(.success(items))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
     /**
      Gets a list of bundles for building a catalog.
      - Parameters:
-        - projectId: Project ID
-        - filterParams: Instance of `StoreFilterParams`
-        - completion: List of `StoreBundle` on completion.
+        - projectId: Project ID.
+        - filterParams: Instance of **StoreFilterParams**.
+        - completion: List of `StoreBundle` in case of success.
      */
     public func getBundlesList(projectId: Int,
                                filterParams: StoreFilterParams,
@@ -187,25 +200,23 @@ extension StoreKit
     {
         api.getBundlesList(projectId: projectId, filterParams: filterParams)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let bundleList = responseModel.items.map { StoreBundle(fromGetBundleListResponse: $0) }
-                    completion(.success(bundleList))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .success(let response) = result
+            {
+                let bundleList = response.items.map { StoreBundle(fromResponse: $0) }
+                completion(.success(bundleList))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
     /**
      Gets a specified bundle.
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - sku: Bundle SKU.
-        - completion: Instance of `StoreBundle` on completion.
+        - completion: Instance of **StoreBundle** in case of success.
      */
     public func getBundle(projectId: Int,
                           sku: String,
@@ -213,14 +224,10 @@ extension StoreKit
     {
         api.getBundle(projectId: projectId, sku: sku)
         { result in
+
             switch result
             {
-                case .success(let responseModel): do
-                {
-                    let bundle = StoreBundle(fromGetBundleResponse: responseModel)
-                    completion(.success(bundle))
-                }
-
+                case .success(let response): completion(.success(StoreBundle(fromResponse: response)))
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
@@ -229,10 +236,10 @@ extension StoreKit
     /**
      Retrieves a specified order.
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - orderId: Order ID.
-        - authorizationType: Type of authorization in Store API.
-     More info [here](https://developers.xsolla.com/doc/buy-button/how-to/set-up-authentication/#guides_buy_button_selling_items_not_authenticated_users).
+        - authorizationType: Type of authorization in the Store API.
+     [See documentation to learn more](https://developers.xsolla.com/doc/buy-button/how-to/set-up-authentication/#guides_buy_button_selling_items_not_authenticated_users).
      */
     public func getOrder(projectId: Int,
                          orderId: String,
@@ -241,14 +248,10 @@ extension StoreKit
     {
         api.getOrder(projectId: projectId, orderId: orderId, authorizationType: authorizationType)
         { result in
+
             switch result
             {
-                case .success(let responseModel): do
-                {
-                    let order = StoreOrder(fromGetOrderResponse: responseModel)
-                    completion(.success(order))
-                }
-
+                case .success(let response): completion(.success(StoreOrder(fromResponse: response)))
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
@@ -257,21 +260,23 @@ extension StoreKit
     /**
      Creates an order with a specified item. The created order will be given a “new” order status.
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui))
-        - itemSku: Item SKU
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+        - itemSku: Item SKU.
+        - quantity: Item quantity.
         - currency: The currency which prices are displayed in (USD  by default). Three-letter currency code per ISO 4217.
         - locale: Response language.
         - isSandbox: Creates an order in the sandbox mode. The option is available for the company users only.
         - paymentProjectSettings: Payment UI theme. Can be `default` or `defaultDark`.
         - customParameters: Project specific parameters.
-        - completion: **Order ID** and **Payment token** on success
+        - completion: **Order ID** and **Payment token** in case of success.
      */
     public func createOrder(projectId: Int,
                             accessToken: String,
                             itemSKU: String,
+                            quantity: Int = 1,
                             currency: String?,
                             locale: String?,
                             isSandbox: Bool,
@@ -282,34 +287,33 @@ extension StoreKit
         api.createOrder(accessToken: accessToken,
                         projectId: projectId,
                         itemSku: itemSKU,
+                        quantity: quantity,
                         currency: currency,
                         locale: locale,
                         isSandbox: isSandbox,
                         paymentProjectSettings: paymentProjectSettings,
                         customParameters: customParameters)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let createdOrder = StoreOrderPaymentInfo(orderId: responseModel.orderId,
-                                                             paymentToken: responseModel.token,
-                                                             isSandbox: isSandbox)
-                    completion(.success(createdOrder))
-                }
 
-                case .failure(let error): completion(.failure(error))
+            if case .success(let response) = result
+            {
+                let createdOrder = StoreOrderPaymentInfo(orderId: response.orderId,
+                                                         paymentToken: response.token,
+                                                         isSandbox: isSandbox)
+                completion(.success(createdOrder))
             }
+
+            if case .failure(let error) = result { completion(.failure(error)) }
         }
     }
 
     /**
      Creates item purchase using virtual currency.
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui))
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - itemSKU: Item SKU.
         - virtualCurrencySKU: Virtual currency SKU. Can be:
             * `playstation_network`
@@ -325,8 +329,8 @@ extension StoreKit
             * `ios_other`
             * `pc_other`
         - platform: Publishing platform the user plays on.
-        - customParameters: Your custom parameters, represented as a valid JSON set of key-value pairs.
-        - completion: Order ID on success.
+        - customParameters: Your custom parameters represented as a valid JSON set of key-value pairs.
+        - completion: Order ID in case of success.
      */
     public func purchaseItemByVirtualCurrency(projectId: Int,
                                               accessToken: String,
@@ -343,9 +347,10 @@ extension StoreKit
                                           platform: platform,
                                           customParameters: customParameters)
         { result in
+
             switch result
             {
-                case .success(let responseModel): completion(.success(responseModel.orderId))
+                case .success(let response): completion(.success(response.orderId))
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
@@ -354,13 +359,13 @@ extension StoreKit
     /**
      Redeems a coupon code. The user gets a bonus after a coupon is redeemed.
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
   You can use the Pay Station Access Token as an alternative.
-  You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui))
+  You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - couponCode: Unique coupon code. Contains letters and numbers.
-        - selectedUnitItems: The reward that is selected by a user. Object key is an SKU of a unit, and value is an SKU of one of the items in a unit.
-        - completion: List of recieved items.
+        - selectedUnitItems: The reward that is selected by a user. Object key is an SKU of a unit, and a value is an SKU of one of the items in a unit.
+        - completion: List of received items.
      */
     public func redeemCoupon(projectId: Int,
                              accessToken: String,
@@ -373,29 +378,27 @@ extension StoreKit
                          couponCode: couponCode,
                          selectedUnitItems: selectedUnitItems)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let bonusItems = responseModel.items.map { StoreCouponRedeemedItem(fromRedeemCouponResponse: $0) }
-                    completion(.success(bonusItems))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .success(let response) = result
+            {
+                let bonusItems = response.items.map { StoreCouponRedeemedItem(fromResponse: $0) }
+                completion(.success(bonusItems))
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
     /**
-     Gets coupons rewards by its code. Can be used to allow users to choose one of many items as a bonus.
-     The usual case is choosing a DRM if the coupon contains a game as a bonus (type=unit).
+     Gets coupons rewards by its code. Can be used to let users select one of many items as a bonus.
+     The usual case is selecting a DRM if the coupon contains a game as a bonus (type=unit).
      - Parameters:
-        - projectId: Project ID
+        - projectId: Project ID.
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui))
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - couponCode: Unique case sensitive code. Contains letters and numbers.
-        - completion: Rewards info on success.
+        - completion: Rewards info in case of success.
      */
     public func getCouponRewards(projectId: Int,
                                  accessToken: String,
@@ -406,14 +409,10 @@ extension StoreKit
                              projectId: projectId,
                              couponCode: couponCode)
         { result in
+
             switch result
             {
-                case .success(let responseModel): do
-                {
-                    let rewards = StoreCouponRewards(fromGetCouponRewardsResponse: responseModel)
-                    completion(.success(rewards))
-                }
-
+                case .success(let response): completion(.success(StoreCouponRewards(fromResponse: response)))
                 case .failure(let error): completion(.failure(error.processed))
             }
         }

@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class LoggerKitDefaultFilter: LoggerKitBaseFilter
 {
     var excludingLevels: [LogLevel] = []
-    var excludingCategories: [LogCategory] = []
+    var excludingCategories: [LogCategory] = [LogCategory.networking]
     var excludingDomains: [LogDomain] = []
     
     // You can use multiple search words separated by comma

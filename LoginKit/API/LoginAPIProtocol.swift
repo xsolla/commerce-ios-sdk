@@ -23,18 +23,13 @@ typealias LoginAPIResult<T> = Result<T, LoginAPIError>
 protocol LoginAPIProtocol
 {
     // MARK: Authentication
-    
+
+    func logUserOut(accessToken: String, sessionType: LogoutSessionType, completion: @escaping (LoginAPIResult<Void>) -> Void)
+
     func authByUsernameAndPassword(username: String,
                                    password: String,
                                    oAuth2Params: OAuth2Params,
                                    completion: @escaping (LoginAPIResult<AuthByUsernameAndPasswordResponse>) -> Void)
-    
-    func authByUsernameAndPasswordJWT(
-        username: String,
-        password: String,
-        clientId: Int,
-        scope: String?,
-        completion: @escaping (LoginAPIResult<AuthByUsernameAndPasswordJWTResponse>) -> Void)
     
     func getLinkForSocialAuth(providerName: String,
                               clientId: Int,
@@ -51,21 +46,12 @@ protocol LoginAPIProtocol
                              socialNetworkOpenId: String?,
                              completion: @escaping (LoginAPIResult<AuthBySocialNetworkResponse>) -> Void)
     
-    func generateJWT(grantType: String,
-                     clientId: Int,
-                     refreshToken: String?,
-                     clientSecret: String?,
-                     redirectUri: String?,
-                     authCode: String?,
+    func generateJWT(with authCode: String?,
+                     jwtParams: JWTGenerationParams,
                      completion: @escaping (LoginAPIResult<GenerateJWTResponse>) -> Void)
     
-    func registerNewUser(oAuth2Params: OAuth2Params,
-                         username: String,
-                         password: String,
-                         email: String,
-                         acceptConsent: Bool?,
-                         fields: [String: String]?,
-                         promoEmailAgreement: Int?,
+    func registerNewUser(params: RegisterNewUserParams,
+                         oAuth2Params: OAuth2Params,
                          completion: @escaping (LoginAPIResult<RegisterNewUserResponse>) -> Void)
     
     func resetPassword(loginProjectId: String,
@@ -132,8 +118,15 @@ protocol LoginAPIProtocol
                                 redirectUri: String?,
                                 completion: @escaping (LoginAPIResult<AddUsernameAndPasswordResponse>) -> Void)
 
+    func createCodeForLinkingAccounts(accessToken: String,
+                                      completion: @escaping (LoginAPIResult<String>) -> Void)
+
     // MARK: - User Account: User Profile
-    
+
+    func getUserPublicProfile(userId: String,
+                              accessToken: String,
+                              completion: @escaping (LoginAPIResult<GetUserPublicProfileResponse>) -> Void)
+
     func getCurrentUserDetails(accessToken: String,
                                completion: @escaping (LoginAPIResult<GetCurrentUserDetailsResponse>) -> Void)
     
@@ -179,8 +172,18 @@ protocol LoginAPIProtocol
                                   action: String,
                                   userID: String,
                                   completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
-    
+
+    func searchUsersByNickname(nickname: String,
+                               accessToken: String,
+                               offset: Int?,
+                               limit: Int?,
+                               completion: @escaping (LoginAPIResult<SearchUsersByNicknameResponse>) -> Void)
+
     // MARK: User Account: Social Networks
+
+    func getLinksForSocialAuth(accessToken: String,
+                               locale: String?,
+                               completion: @escaping (LoginAPIResult<GetLinksForSocialAuthResponse>) -> Void)
     
     func getLinkedNetworks(accessToken: String,
                            completion: @escaping (LoginAPIResult<GetLinkedNetworksResponse>) -> Void)
@@ -221,4 +224,9 @@ protocol LoginAPIProtocol
                                     publisherProjectId: Int?,
                                     removingKeys: [String]?,
                                     completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
+
+    func checkUserAge(birthday: String,
+                      accessToken: String,
+                      loginId: String,
+                      completion: @escaping (LoginAPIResult<Bool>) -> Void)
 }

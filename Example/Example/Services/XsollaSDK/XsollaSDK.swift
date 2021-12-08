@@ -19,10 +19,16 @@ import Foundation
 import XsollaSDKInventoryKit
 import XsollaSDKLoginKit
 import XsollaSDKStoreKit
+import XsollaSDKPaymentsKit
 
 protocol XsollaSDKAuthorizationErrorDelegate: AnyObject
 {
     func xsollaSDK(_ xsollaSDK: XsollaSDK, didFailAuthorizationWithError error: Error)
+}
+
+protocol XsollaSDKBalanceUpdatesListener: AnyObject
+{
+    func didRecieveCurrencyBalance(currency1Balance: VirtualCurrencyBalance, currency2Balance: VirtualCurrencyBalance) 
 }
 
 final class XsollaSDK
@@ -30,11 +36,15 @@ final class XsollaSDK
     let accessTokenProvider: AccessTokenProvider
     
     weak var authorizationErrorDelegate: XsollaSDKAuthorizationErrorDelegate?
+
+    var balanceFetcher: VirtualCurrencyBalanceFetcherProtocol?
+    weak var balanceUpdatesListener: XsollaSDKBalanceUpdatesListener?
     
     private var login: LoginKit { .shared }
     private var inventory: InventoryKit { .shared }
     private var store: StoreKit { .shared }
-    
+    private var payments: PaymentsKit { .shared }
+
     @Atomic private var isTokenDependedTasksInProcess = false
     private var tokenDependentTasksQueue = ThreadSafeArray<TokenDependentTask>()
     
@@ -86,65 +96,70 @@ final class XsollaSDK
             tokenDependentTasksQueue.dropFirst()
         }
     }
+
+    func requestBalanceUpdate()
+    {
+        balanceFetcher?.fetchBalanceData()
+    }
+}
+
+extension XsollaSDK: VirtualCurrencyBalanceFetcherDelegate
+{
+    func didRecieveCurrencyBalance(currency1Balance: VirtualCurrencyBalance, currency2Balance: VirtualCurrencyBalance)
+    {
+        balanceUpdatesListener?.didRecieveCurrencyBalance(currency1Balance: currency1Balance,
+                                                          currency2Balance: currency2Balance)
+    }
 }
 
 // MARK: - Login API
 
 extension XsollaSDK: XsollaSDKProtocol
 {
+    @available(iOS 13.4, *)
+    func authBySocialNetwork(_ providerName: String,
+                             oAuth2Params: OAuth2Params,
+                             jwtParams: JWTGenerationParams,
+                             presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                             completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
+    {
+        login.authBySocialNetwork(providerName,
+                                  oAuth2Params: oAuth2Params,
+                                  jwtParams: jwtParams,
+                                  presentationContextProvider: presentationContextProvider,
+                                  completion: completion)
+    }
+
     func authByUsernameAndPassword(username: String,
                                    password: String,
                                    oAuth2Params: OAuth2Params,
-                                   completion: @escaping LoginKitCompletion<String>)
+                                   jwtParams: JWTGenerationParams,
+                                   completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
         login.authByUsernameAndPassword(username: username,
                                         password: password,
                                         oAuth2Params: oAuth2Params,
+                                        jwtParams: jwtParams,
                                         completion: completion)
     }
     
-    func authByUsernameAndPasswordJWT(username: String,
-                                      password: String,
-                                      clientId: Int,
-                                      scope: String?,
-                                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
-    {
-        login.authByUsernameAndPasswordJWT(username: username,
-                                           password: password,
-                                           clientId: clientId,
-                                           scope: scope)
-        { [weak self] result in
-            switch result
-            {
-                case .success(let tokenInfo): do
-                {
-                    completion?(.success(tokenInfo))
-                }
-                
-                case .failure(let error): do
-                {
-                    self?.processError(error)
-                    completion?(.failure(error))
-                }
-            }
-        }
-    }
-    
     func getLinkForSocialAuth(providerName: String,
-                              oauth2params: OAuth2Params,
+                              oAuth2Params: OAuth2Params,
                               completion: @escaping LoginKitCompletion<URL>)
     {
-        login.getLinkForSocialAuth(providerName: providerName, oauth2params: oauth2params, completion: completion)
+        login.getLinkForSocialAuth(providerName: providerName, oAuth2Params: oAuth2Params, completion: completion)
     }
     
     func authBySocialNetwork(oAuth2Params: OAuth2Params,
+                             jwtParams: JWTGenerationParams,
                              providerName: String,
                              socialNetworkAccessToken: String,
                              socialNetworkAccessTokenSecret: String?,
                              socialNetworkOpenId: String?,
-                             completion: @escaping LoginKitCompletion<String>)
+                             completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
         login.authBySocialNetwork(oAuth2Params: oAuth2Params,
+                                  jwtParams: jwtParams,
                                   providerName: providerName,
                                   socialNetworkAccessToken: socialNetworkAccessToken,
                                   socialNetworkAccessTokenSecret: socialNetworkAccessTokenSecret,
@@ -152,20 +167,11 @@ extension XsollaSDK: XsollaSDKProtocol
                                   completion: completion)
     }
     
-    func generateJWT(grantType: TokenGrantType,
-                     clientId: Int,
-                     refreshToken: RefreshToken?,
-                     clientSecret: String?,
-                     redirectUri: String?,
-                     authCode: String?,
+    func generateJWT(with authCode: String?,
+                     jwtParams: JWTGenerationParams,
                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     {
-        login.generateJWT(grantType: grantType,
-                          clientId: clientId,
-                          refreshToken: refreshToken,
-                          clientSecret: clientSecret,
-                          redirectUri: redirectUri,
-                          authCode: authCode)
+        login.generateJWT(with: authCode, jwtParams: jwtParams)
         { [weak self] result in
             switch result
             {
@@ -182,27 +188,17 @@ extension XsollaSDK: XsollaSDKProtocol
             }
         }
     }
-    
-    func registerNewUser(oAuth2Params: OAuth2Params,
-                         username: String,
-                         password: String,
-                         email: String,
-                         acceptConsent: Bool?,
-                         fields: [String: String]?,
-                         promoEmailAgreement: Int?,
-                         completion: ((Result<URL?, Error>) -> Void)?)
+
+    func registerNewUser(params: RegisterNewUserParams,
+                         oAuth2Params: OAuth2Params,
+                         jwtParams: JWTGenerationParams,
+                         completion: ((Result<AccessTokenInfo?, Error>) -> Void)?)
     {
-        login.registerNewUser(oAuth2Params: oAuth2Params,
-                              username: username,
-                              password: password,
-                              email: email,
-                              acceptConsent: acceptConsent,
-                              fields: fields,
-                              promoEmailAgreement: promoEmailAgreement)
+        login.registerNewUser(params: params, oAuth2Params: oAuth2Params, jwtParams: jwtParams)
         { [weak self] result in
             switch result
             {
-                case .success(let url): completion?(.success(url))
+                case .success(let tokenInfo): completion?(.success(tokenInfo))
                 case .failure(let error): do
                 {
                     self?.processError(error)
@@ -237,7 +233,7 @@ extension XsollaSDK: XsollaSDKProtocol
                           email: String,
                           linkUrl: String?,
                           sendLink: Bool,
-                          completion: ((Result<String, Error>) -> Void)?)
+                          completion: ((Result<LoginOperationId, Error>) -> Void)?)
     {
         login.startAuthByEmail(oAuth2Params: oAuth2Params, email: email, linkUrl: linkUrl, sendLink: sendLink)
         { [weak self] result in
@@ -256,14 +252,19 @@ extension XsollaSDK: XsollaSDKProtocol
     func completeAuthByEmail(clientId: Int,
                              code: String,
                              email: String,
-                             operationId: String,
-                             completion: ((Result<String, Error>) -> Void)?)
+                             operationId: LoginOperationId,
+                             jwtParams: JWTGenerationParams,
+                             completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     {
-        login.completeAuthByEmail(clientId: clientId, code: code, email: email, operationId: operationId)
+        login.completeAuthByEmail(clientId: clientId,
+                                  code: code,
+                                  email: email,
+                                  operationId: operationId,
+                                  jwtParams: jwtParams)
         { [weak self] result in
             switch result
             {
-                case .success(let loginUrl): completion?(.success(loginUrl))
+                case .success(let tokenInfo): completion?(.success(tokenInfo))
                 case .failure(let error): do
                 {
                     self?.processError(error)
@@ -277,7 +278,7 @@ extension XsollaSDK: XsollaSDKProtocol
                           phoneNumber: String,
                           linkUrl: String?,
                           sendLink: Bool,
-                          completion: ((Result<String, Error>) -> Void)?)
+                          completion: ((Result<LoginOperationId, Error>) -> Void)?)
     {
         login.startAuthByPhone(oAuth2Params: oAuth2Params,
                                phoneNumber: phoneNumber,
@@ -299,14 +300,19 @@ extension XsollaSDK: XsollaSDKProtocol
     func completeAuthByPhone(clientId: Int,
                              code: String,
                              phoneNumber: String,
-                             operationId: String,
-                             completion: ((Result<String, Error>) -> Void)?)
+                             operationId: LoginOperationId,
+                             jwtParams: JWTGenerationParams,
+                             completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     {
-        login.completeAuthByPhone(clientId: clientId, code: code, phoneNumber: phoneNumber, operationId: operationId)
+        login.completeAuthByPhone(clientId: clientId,
+                                  code: code,
+                                  phoneNumber: phoneNumber,
+                                  operationId: operationId,
+                                  jwtParams: jwtParams)
         { [weak self] result in
             switch result
             {
-                case .success(let loginUrl): completion?(.success(loginUrl))
+                case .success(let tokenInfo): completion?(.success(tokenInfo))
                 case .failure(let error): do
                 {
                     self?.processError(error)
@@ -360,16 +366,18 @@ extension XsollaSDK: XsollaSDKProtocol
         }
     }
 
-    func authWithDeviceId(oAuth2Params: OAuth2Params,
+    func authWithDeviceId(deviceId: String,
                           device: String,
-                          deviceId: String,
-                          completion: ((Result<String, Error>) -> Void)?)
+                          oAuth2Params: OAuth2Params,
+                          jwtParams: JWTGenerationParams,
+                          completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     {
-        login.authWithDeviceId(oAuth2Params: oAuth2Params, device: device, deviceId: deviceId)
+        login.authWithDeviceId(deviceId: deviceId, device: device, oAuth2Params: oAuth2Params, jwtParams: jwtParams)
         { [weak self] result in
+
             switch result
             {
-                case .success(let loginUrl): completion?(.success(loginUrl))
+                case .success(let tokenInfo): completion?(.success(tokenInfo))
                 case .failure(let error): do
                 {
                     self?.processError(error)
@@ -1014,6 +1022,7 @@ extension XsollaSDK
     
     func createOrder(projectId: Int,
                      itemSKU: String,
+                     quantity: Int = 1,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
@@ -1028,6 +1037,7 @@ extension XsollaSDK
             store.createOrder(projectId: projectId,
                               accessToken: token,
                               itemSKU: itemSKU,
+                              quantity: quantity,
                               currency: currency,
                               locale: locale,
                               isSandbox: isSandbox,
@@ -1084,6 +1094,16 @@ extension XsollaSDK
                                    accessToken: token,
                                    couponCode: couponCode,
                                    completion: completion) }
+    }
+}
+
+// MARK: - Payments API
+
+extension XsollaSDK
+{
+    func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
+    {
+        self.payments.createPaymentUrl(paymentToken: paymentToken, isSandbox: isSandbox)
     }
 }
 

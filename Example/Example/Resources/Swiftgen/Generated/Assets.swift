@@ -80,6 +80,7 @@ internal enum Asset {
     internal static let menuProfileAvatar = ImageAsset(name: "menu-profile-avatar")
     internal static let menuStoreIcon = ImageAsset(name: "menu-store-icon")
     internal static let menuToggleIcon = ImageAsset(name: "menu-toggle-icon")
+    internal static let menuWebshopIcon = ImageAsset(name: "menu-webshop-icon")
     internal static let avatarPlaceholderLarge = ImageAsset(name: "avatar-placeholder-large")
     internal static let avatarPlaceholder = ImageAsset(name: "avatar-placeholder")
     internal static let dismissButtonIcon = ImageAsset(name: "dismiss-button-icon")

@@ -15,6 +15,8 @@ internal enum StoryboardScene {
   internal enum Authentication: StoryboardType {
     internal static let storyboardName = "Authentication"
 
+    internal static let appDeveloperSettings = SceneType<Example.AppDeveloperSettingsVC>(storyboard: Authentication.self, identifier: "AppDeveloperSettings")
+
     internal static let authenticationOptionsSelector = SceneType<Example.AuthenticationOptionsSelectorVC>(storyboard: Authentication.self, identifier: "AuthenticationOptionsSelector")
 
     internal static let login = SceneType<Example.LoginVC>(storyboard: Authentication.self, identifier: "Login")

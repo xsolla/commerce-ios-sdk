@@ -22,6 +22,7 @@ protocol SideMenuContentVCProtocol: BaseViewController
     var inventoryMenuItemHandler: (() -> Void)? { get set }
     var virtualItemsMenuItemHandler: (() -> Void)? { get set }
     var virtualCurrencyMenuItemHandler: (() -> Void)? { get set }
+    var webstoreMenuItemHandler: (() -> Void)? { get set }
     var logoutMenuItemHandler: (() -> Void)? { get set }
     
     func setProfileInfo(name: String?, email: String?, avatarUrl: URL?, message: String?)
@@ -34,6 +35,7 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
     var inventoryMenuItemHandler: (() -> Void)?
     var virtualItemsMenuItemHandler: (() -> Void)?
     var virtualCurrencyMenuItemHandler: (() -> Void)?
+    var webstoreMenuItemHandler: (() -> Void)?
     var logoutMenuItemHandler: (() -> Void)?
     
     func setProfileInfo(name: String?, email: String?, avatarUrl: URL?, message: String?)
@@ -58,6 +60,7 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
     @IBOutlet private weak var characterSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var inventorySection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var storeSection: ExpandableMenuItemsSectionView!
+    @IBOutlet private weak var webstoreSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var logoutSection: ExpandableMenuItemsSectionView!
     @IBOutlet private weak var versionInfoLabel: UILabel!
     
@@ -68,6 +71,7 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
         setupCharacterSection()
         setupInventorySection()
         setupStoreSection()
+        setupWebstoreSection()
         setupProfileSection()
         setupLogoutSection()
         updateProfileInfo()
@@ -92,16 +96,28 @@ class SideMenuContentVC: BaseViewController, SideMenuContentVCProtocol
 
         section.setup(withTitleView: view, items: [])
     }
-    
+
     func setupInventorySection()
     {
         let section = inventorySection!
-        
+
         let title = L10n.Menu.Item.inventory
         let sectionTitle = MenuItemView(title: title,
                                         image: Asset.Images.menuInventoryIcon.image,
                                         height: 40)
         let titleView = ExpandableMenuItemsSectionView.View(view: sectionTitle, tapHandler: inventoryMenuItemHandler)
+        section.setup(withTitleView: titleView, items: [])
+    }
+
+    func setupWebstoreSection()
+    {
+        let section = webstoreSection!
+
+        let title = L10n.Menu.Item.webstore
+        let sectionTitle = MenuItemView(title: title,
+                                        image: Asset.Images.menuWebshopIcon.image,
+                                        height: 40)
+        let titleView = ExpandableMenuItemsSectionView.View(view: sectionTitle, tapHandler: webstoreMenuItemHandler)
         section.setup(withTitleView: titleView, items: [])
     }
     

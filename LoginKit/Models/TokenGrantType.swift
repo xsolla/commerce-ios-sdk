@@ -16,13 +16,13 @@ import Foundation
 /// The type of getting the JWT.
 public enum TokenGrantType: String
 {
-    /// to exchange the code received in the [method](https://developers.xsolla.com/login-api/methods/oauth-20/oauth-20-auth-by-username-and-password/)
+    /// To exchange the code received in the [method](https://developers.xsolla.com/login-api/methods/oauth-20/oauth-20-auth-by-username-and-password/)
     /// for a JWT.
     case authorizationCode = "authorization_code"
 
-    /// to get the refreshed JWT when the previous value is expired.
+    /// To get the refreshed JWT when the previous value is expired.
     case refreshToken = "refresh_token"
 
-    /// to get the server JWT without user participation.
+    /// To get the server JWT without user participation.
     case clientCredentials = "client_credentials"
 }

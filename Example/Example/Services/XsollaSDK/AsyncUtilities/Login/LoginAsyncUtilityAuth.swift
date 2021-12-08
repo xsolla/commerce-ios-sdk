@@ -15,21 +15,21 @@ import Foundation
 import XsollaSDKLoginKit
 import Promises
 
-// swiftlint:disable function_parameter_count
-
 extension LoginAsyncUtility: LoginAsyncUtilityAuthProtocol
 {
-    func authWith(username: String, password: String, clientId: Int?, scope: String?) -> Promise<AccessTokenInfo>
+    func authWith(username: String, password: String) -> Promise<AccessTokenInfo>
     {
         let api = self.api
+        let oAuth2Params = self.oAuth2Params
+        let jwtParams = self.jwtParams
 
         return Promise<AccessTokenInfo>
         { fulfill, reject in
 
-            api.authByUsernameAndPasswordJWT(username: username,
-                                             password: password,
-                                             clientId: clientId ?? self.clientId,
-                                             scope: scope ?? self.scope)
+            api.authByUsernameAndPassword(username: username,
+                                          password: password,
+                                          oAuth2Params: oAuth2Params,
+                                          jwtParams: jwtParams)
             { result in
 
                 switch result
@@ -41,33 +41,16 @@ extension LoginAsyncUtility: LoginAsyncUtilityAuthProtocol
         }
     }
 
-    func authWith(deviceId: String,
-                  device: String,
-                  state: String?,
-                  clientId: Int?,
-                  redirectUri: String?,
-                  scope: String?,
-                  responseType: String?) -> Promise<AccessTokenInfo>
-    {
-        let oAuth2Params = OAuth2Params(clientId: clientId ?? self.clientId,
-                                        state: state ?? UUID().uuidString,
-                                        scope: scope ?? self.scope,
-                                        redirectUri: redirectUri ?? self.redirectURL)
-
-        return
-            authWith(deviceId: deviceId, device: device, oAuth2Params: oAuth2Params)
-            .then(extractAuthCode)
-            .then(generateJWTWithAuthCode)
-    }
-
-    func authWith(deviceId: String, device: String, oAuth2Params: OAuth2Params) -> Promise<LoginRedirectUrlString>
+    func authWith(deviceId: String, device: String) -> Promise<AccessTokenInfo>
     {
         let api = self.api
+        let oAuth2Params = self.oAuth2Params
+        let jwtParams = self.jwtParams
 
-        return Promise<LoginRedirectUrlString>
+        return Promise<AccessTokenInfo>
         { fulfill, reject in
 
-            api.authWithDeviceId(oAuth2Params: oAuth2Params, device: device, deviceId: deviceId)
+            api.authWithDeviceId(deviceId: deviceId, device: device, oAuth2Params: oAuth2Params, jwtParams: jwtParams)
             { result in
 
                 switch result
@@ -79,62 +62,23 @@ extension LoginAsyncUtility: LoginAsyncUtilityAuthProtocol
         }
     }
 
-    func extractAuthCode(redirectUrl url: LoginRedirectUrlString) -> Promise<LoginAuthCode>
-    {
-        if
-            let urlComponents = URLComponents(string: url),
-            let code = urlComponents.queryItems?.first(where: { $0.name == "code" })?.value
-        {
-            return Promise(code)
-        }
-        else
-        {
-            return Promise(getRedirectUrlParsingError(redirectUrl: url) ?? RedirectUrlParsingError.unknownError(nil))
-        }
-    }
-
-    func getRedirectUrlParsingError(redirectUrl url: LoginRedirectUrlString) -> Error?
-    {
-        guard
-            let urlComponents = URLComponents(string: url),
-            let errorCode = urlComponents.queryItems?.first(where: { $0.name == "error_code" })?.value,
-            var errorDescription = urlComponents.queryItems?.first(where: { $0.name == "error_description" })?.value
-        else
-            { return nil }
-
-        errorDescription = errorDescription.replacingOccurrences(of: "+", with: " ")
-
-        switch errorCode
-        {
-            case "010-016": return RedirectUrlParsingError.networkLinkingError(errorDescription)
-            default: return RedirectUrlParsingError.unknownError(errorDescription)
-        }
-    }
-
     func generateJWTWithAuthCode(_ authCode: LoginAuthCode) -> Promise<AccessTokenInfo>
     {
         generateJWTWith(authCode: authCode)
     }
 
-    func generateJWTWith(authCode: LoginAuthCode,
-                         clientId: Int?,
-                         clientSecret: String?,
-                         redirectURL: String?,
-                         refreshToken: RefreshToken?) -> Promise<AccessTokenInfo>
+    func generateJWTWith(authCode: LoginAuthCode) -> Promise<AccessTokenInfo>
     {
         let api = self.api
-        let clientId = clientId ?? self.clientId
-        let redirectURL = redirectURL ?? self.redirectURL
+        let clientId = jwtParams.clientId
+        let redirectURL = jwtParams.redirectUri
 
         return Promise<AccessTokenInfo>
         { fulfill, reject in
 
-            api.generateJWT(grantType: .authorizationCode,
-                            clientId: clientId,
-                            refreshToken: refreshToken,
-                            clientSecret: clientSecret,
-                            redirectUri: redirectURL,
-                            authCode: authCode)
+            let jwtParams = JWTGenerationParams(clientId: clientId, redirectUri: redirectURL)
+
+            api.generateJWT(with: authCode, jwtParams: jwtParams)
             { result in
                 switch result
                 {
@@ -152,7 +96,7 @@ extension LoginAsyncUtility: LoginAsyncUtilityAuthProtocol
         return Promise<Void>
         { fulfill, reject in
 
-            api.resetPassword(loginProjectId: AppConfig.loginProjectID,
+            api.resetPassword(loginProjectId: AppConfig.loginId,
                               username: username,
                               loginUrl: AppConfig.redirectUrl)
             { result in

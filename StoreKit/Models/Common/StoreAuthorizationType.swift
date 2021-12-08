@@ -13,7 +13,7 @@
 
 import Foundation
 
-/// Type of authorization in Store API
+/// Type of authorization in Store API.
 public enum StoreAuthorizationType
 {
     /// Authorized users with the access token.

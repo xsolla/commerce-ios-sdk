@@ -68,6 +68,7 @@ class VirtualItemsActionHandler
         logger.info { "Buy item: \(item.name) with REAL currency" }
 
         store.createOrder(itemSKU: item.sku,
+                          quantity: 1,
                           currency: nil,
                           locale: "",
                           isSandbox: true)

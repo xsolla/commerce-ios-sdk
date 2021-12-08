@@ -19,7 +19,7 @@ public struct StoreOrder
     /// Order ID.
     public let orderId: Int
 
-    /// Order status. May be: `new`, `paid`, `done`, `canceled`.
+    /// Order status. May be: `new`, `paid`, `done`, and `canceled`.
     public let status: String?
 
     /// Order details.
@@ -66,7 +66,7 @@ extension StoreOrder.Content
 
 extension StoreOrder
 {
-    init(fromGetOrderResponse response: GetOrderResponse)
+    init(fromResponse response: GetOrderResponse)
     {
         self.orderId = response.orderId
         self.status = response.status

@@ -53,7 +53,7 @@ public struct StoreItemGroupShort
 
 extension StoreItemGroup
 {
-    init(fromAPIResponse response: GetItemGroupsResponse.Group)
+    init(fromResponse response: GetItemGroupsResponse.Group)
     {
         externalId = response.externalId
         name = response.name
@@ -61,7 +61,7 @@ extension StoreItemGroup
         imageUrl = response.imageUrl
         order = response.order
         level = response.level
-        children = response.children?.map { StoreItemGroup(fromAPIResponse: $0) }
+        children = response.children?.map { StoreItemGroup(fromResponse: $0) }
         parentExternalId = response.parentExternalId
     }
 }

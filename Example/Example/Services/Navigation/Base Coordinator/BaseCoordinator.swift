@@ -69,6 +69,9 @@ class BaseCoordinator<Dependencies, Params>: NSObject, Coordinator, UINavigation
                             animated: Bool = true,
                             pushMode: NavigationController.PushMode = .push)
     {
+        guard childCoordinators.isEmpty
+        else { fatalError("It's not allowed to push a view controller when child coordinator(s) started") }
+
         var mode = pushMode
         
         // Overriding local push mode by global mode if global one is not default mode (.push)
@@ -131,6 +134,8 @@ class BaseCoordinator<Dependencies, Params>: NSObject, Coordinator, UINavigation
             coordinator.navigationController?(navigationController, didShow: viewController, animated: animated)
         }
     }
+
+    var currentViewController: UIViewController? { presenter?.viewControllers.last }
     
     init(presenter: Presenter?, dependencies: Dependencies, params: Params)
     {

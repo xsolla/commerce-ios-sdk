@@ -43,8 +43,7 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
 
             dependencies.otpSequence.sendOTPRequest(payload: payload,
                                                     state: UUID().uuidString,
-                                                    confirmationLink: AppConfig.confirmationLink,
-                                                    sendConfirmationLink: true)
+                                                    confirmationLink: AppConfig.passwordlessConfirmationUrl)
             { [weak self] result in
 
                 if case .success(let opertionId) = result
@@ -65,7 +64,7 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
         presenter?.pushViewController(viewController, animated: true)
     }
 
-    func showInputCodeVC(payload: OTPRequestPayload, operationId: OTPOperationId)
+    func showInputCodeVC(payload: OTPRequestPayload, operationId: LoginOperationId)
     {
         let params = OTPInputCodeVCFactoryParams(configuration: dependencies.configuration)
         let viewController = dependencies.viewControllerFactory.createOTPInputCodeVC(params: params)
@@ -81,8 +80,7 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
 
             self.dependencies.otpSequence.sendOTPRequest(payload: payload,
                                                          state: UUID().uuidString,
-                                                         confirmationLink: AppConfig.confirmationLink,
-                                                         sendConfirmationLink: true)
+                                                         confirmationLink: AppConfig.passwordlessConfirmationUrl)
             { result in
 
                 if case .success = result
@@ -119,7 +117,7 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
 
     func validateCode(_ code: String,
                       payload: OTPRequestPayload,
-                      operationId: OTPOperationId,
+                      operationId: LoginOperationId,
                       in viewController: OTPInputCodeVCProtocol,
                       view: UIView?)
     {
@@ -152,7 +150,7 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
 
     func startListeningConfirmationCode(in viewController: OTPInputCodeVCProtocol,
                                         payload: OTPRequestPayload,
-                                        operationId: OTPOperationId)
+                                        operationId: LoginOperationId)
     {
         dependencies.otpSequence.startListeningConfirmationCode
         { [weak self] result in

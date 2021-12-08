@@ -18,48 +18,46 @@ import XsollaSDKInventoryKit
 import XsollaSDKLoginKit
 import XsollaSDKStoreKit
 
-protocol XsollaSDKProtocol
+protocol XsollaSDKProtocol: AnyObject
 {
+    var balanceUpdatesListener: XsollaSDKBalanceUpdatesListener? { get set }
+    func requestBalanceUpdate()
+
     // MARK: - LoginKit
+
+    @available(iOS 13.4, *)
+    func authBySocialNetwork(_ providerName: String,
+                             oAuth2Params: OAuth2Params,
+                             jwtParams: JWTGenerationParams,
+                             presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                             completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     
     func authByUsernameAndPassword(username: String,
                                    password: String,
                                    oAuth2Params: OAuth2Params,
-                                   completion: @escaping LoginKitCompletion<String>)
-    
-    func authByUsernameAndPasswordJWT(username: String,
-                                      password: String,
-                                      clientId: Int,
-                                      scope: String?,
-                                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
+                                   jwtParams: JWTGenerationParams,
+                                   completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     
     func getLinkForSocialAuth(providerName: String,
-                              oauth2params: OAuth2Params,
+                              oAuth2Params: OAuth2Params,
                               completion: @escaping LoginKitCompletion<URL>)
     
     func authBySocialNetwork(oAuth2Params: OAuth2Params,
+                             jwtParams: JWTGenerationParams,
                              providerName: String,
                              socialNetworkAccessToken: String,
                              socialNetworkAccessTokenSecret: String?,
                              socialNetworkOpenId: String?,
-                             completion: @escaping LoginKitCompletion<String>)
+                             completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     
-    func generateJWT(grantType: TokenGrantType,
-                     clientId: Int,
-                     refreshToken: RefreshToken?,
-                     clientSecret: String?,
-                     redirectUri: String?,
-                     authCode: String?,
+    func generateJWT(with authCode: String?,
+                     jwtParams: JWTGenerationParams,
                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
-    
-    func registerNewUser(oAuth2Params: OAuth2Params,
-                         username: String,
-                         password: String,
-                         email: String,
-                         acceptConsent: Bool?,
-                         fields: [String: String]?,
-                         promoEmailAgreement: Int?,
-                         completion: ((Result<URL?, Error>) -> Void)?)
+
+    func registerNewUser(params: RegisterNewUserParams,
+                         oAuth2Params: OAuth2Params,
+                         jwtParams: JWTGenerationParams,
+                         completion: ((Result<AccessTokenInfo?, Error>) -> Void)?)
     
     func resetPassword(loginProjectId: String,
                        username: String,
@@ -70,25 +68,27 @@ protocol XsollaSDKProtocol
                           email: String,
                           linkUrl: String?,
                           sendLink: Bool,
-                          completion: ((Result<String, Error>) -> Void)?)
+                          completion: ((Result<LoginOperationId, Error>) -> Void)?)
     
     func completeAuthByEmail(clientId: Int,
                              code: String,
                              email: String,
-                             operationId: String,
-                             completion: ((Result<String, Error>) -> Void)?)
+                             operationId: LoginOperationId,
+                             jwtParams: JWTGenerationParams,
+                             completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     
     func startAuthByPhone(oAuth2Params: OAuth2Params,
                           phoneNumber: String,
                           linkUrl: String?,
                           sendLink: Bool,
-                          completion: ((Result<String, Error>) -> Void)?)
+                          completion: ((Result<LoginOperationId, Error>) -> Void)?)
     
     func completeAuthByPhone(clientId: Int,
                              code: String,
                              phoneNumber: String,
-                             operationId: String,
-                             completion: ((Result<String, Error>) -> Void)?)
+                             operationId: LoginOperationId,
+                             jwtParams: JWTGenerationParams,
+                             completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
 
     func getConfirmationCode(projectId: String,
                              login: String,
@@ -101,10 +101,11 @@ protocol XsollaSDKProtocol
                                 username: String,
                                 completion: ((Result<Void, Error>) -> Void)?)
 
-    func authWithDeviceId(oAuth2Params: OAuth2Params,
+    func authWithDeviceId(deviceId: String,
                           device: String,
-                          deviceId: String,
-                          completion: ((Result<String, Error>) -> Void)?)
+                          oAuth2Params: OAuth2Params,
+                          jwtParams: JWTGenerationParams,
+                          completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
     
     func getUserConnectedDevices(completion: ((Result<[DeviceInfo], Error>) -> Void)?)
     
@@ -230,6 +231,7 @@ protocol XsollaSDKProtocol
     
     func createOrder(projectId: Int,
                      itemSKU: String,
+                     quantity: Int,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
@@ -252,4 +254,6 @@ protocol XsollaSDKProtocol
     func getCouponRewards(projectId: Int,
                           couponCode: String,
                           completion: @escaping StoreKitCompletion<StoreCouponRewards>)
+
+    func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
 }

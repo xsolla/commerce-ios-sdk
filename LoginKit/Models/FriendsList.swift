@@ -28,7 +28,7 @@ public struct FriendsList
 
 extension FriendsList
 {
-    /// Friends details
+    /// Friends details.
     public struct Relationship
     {
         /// Status of the current user depending on the requested friend.
@@ -37,7 +37,7 @@ extension FriendsList
         /// Status of the requested friend depending on the current user.
         public let outgoingStatus: Status
 
-        /// Date of the latest action of adding a friend to the friend list or banning them in seconds.
+        /// Date of the latest action of adding a friend to the friend list or banning them. In seconds.
         public let updated: Date
 
         /// User details.

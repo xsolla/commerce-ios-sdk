@@ -21,7 +21,9 @@ extension AppCoordinator
         
         let coordinatorDependencies = AppCoordinator.Dependencies(factories: projectFactories,
                                                                   appstateProvider: stateProvider,
-                                                                  loginManager: LoginManager.shared)
+                                                                  loginManager: LoginManager.shared,
+                                                                  accessTokenProvider: LoginManager.shared,
+                                                                  deepLinkManager: DeepLinkManager.shared)
         
         let coordinator = AppCoordinator(window: window, dependencies: coordinatorDependencies, params: .none)
         
@@ -35,13 +37,17 @@ extension AppCoordinator
         
         let viewControllerFactory = ViewControllerFactory(params: .none)
         let datasourceFactory = DatasourceFactory(params: .init(priceHelper: priceHelper))
-        
+
         let xsollaSDK = XsollaSDK(accessTokenProvider: LoginManager.shared)
         xsollaSDK.authorizationErrorDelegate = LoginManager.shared
-        
+
         let asyncUtilsFactory = AsyncUtilsFactory(api: xsollaSDK)
 
         let modelFactory = ModelFactory(params: .init(xsollaSDK: xsollaSDK, dataSourceFactory: datasourceFactory))
+
+        let balanceFetcher = modelFactory.createVirtualCurrencyBalanceFetcher(params: .none)
+        balanceFetcher.delegate = xsollaSDK
+        xsollaSDK.balanceFetcher = balanceFetcher
 
         let store = Store(dependencies: .init(xsollaSDK: xsollaSDK))
 

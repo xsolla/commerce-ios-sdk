@@ -69,7 +69,7 @@ public struct StoreBundle
         /// List of attributes and their values corresponding to the item. Can be used for catalog filtering.
         public let attributes: [StoreItemAttribute]
 
-        /// Type of item: `virtual_good`, `virtual_currency`, `bundle`.
+        /// Type of item: `virtual_good`, `virtual_currency`, and `bundle`.
         public let type: String
 
         /// Item description.
@@ -100,7 +100,7 @@ public struct StoreBundle
 
 extension StoreBundle
 {
-    init(fromGetBundleListResponse response: GetBundlesListResponse.Item)
+    init(fromResponse response: GetBundlesListResponse.Item)
     {
         self.sku = response.sku
         self.name = response.name
@@ -140,7 +140,7 @@ extension StoreBundle
         }
     }
 
-    init(fromGetBundleResponse response: GetBundleResponse)
+    init(fromResponse response: GetBundleResponse)
     {
         self.sku = response.sku
         self.name = response.name

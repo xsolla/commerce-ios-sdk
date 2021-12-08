@@ -36,7 +36,26 @@ class PaymentsAPI
 
 extension PaymentsAPI: PaymentsAPIProtocol
 {
+    func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
+    {
+        let baseUrlString = isSandbox
+            ? "https://sandbox-secure.xsolla.com/paystation3/"
+            : "https://secure.xsolla.com/paystation3/"
 
+        guard var urlComponents = URLComponents(string: baseUrlString) else
+        {
+            return nil
+        }
+
+        urlComponents.queryItems = [URLQueryItem(name: "access_token", value: paymentToken)]
+
+        guard let url = urlComponents.url else
+        {
+            return nil
+        }
+
+        return url
+    }
 }
 
 extension PaymentsAPI
@@ -44,7 +63,7 @@ extension PaymentsAPI
     var configuration: PaymentsAPIConfiguration
     {
         PaymentsAPIConfiguration(requestPerformer: requestPerformer,
-                                  responseProcessor: responseProcessor,
-                                  apiBasePath: "http://0.0.0.0:3000/")
+                                 responseProcessor: responseProcessor,
+                                 apiBasePath: "http://0.0.0.0:3000/")
     }
 }

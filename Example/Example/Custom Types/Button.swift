@@ -63,6 +63,7 @@ class Button: UIButton
                   attributes: Attributes = Style.button.attributes(withColor: .xsolla_white),
                   for state: UIControl.State = .normal)
     {
+        super.setTitle(nil, for: state)
         setAttributedTitle(text?.attributed(attributes), for: state)
     }
 

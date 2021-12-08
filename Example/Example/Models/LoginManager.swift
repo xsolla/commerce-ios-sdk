@@ -16,7 +16,7 @@ import XsollaSDKLoginKit
 
 typealias AccessToken = String
 typealias LoginAuthCode = String
-typealias LoginRedirectUrlString = String
+typealias RedirectUrlString = String
 typealias RefreshToken = String
 
 enum LoginManagerError: Error
@@ -146,13 +146,14 @@ extension LoginManager
             completion(.failure(.refreshTokenNotFound))
             return
         }
+        
+        let jwtParams = JWTGenerationParams(grantType: .refreshToken,
+                                            clientId: AppConfig.oAuth2ClientId,
+                                            refreshToken: refreshToken,
+                                            clientSecret: nil,
+                                            redirectUri: AppConfig.redirectUrl)
 
-        LoginKit.shared.generateJWT(grantType: .refreshToken,
-                                    clientId: AppConfig.loginClientId,
-                                    refreshToken: refreshToken,
-                                    clientSecret: nil,
-                                    redirectUri: AppConfig.redirectUrl,
-                                    authCode: nil)
+        LoginKit.shared.generateJWT(with: nil, jwtParams: jwtParams)
         { [weak self] result in
 
             guard let self = self else

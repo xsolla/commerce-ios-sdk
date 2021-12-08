@@ -12,16 +12,21 @@
 // See the License for the specific language governing and permissions and
 
 // swiftlint:disable function_parameter_count
+// swiftlint:disable line_length
 
 import Foundation
 import XsollaSDKUtilities
+import UIKit
 
 public typealias LoginKitResult<T> = Result<T, Error>
 public typealias LoginKitCompletion<T> = (LoginKitResult<T>) -> Void
+public typealias LoginOperationId = String
 
 public final class LoginKit
 {
     public static let shared = LoginKit()
+
+    public var authCodeExtractor: AuthCodeExtracting = AuthCodeExtractor()
 
     private var api: LoginAPIProtocol
 
@@ -40,73 +45,188 @@ public final class LoginKit
     }
 }
 
+@available(iOS 13.4, *)
 extension LoginKit
 {
+
     /**
-     Authenticates the user by the username/email and password specified.
-     To finish user authentication, get the user JWT by sending the **Generate JWT** request.
+     Authenticates the user via a social network.
+
      - Parameters:
-       - username: Username/email
-       - password: Password
-       - oAuth2Params: Instance of **OAuth2Params**
-       - completion: Completion with `Result`: URL string on success and Error on failure.
-       URL string generated from **redirectUri** of **OAuth2Params** with additional parameters.
-       The **code** parameter is the user authentication code which must be exchanged to JWT
-    */
-    public func authByUsernameAndPassword(username: String,
-                                          password: String,
-                                          oAuth2Params: OAuth2Params,
-                                          completion: @escaping LoginKitCompletion<String>)
+       - providerName: Name of the social network connected to Login in Publisher Account.
+       Can have the following values: `amazon`, `apple`, `baidu`, `battlenet`, `discord`, `facebook`, `github`, `google`, `kakao`, `linkedin`, `mailru`, `microsoft`, `msn`, `naver`, `ok`, `paypal`, `psn`, `reddit`, `steam`, `twitch`, `twitter`, `vimeo`, `vk`, `wechat`, `weibo`, `yahoo`, `yandex`, `youtube`, `xbox`.
+       If you store user data in [PlayFab](https://developers.xsolla.com/doc/login/how-to/users-storage-playfab), only `twitch` is available.
+       - oAuth2Params: Instance of **OAuth2Params**.
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
+     */
+    public func authBySocialNetwork(_ providerName: String,
+                                    oAuth2Params: OAuth2Params,
+                                    jwtParams: JWTGenerationParams,
+                                    presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                                    completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
-        api.authByUsernameAndPassword(username: username, password: password, oAuth2Params: oAuth2Params)
+        guard
+            let redirectUri = oAuth2Params.redirectUri,
+            let urlComponents = URLComponents(string: redirectUri),
+            let callbackScheme = urlComponents.scheme,
+            ["http", "https"].contains(callbackScheme) != true
+        else
+        {
+            let error = LoginKitError.invalidRedirectUrl("Invalid callback URL in OAuth parameters")
+            completion(.failure(error))
+            return
+        }
+
+        getLinkForSocialAuth(providerName: providerName, oAuth2Params: oAuth2Params)
         { result in
 
-            switch result
+            if case .failure(let error) = result { completion(.failure(error)) }
+
+            if case .success(let url) = result
             {
-                case .success(let response): completion(.success(response.loginUrl))
-                case .failure(let error): completion(.failure(error.processed))
+                self.getAccessTokenFromWebAuthenticationSession(with: url,
+                                                                callbackScheme: callbackScheme,
+                                                                jwtParams: jwtParams,
+                                                                presentationContextProvider: presentationContextProvider)
+                { result in
+
+                    completion(result)
+                }
             }
         }
     }
 
-    /**
-     Authenticates the user by the username/email and password and returns a JWT.
-     Exchanging the code to a JWT via the **Generate JWT** method isn't needed.
-     - Parameters:
-       - username: Username/email.
-       - password: Password.
-       - clientId: Your application ID from [Publisher Account](https://publisher.xsolla.com/). You will get it after sending the request to enable the OAuth 2.0 protocol.
-       - scope: Scope is a mechanism in OAuth 2.0 to limit an application's access to a user's account.
-       Can be:
-           * **email** for [Auth via social network](https://developers.xsolla.com/login-api/oauth-20/oauth-20-auth-via-social-network)
-           or [Get link for social auth](https://developers.xsolla.com/login-api/oauth-20/oauth-20-get-link-for-social-auth)
-           methods to request an email from the user additionally.
-           * **offline** to use `refresh_token` from [Generate JWT](https://developers.xsolla.com/login-api/oauth-20/generate-jwt)
-           method to refresh the JWT when it is expired.
-           * **playfab** to write SessionTicket to the session_ticket claim of the JWT if you store user data on the PlayFab side.
-           If you process your own values of the **scope** parameter, and the values aren't mentioned above, you can set them when using this method.
-       - completion: Completion with `AuthInfo` on success and Error on failure.
-    */
-    public func authByUsernameAndPasswordJWT(username: String,
-                                             password: String,
-                                             clientId: Int,
-                                             scope: String?,
-                                             completion: @escaping LoginKitCompletion<AccessTokenInfo>)
+    func getAccessTokenFromWebAuthenticationSession(with url: URL,
+                                                    callbackScheme: String,
+                                                    jwtParams: JWTGenerationParams,
+                                                    presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                                                    completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
-        api.authByUsernameAndPasswordJWT(username: username, password: password, clientId: clientId, scope: scope)
+        getAccessCodeFromWebAuthenticationSession(with: url,
+                                                  callbackScheme: callbackScheme,
+                                                  presentationContextProvider: presentationContextProvider)
         { result in
-            switch result
-            {
-                case .success(let responseModel): do
-                {
-                    let authInfo = AccessTokenInfo(accessToken: responseModel.accessToken,
-                                                   expiresIn: responseModel.expiresIn,
-                                                   refreshToken: responseModel.refreshToken,
-                                                   tokenType: responseModel.tokenType)
-                    completion(.success(authInfo))
-                }
 
-                case .failure(let error): completion(.failure(error.processed))
+            if case .failure(let error) = result { completion(.failure(error)) }
+
+            if case .success(let code) = result
+            {
+                self.generateJWT(with: code, jwtParams: jwtParams)
+                { result in
+                    completion(result)
+                }
+            }
+        }
+    }
+
+    func getAccessCodeFromWebAuthenticationSession(with url: URL,
+                                                   callbackScheme: String,
+                                                   presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                                                   completion: @escaping (Result<String, Error>) -> Void)
+    {
+        startWebAuthenticationSession(with: url,
+                                      callbackScheme: callbackScheme,
+                                      presentationContextProvider: presentationContextProvider)
+        { result in
+
+            completion(self.authCodeExtractor.extract(from: result))
+        }
+    }
+
+    func startWebAuthenticationSession(with url: URL,
+                                       callbackScheme: String,
+                                       presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                                       completion: @escaping (Result<URL, Error>) -> Void)
+    {
+
+        let session = WebAuthenticationSession(url: url,
+                                               callbackScheme: callbackScheme,
+                                               presentationContextProvider: presentationContextProvider,
+                                               completionHandler: completion)
+        session.start()
+
+    }
+}
+
+extension LoginKit
+{
+
+    /**
+     Exchanges an authorization code to the JWT. The value of the authorization code is received from the redirect URL that should be passed in the `from` parameter.
+     - Parameters
+       - from: Mapped result. Should contain a redirect URL string in case of success and `Error` in case of failure.
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
+    */
+    func getAccessToken(from result: Result<String, Error>,
+                        jwtParams: JWTGenerationParams,
+                        completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
+    {
+        switch authCodeExtractor.extract(from: result)
+        {
+            case .failure(let error):
+                completion(.failure(error))
+
+            case .success(let code):
+                getAccessToken(with: code, jwtParams: jwtParams, completion: completion)
+        }
+    }
+
+    func getAccessToken(with code: String,
+                        jwtParams: JWTGenerationParams,
+                        completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
+    {
+        generateJWT(with: code, jwtParams: jwtParams)
+        { result in
+            completion(result)
+        }
+    }
+
+    /**
+     Logs the user out and deletes the user session according to the value of the sessions parameter. Call the `Check user authentication` method to see if the user is logged in.
+     - Parameters:
+       - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+       You can use the Pay Station Access Token as an alternative.
+       You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - sessionType: Instance of **LogoutSessionType**.
+       - completion: Completion with `Result`: Void on success and Error on failure.
+     */
+    public func logUserOut(accessToken: String, sessionType: LogoutSessionType, completion: @escaping LoginKitCompletion<Void>)
+    {
+        api.logUserOut(accessToken: accessToken, sessionType: sessionType)
+        { result in
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success = result { completion(.success(())) }
+        }
+    }
+
+    /**
+     Authenticates the user by the specified username/email and password.
+     To finish user authentication, get the user JWT by the `generateJWT` method.
+     - Parameters:
+       - username: Username or email address.
+       - password: User password.
+       - oAuth2Params: Instance of **OAuth2Params**.
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
+    */
+    public func authByUsernameAndPassword(username: String,
+                                          password: String,
+                                          oAuth2Params: OAuth2Params,
+                                          jwtParams: JWTGenerationParams,
+                                          completion: @escaping LoginKitCompletion<AccessTokenInfo>)
+    {
+        api.authByUsernameAndPassword(username: username, password: password, oAuth2Params: oAuth2Params)
+        { result in
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success(let response) = result
+            {
+                self.getAccessToken(from: .success(response.loginUrl),
+                                    jwtParams: jwtParams,
+                                    completion: completion)
             }
         }
     }
@@ -116,22 +236,23 @@ extension LoginKit
      You can get the link by this method and add it to your button for authentication via a social network.
      - Parameters:
        - providerName: Name of the social network connected to Login in Publisher Account.
-         Can be: *amazon*, *apple*, *baidu*, *battlenet*, *discord*, *facebook*, *github*, *google*, *kakao*, *linkedin*, *mailru*, *microsoft*, *msn*, *naver*, *ok*, *paypal*, *psn*, *reddit*, *steam*, *twitch*, *twitter*, *vimeo*, *vk*, *wechat*, *weibo*, *yahoo*, *yandex*, *youtube*, *xbox*.
+         Can have the following values: `amazon`, `apple`, `baidu`, `battlenet`, `discord`, `facebook`, `github`, `google`, `kakao`, `linkedin`, `mailru`, `microsoft`, `msn`, `naver`, `o`*, `paypal`, `psn`, `reddit`, `steam`, `twitch`, `twitter`, `vimeo`, `vk`, `wechat`, `weibo`, `yahoo`, `yandex`, `youtube`, `xbox`.
          If you store user data in [PlayFab](https://developers.xsolla.com/doc/login/how-to/users-storage-playfab), only 'twitch' is available.
-       - oauth2params: Instance of **OAuth2Params**
-       - completion: Completion with `Result`: URL string on success and Error on failure. URL string is URL for authentication via social network.
+       - oAuth2Params: Instance of **OAuth2Params**.
+       - completion: Completion with `Result`: URL string in case of success and `Error` in case of failure. URL string is URL for authentication via social network.
     */
     public func getLinkForSocialAuth(providerName: String,
-                                     oauth2params: OAuth2Params,
+                                     oAuth2Params: OAuth2Params,
                                      completion: @escaping LoginKitCompletion<URL>)
     {
         api.getLinkForSocialAuth(providerName: providerName,
-                                 clientId: oauth2params.clientId,
-                                 state: oauth2params.state,
-                                 responseType: oauth2params.responseType,
-                                 scope: oauth2params.scope,
-                                 redirectUri: oauth2params.redirectUri)
+                                 clientId: oAuth2Params.clientId,
+                                 state: oAuth2Params.state,
+                                 responseType: oAuth2Params.responseType,
+                                 scope: oAuth2Params.scope,
+                                 redirectUri: oAuth2Params.redirectUri)
         { result in
+
             switch result
             {
                 case .success(let responseModel): do
@@ -153,21 +274,21 @@ extension LoginKit
     /**
      Authenticates the user with the access token using social network credentials.
      - Parameters:
-       - oAuth2Params: Instance of **OAuth2Params**
+       - oAuth2Params: Instance of **OAuth2Params**.
+       - jwtParams: Instance of **JWTGenerationParams**.
        - providerName: "Name of the social network connected to Login in Publisher Account. Can have the following values: 'facebook', 'google', 'linkedin', 'twitter', 'discord', 'naver', 'baidu', and 'wechat'.
        - socialNetworkAccessToken: Access token received from a social network.
-       - socialNetworkAccessTokenSecret: Secret token received from the authorization request. Required for Twitter only.
-       - socialNetworkOpenId: ID received from a social network. Required for WeChat only.
-       - completion: Completion with `Result`: URL string on success and Error on failure.
-     URL string generated from **redirectUri** of **OAuth2Params** with additional parameters.
-     The **code** parameter is the user authentication code which must be exchanged for a JWT.
+       - socialNetworkAccessTokenSecret: Secret token received from the authorization request. **Required** for Twitter only.
+       - socialNetworkOpenId: ID received from a social network. **Required** for WeChat only.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
      */
     public func authBySocialNetwork(oAuth2Params: OAuth2Params,
+                                    jwtParams: JWTGenerationParams,
                                     providerName: String,
                                     socialNetworkAccessToken: String,
                                     socialNetworkAccessTokenSecret: String?,
                                     socialNetworkOpenId: String?,
-                                    completion: @escaping LoginKitCompletion<String>)
+                                    completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
         api.authBySocialNetwork(oAuth2Params: oAuth2Params,
                                 providerName: providerName,
@@ -175,50 +296,33 @@ extension LoginKit
                                 socialNetworkAccessTokenSecret: socialNetworkAccessTokenSecret,
                                 socialNetworkOpenId: socialNetworkOpenId)
         { result in
-            switch result
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success(let response) = result
             {
-                case .success(let responseModel): completion(.success(responseModel.loginUrl))
-                case .failure(let error): completion(.failure(error.processed))
+                self.getAccessToken(from: .success(response.loginUrl),
+                                    jwtParams: jwtParams,
+                                    completion: completion)
             }
         }
     }
 
     /**
      This method can be used in the following scripts:
-     * To exchange the user authentication code for a JWT.
-     * To refresh the JWT when it is expired if your application needs access to the Login API beyond the JWT expiration period. Works only if scope=offline in the registration or authentication method.
+     * To exchange the user authorization code for a JWT.
+     * To refresh the JWT when it is expired if your application needs access to the Login API beyond the JWT expiration period. Works only if `scope=offline` in the registration or authentication method.
      * To get the server JWT without user participation.
 
      - Parameters:
-       - grantType: The type of getting the JWT. Can be:
-         * **authorization_code** to exchange the code received in the [method](https://developers.xsolla.com/login-api/methods/oauth-20/oauth-20-auth-by-username-and-password/) to JWT
-         The value of the `authCode` parameter must be specified.
-         * **refresh_token** to get the refreshed JWT when the previous value is expired. The value of the `refreshToken` parameter must be specified.
-         * **client_credentials** to get the server JWT without user participation, the values of the `clientId` and `clientSecret` parameters must be specified.
-       - clientId: Your application ID from [Publisher Account](https://publisher.xsolla.com/).
-         You will get it after sending the request to enable the OAuth 2.0 protocol.
-       - refreshToken: The `refreshToken` value received in the response to the last call of this method. Required if `grant_type=refresh_token`.
-       - clientSecret: Your secret key hashed according to the [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) algorithm.
-         You got it after sending the request to enable OAuth 2.0. To get your secret key again, contact your Account Manager.
-       - redirectUri: URL to redirect the user to after account confirmation, successful authentication, or password reset confirmation.
-         To set up this parameter, contact your Account Manager.
-       - authCode: User authentication code that will be exchanged to a JWT. Required if `grant_type=authorization_code`.
-       - completion: Completion with `AuthInfo` on success and Error on failure.
+       - authCode: User authorization code that will be exchanged to a JWT. **Required** if `grant_type=authorization_code`.
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
     */
-    public func generateJWT(grantType: TokenGrantType,
-                            clientId: Int,
-                            refreshToken: String?,
-                            clientSecret: String?,
-                            redirectUri: String?,
-                            authCode: String?,
+    public func generateJWT(with authCode: String?,
+                            jwtParams: JWTGenerationParams,
                             completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
-        api.generateJWT(grantType: grantType.rawValue,
-                        clientId: clientId,
-                        refreshToken: refreshToken,
-                        clientSecret: clientSecret,
-                        redirectUri: redirectUri,
-                        authCode: authCode)
+        api.generateJWT(with: authCode, jwtParams: jwtParams)
         { result in
             switch result
             {
@@ -239,57 +343,44 @@ extension LoginKit
 
     /**
      Creates a new user.
-     * If you store user data on the Xsolla side or in the custom storage, the user will receive an account confirmation [email](https://developers.xsolla.com/doc/login/how-to/email-customization/).
-     * If you store user data on the PlayFab side, you can set up sending the account confirmation email to the user.
-     Use the [PlayFab instruction](https://developers.xsolla.com/doc/login/how-to/users-storage-playfab/#recipes_users_storage_playfab_how_it_works_registration_confirmation/) for this.
+     * If you store user data at Xsolla side or in the custom storage, the user will receive an [account confirmation email](https://developers.xsolla.com/doc/login/how-to/email-customization/).
+     * If you store user data at PlayFab, you can set up sending the account confirmation email to the user.
+     [Use the PlayFab instruction](https://developers.xsolla.com/doc/login/references/playfab-storage/#recipes_users_storage_playfab_how_it_works_registration_confirmation) for this.
 
-     See [Selecting a User Data Storage instruction](https://developers.xsolla.com/doc/login/features/users-storage/) for more information about user data storages.
+     [See Selecting a User Data Storage instruction](https://developers.xsolla.com/doc/login/references/users-storages-comparison/) for more information about user data storages.
 
      - Parameters:
+       - params: Instance of **RegisterNewUserParams**.
        - oAuth2Params: Instance of **OAuth2Params**.
-       - username: Username.
-       - password: Password.
-       - email: Email.
-       - acceptConsent: Whether the user gave consent to processing of their personal data.
-       - fields: Parameters for advanced user registration. To use this feature, contact your Account Manager.
-       - promoEmailAgreement: User's consent to receive the newsletter.
-       - completion: Completion with `Result`: URL string on success and Error on failure.
-           URL string generated from **redirectUri** of **OAuth2Params** with additional parameters.
-           The **code** parameter is the user authentication code which must be exchanged for a JWT.
-    */
-    public func registerNewUser(oAuth2Params: OAuth2Params,
-                                username: String,
-                                password: String,
-                                email: String,
-                                acceptConsent: Bool?,
-                                fields: [String: String]?,
-                                promoEmailAgreement: Int?,
-                                completion: @escaping LoginKitCompletion<URL?>)
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
+     */
+    public func registerNewUser(params: RegisterNewUserParams,
+                                oAuth2Params: OAuth2Params,
+                                jwtParams: JWTGenerationParams,
+                                completion: @escaping LoginKitCompletion<AccessTokenInfo?>)
     {
-        api.registerNewUser(oAuth2Params: oAuth2Params,
-                            username: username,
-                            password: password,
-                            email: email,
-                            acceptConsent: acceptConsent,
-                            fields: fields,
-                            promoEmailAgreement: promoEmailAgreement)
+        api.registerNewUser(params: params, oAuth2Params: oAuth2Params)
         { result in
-            switch result
+
+            if case .success(let response) = result
             {
-                case .success(let responseModel): do
+                if let urlString = response.loginUrl
                 {
-                    if let urlString = responseModel.loginUrl, let url = URL(string: urlString)
-                    {
-                        completion(.success(url))
-                    }
-                    else
-                    {
-                        completion(.success(nil))
+                    self.getAccessToken(from: .success(urlString), jwtParams: jwtParams)
+                    { result in
+
+                        if case .success(let tokenInfo) = result { completion(.success(tokenInfo)) }
+                        if case .failure(let error) = result { completion(.failure(error)) }
                     }
                 }
-
-                case .failure(let error): completion(.failure(error.processed))
+                else
+                {
+                    completion(.success(nil))
+                }
             }
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
         }
     }
 
@@ -313,7 +404,7 @@ extension LoginKit
      - Parameters:
         - loginProjectId: Login project ID from [Publisher Account](https://publisher.xsolla.com/).
         - username: Email to send the password change verification message to.
-        - loginUrl: URL to redirect the user to after account confirmation, successful authentication, two-factor authentication configuration, or password reset confirmation. Must be identical to the **Callback URL** specified in **your Login project > General settings > URL** section of [Publisher Account](https://publisher.xsolla.com/). Required if there are several Callback URLs.
+        - loginUrl: URL to redirect the user to after account confirmation, successful authentication, two-factor authentication configuration, or password reset confirmation. Must be identical to the **Callback URL** specified in **your Login project > General settings > URL** section of [Publisher Account](https://publisher.xsolla.com/). **Required** if there are several Callback URLs.
         - completion: Completion with `Result` without content.
     */
     public func resetPassword(loginProjectId: String,
@@ -348,7 +439,7 @@ extension LoginKit
      8. The user is considered as authorized.
 
      - Parameters:
-       - oAuth2Params: Instance of `OAuth2Params`.
+       - oAuth2Params: Instance of **OAuth2Params**.
        - email: User email address.
        - linkUrl: URL to redirect the user to the status authentication page. **Required** if the parameter `send_link` is `true`.
        - sendLink: Whether a link is sent in an email with the confirmation code. The link can be used instead of the confirmation code to log in. If the parameter is `true`, the link is sent in an email.
@@ -358,7 +449,7 @@ extension LoginKit
                                  email: String,
                                  linkUrl: String?,
                                  sendLink: Bool,
-                                 completion: @escaping LoginKitCompletion<String>)
+                                 completion: @escaping LoginKitCompletion<LoginOperationId>)
     {
         api.startAuthByEmail(oAuth2Params: oAuth2Params, email: email, linkUrl: linkUrl, sendLink: sendLink)
         { result in
@@ -371,7 +462,7 @@ extension LoginKit
     }
 
     /**
-     Completes user authentication via email and a confirmation code.
+     Completes user authentication via an email and a confirmation code.
      This method is called only with the `startAuthByEmail` method.
 
      The workflow of using this method:
@@ -390,26 +481,32 @@ extension LoginKit
        - code: Сonfirmation code.
        - email: User email address.
        - operationId: ID of the confirmation code.
-       - completion: Completion with `loginURL` on success.
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
     */
+
     public func completeAuthByEmail(clientId: Int,
                                     code: String,
                                     email: String,
-                                    operationId: String,
-                                    completion: @escaping LoginKitCompletion<String>)
+                                    operationId: LoginOperationId,
+                                    jwtParams: JWTGenerationParams,
+                                    completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
         api.completeAuthByEmail(clientId: clientId, code: code, email: email, operationId: operationId)
         { result in
-            switch result
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success(let response) = result
             {
-                case .success(let response): completion(.success(response.loginURL))
-                case .failure(let error): completion(.failure(error.processed))
+                self.getAccessToken(from: .success(response.loginURL),
+                                    jwtParams: jwtParams,
+                                    completion: completion)
             }
         }
     }
 
     /**
-     Starts user authentication via phone number and sends a confirmation code to the user phone number.
+     Starts user authentication via a phone number and sends a confirmation code to the user phone number.
      This method is called only with the `completeAuthByPhone` method.
 
      The workflow of using this method:
@@ -424,7 +521,7 @@ extension LoginKit
      8. The user is considered as authorized.
 
      - Parameters:
-        - oAuth2Params: Instance of `OAuth2Params`.
+        - oAuth2Params: Instance of **OAuth2Params**.
         - phoneNumber: User phone number.
         - linkUrl: URL to redirect the user to the status authentication page. **Required** if the parameter `send_link` is `true`.
         - sendLink: Whether a link is sent with the confirmation code in the SMS. The link can be used instead of the confirmation code to log in. If the parameter is `true`, the link is sent in the SMS.
@@ -434,7 +531,7 @@ extension LoginKit
                                  phoneNumber: String,
                                  linkUrl: String?,
                                  sendLink: Bool,
-                                 completion: @escaping LoginKitCompletion<String>)
+                                 completion: @escaping LoginKitCompletion<LoginOperationId>)
     {
         api.startAuthByPhone(oAuth2Params: oAuth2Params, phoneNumber: phoneNumber, linkUrl: linkUrl, sendLink: sendLink)
         { result in
@@ -447,7 +544,7 @@ extension LoginKit
     }
 
     /**
-     Completes user authentication via the phone number and a confirmation code.
+     Completes user authentication via a phone number and a confirmation code.
      This method is called only with the `startAuthByPhone` method.
 
      The workflow of using this method:
@@ -467,41 +564,47 @@ extension LoginKit
         - code: Confirmation code.
         - phoneNumber]: User phone number.
         - operationId: ID of the confirmation code.
-        - completion: Completion with `loginURL` on success.
+        - jwtParams: Instance of **JWTGenerationParams**.
+        - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
     */
     public func completeAuthByPhone(clientId: Int,
                                     code: String,
                                     phoneNumber: String,
-                                    operationId: String,
-                                    completion: @escaping LoginKitCompletion<String>)
+                                    operationId: LoginOperationId,
+                                    jwtParams: JWTGenerationParams,
+                                    completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
         api.completeAuthByPhone(clientId: clientId, code: code, operationId: operationId, phoneNumber: phoneNumber)
         { result in
-            switch result
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success(let response) = result
             {
-                case .success(let response): completion(.success(response.loginURL))
-                case .failure(let error): completion(.failure(error.processed))
+                self.getAccessToken(from: .success(response.loginURL),
+                                    jwtParams: jwtParams,
+                                    completion: completion)
             }
         }
     }
 
     /**
-     Waits until the user follows the link provided via email or SMS and returns the confirmation code for authentication. If you made this request and didn't get the code after 20 seconds, an error occurred. In this case, resend the request immediately. The lifetime of the code is 3 minutes.
+     Waits until the user follows the link provided via email or SMS and returns a confirmation code for authentication. If you send this request and don't get the code after 20 seconds, an error occurs. In this case, resend the request immediately. The lifetime of the code is 3 minutes.
 
      The workflow of using this method:
 
      1. The application opens an authentication form so the user can enter their email address.
      2. The user enters their email address.
-     3. The application sends the `Start auth by email or phone number` (JWT or OAuth 2.0) request to the Xsolla Login server: a. If the parameter `send_link` is `true`, after this request, you should send this same request to make email or SMS contain the confirmation code and link. b. If the parameter `send_link` is `false` or not passed, the email will contain the confirmation code only.
+     3. The application sends the `Start auth by email or phone number` (JWT or OAuth 2.0) request to the Xsolla Login server: a. If the parameter `send_link` is `true`, after this request, you should send this same request to make an email or SMS contain the confirmation code and link. b. If the parameter `send_link` is `false` or not passed, the email will contain the confirmation code only.
      4. The Xsolla Login server sends an email or SMS to the user and returns the ID of the confirmation code.
      5. The application shows a field so the user can fill in the confirmation code.
      6. The user enters the received confirmation code or follows the link.
      7. The application sends the `Complete auth by email or phone number` (JWT or OAuth 2.0) request with the received ID to the Xsolla Login server.
      8. The user is considered as authorized.
     */
+
     public func getConfirmationCode(projectId: String,
                                     login: String,
-                                    operationId: String,
+                                    operationId: LoginOperationId,
                                     completion: @escaping LoginKitCompletion<String>)
     {
         api.getConfirmationCode(projectId: projectId, login: login, operationId: operationId, completion: completion)
@@ -510,22 +613,27 @@ extension LoginKit
     /**
      Authenticates a user via a specific device ID.
      - Parameters:
-       - oAuth2Params: Instance of `OAuth2Params`.
-       - device: Manufacturer and model name of the device.
        - deviceId: Device ID. For iOS, it is an [identifierForVendor](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor?language=objc) property.
-       - completion: Completion with `operationId` on success.
+       - device: Manufacturer and model name of the device.
+       - oAuth2Params: Instance of **OAuth2Params**.
+       - jwtParams: Instance of **JWTGenerationParams**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
     */
-    public func authWithDeviceId(oAuth2Params: OAuth2Params,
+    public func authWithDeviceId(deviceId: String,
                                  device: String,
-                                 deviceId: String,
-                                 completion: @escaping LoginKitCompletion<String>)
+                                 oAuth2Params: OAuth2Params,
+                                 jwtParams: JWTGenerationParams,
+                                 completion: @escaping LoginKitCompletion<AccessTokenInfo>)
     {
         api.authWithDeviceId(oAuth2Params: oAuth2Params, device: device, deviceId: deviceId)
         { result in
-            switch result
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success(let response) = result
             {
-                case .success(let response): completion(.success(response.loginURL))
-                case .failure(let error): completion(.failure(error.processed))
+                self.getAccessToken(from: .success(response.loginURL),
+                                    jwtParams: jwtParams,
+                                    completion: completion)
             }
         }
     }
@@ -537,7 +645,7 @@ extension LoginKit
        - redirectUri: URL to redirect the user to after account confirmation, successful authentication, or password reset confirmation. Must be identical to the **Callback URL** specified in [Publisher Account](https://publisher.xsolla.com/) > your Login project > **General settings** > **URL**. **Required** if there are several Callback URLs.
        - state: Value used for additional user verification. Often used to mitigate [CSRF Attacks](https://en.wikipedia.org/wiki/Cross-site_request_forgery). The value will be returned in the response. Must be longer than 8 characters.
        - username: Username or user email address.
-       - completion: Completion void on success or error on failure.
+       - completion: Completion void in case of success or error in case of failure.
     */
     public func resendConfirmationLink(clientId: Int,
                                        redirectUri: String,
@@ -560,8 +668,8 @@ extension LoginKit
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
           You can use the Pay Station Access Token as an alternative.
-          You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-        - completion: Completion with array of `DeviceInfo` on success.
+          You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+        - completion: Completion with an array of `DeviceInfo` in case of success.
     */
     public func getUserDevices(accessToken: String, completion: @escaping LoginKitCompletion<[DeviceInfo]>)
     {
@@ -582,8 +690,8 @@ extension LoginKit
        - deviceId: Device ID. For iOS, it is an [identifierForVendor](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor?language=objc) property.
        - accessToken: Access token. By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          Alternatively, you can use the Pay Station access token.
-         You can generate your own token ([learn more](https://developers.xsolla.com/pay-station-api/current/token/create-token)).
-       - completion: Completion with empty response on success.
+         You can [generate your own token](https://developers.xsolla.com/pay-station-api/current/token/create-token).
+       - completion: Completion with an empty response in case of success.
     */
     public func linkDeviceToAccount(device: String,
                                     deviceId: String,
@@ -606,8 +714,8 @@ extension LoginKit
        - deviceId: Device ID. For iOS, it is an [identifierForVendor](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor?language=objc) property.
        - accessToken: Access token. By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          Alternatively, you can use the Pay Station access token.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: Completion with empty response on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Completion with an empty response in case of success.
     */
     public func unlinkDeviceFromAccount(deviceId: String,
                                         accessToken: String,
@@ -624,15 +732,15 @@ extension LoginKit
     }
 
     /**
-     Adds the username/email and password authentication to the existing user account. This method is called if the account is created via device ID or phone number.
+     Adds the username/email and password authentication to the existing user account. This method is called if the account is created via a device ID or phone number.
      - Parameters:
        - username: Username.
        - password: User password.
        - email: User email address.
        - promoEmailAgreement: User consent to receive the newsletter.
-       - accessToken: Access token. By default, the Xsolla Login User JWT (Bearer token) is used for authorization. Alternatively, you can use the Pay Station access token. You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+       - accessToken: Access token. By default, the Xsolla Login User JWT (Bearer token) is used for authorization. Alternatively, you can use the Pay Station access token. You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
            - redirectUri: URL to redirect the user to after account confirmation, successful authentication, or password reset confirmation. Must be identical to the **Callback URL** specified in [Publisher Account](https://publisher.xsolla.com/) > your Login project > **General settings** > **URL**. **Required** if there are several Callback URLs.
-           - completion: Completion with information whether the user has to confirm the email address or not on success.
+           - completion: Completion with information whether the user has to confirm the email address or not in case of success.
     */
     public func addUsernameAndPassword(username: String,
                                        password: String,
@@ -658,12 +766,61 @@ extension LoginKit
     }
 
     /**
+     Creates the code for linking the `platform account` to the existing `main account` when the user logs in to the game via a gaming console.
+     The call is used with the `Link accounts by code request` method.
+     - Parameters:
+     - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+     - completion: Completion with `Result`: `Code` on success and Error on failure.
+     */
+    public func createCodeForLinkingAccounts(accessToken: String,
+                                             completion: @escaping LoginKitCompletion<String>)
+    {
+        api.createCodeForLinkingAccounts(accessToken: accessToken)
+        { result in
+
+            if case .failure(let error) = result { completion(.failure(error.processed)) }
+            if case .success(let code) = result { completion(.success(code)) }
+        }
+    }
+
+    /**
+     Gets the user information from their public profile by user ID.
+     - Parameters:
+       - userId: User ID. You can find it in [Publisher Account](https://publisher.xsolla.com/) > your Login project > **Users**.
+       - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+       You can use the Pay Station Access Token as an alternative.
+       You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Instance of `UserPublicProfile` on success.
+     */
+    public func getUserPublicProfile(userId: String,
+                                     accessToken: String,
+                                     completion: @escaping LoginKitCompletion<UserPublicProfile>)
+    {
+        api.getUserPublicProfile(userId: userId, accessToken: accessToken)
+        { result in
+
+            switch result
+            {
+                case .success(let responseModel): do
+                {
+                    let userProfile = UserPublicProfile(fromResponse: responseModel)
+                    completion(.success(userProfile))
+                }
+
+                case .failure(let error): completion(.failure(error.processed))
+            }
+        }
+    }
+
+    /**
      Gets details of the user authenticated by the JWT.
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: Instance of `LoginUserDetails` on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Instance of **LoginUserDetails** on success.
     */
     public func getCurrentUserDetails(accessToken: String,
                                       completion: @escaping LoginKitCompletion<UserProfileDetails>)
@@ -688,8 +845,8 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: Instance of `LoginUserDetails` on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Instance of **LoginUserDetails** in case of success.
     */
     public func updateCurrentUserDetails(accessToken: String,
                                          birthday: Date? = nil,
@@ -732,8 +889,8 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: user's email on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: User's email in case of success.
     */
     public func getUserEmail(accessToken: String,
                              completion: @escaping LoginKitCompletion<String?>)
@@ -753,8 +910,8 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: Empty response on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Empty response in case of success.
     */
     public func deleteUserPicture(accessToken: String, completion: @escaping LoginKitCompletion<Void>)
     {
@@ -773,9 +930,9 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - imageURL: URL of image to be uploaded.
-       - completion: Picture link on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - imageURL: URL of a picture to be uploaded.
+       - completion: Picture link in case of success.
     */
     public func uploadUserPicture(accessToken: String,
                                   imageURL: URL,
@@ -797,8 +954,8 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: Empty response on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Empty response in case of success.
     */
     public func getCurrentUserPhone(accessToken: String,
                                     completion: @escaping LoginKitCompletion<String?>)
@@ -815,13 +972,13 @@ extension LoginKit
 
     /**
      Updates the phone number of the authenticated user by the JWT.
-     The phone number in This method is used only for passing two-factor authentication.
+     The phone number in this method is used only for passing two-factor authentication.
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - phoneNumber: Updated user phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers)
-       - completion: User phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers) on success.
+       - completion: User phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers) in case of success.
     */
     public func updateCurrentUserPhone(accessToken: String,
                                        phoneNumber: String,
@@ -839,13 +996,13 @@ extension LoginKit
 
     /**
      Deletes the phone number of the authenticated user by the JWT.
-     The phone number in This method is used only for passing two-factor authentication.
+     The phone number in this method is used only for passing two-factor authentication.
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - phoneNumber: User phone number according to [national conventions](https://en.wikipedia.org/wiki/National_conventions_for_writing_telephone_numbers)
-       - completion: Empty response on success.
+       - completion: Empty response in case of success.
     */
     public func deleteCurrentUserPhone(accessToken: String,
                                        phoneNumber: String,
@@ -866,13 +1023,13 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - listType: Friend list type parameter.
-       - sortType: Sorting parameter.
-       - sortOrderType: Sorting order parameter
+       - sortType: Parameter that is used for sorting.
+       - sortOrderType: Sorting order parameter.
        - after: Parameter that is used for API pagination.
        - limit: Limit of the result.
-       - completion: Instance of `FriendsList` on success.
+       - completion: Instance of **FriendsList** in case of success.
     */
     public func getCurrentUserFriends(accessToken: String,
                                       listType: FriendsListType,
@@ -902,11 +1059,11 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - after: Parameter that is used for API pagination.
        - actionType: Type of the friend list updating action.
        - userID: ID of the user to change relationships with.
-       - completion: Empty response on success.
+       - completion: Empty response in case of success.
     */
     public func updateCurrentUserFriends(accessToken: String,
                                          actionType: FriendsListUpdateAction,
@@ -926,12 +1083,47 @@ extension LoginKit
     }
 
     /**
+     Gets links for authentication via the social networks enabled in **your Login project > General settings > Social Networks** section of `Publisher Account`. The links are valid for 10 minutes.
+
+     You can get the link by this call and add it to your button for authentication via a social network.
+
+     - Parameters:
+     - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+     You can use the Pay Station Access Token as an alternative.
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+     - locale: Region in the `<language code>_<country code>` format, where:
+       * `language code`: language code in the [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format;
+       * `country code`: country/region code in the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.
+       The list of the links will be sorted from most to least used social networks according to the variable value.
+     - completion: Instance of **LinksForSocialAuth** in case of success and Error in case of failure.
+     */
+    public func getLinksForSocialAuth(accessToken: String,
+                                      locale: String?,
+                                      completion: @escaping LoginKitCompletion<LinksForSocialAuth>)
+    {
+        api.getLinksForSocialAuth(accessToken: accessToken, locale: locale)
+        { result in
+
+            switch result
+            {
+                case .success(let response): do
+                {
+                    let links = response.map { LinksForSocialAuthElement(authURL: $0.authURL, provider: $0.provider) }
+                    completion(.success(links))
+                }
+
+                case .failure(let error): completion(.failure(error.processed))
+            }
+        }
+    }
+
+    /**
      Updates the friend list of the authenticated user.
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
-       - completion: Array of `UserSocialNetworkInfo` on success.
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - completion: Array of `UserSocialNetworkInfo` in case of success.
     */
     public func getLinkedNetworks(accessToken: String,
                                   completion: @escaping LoginKitCompletion<[UserSocialNetworkInfo]>)
@@ -956,14 +1148,15 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - providerName: Name of the social network connected to Login in Publisher Account.
          Can be: *amazon*, *apple*, *baidu*, *battlenet*, *discord*, *facebook*, *github*, *google*, *kakao*, *linkedin*,
          *mailru*, *microsoft*, *msn*, *naver*, *ok*, *paypal*, *psn*, *reddit*, *steam*, *twitch*, *twitter*, *vimeo*, *vk*,
          *wechat*, *weibo*, *yahoo*, *yandex*, *youtube*, *xbox*.
        - loginURL: URL to redirect the user to after account confirmation, successful authentication, or password reset confirmation. Must be identical to the **Callback URL** specified in [Publisher Account](https://publisher.xsolla.com/) > your Login project > **General settings** > **URL**. **Required** if there are several Callback URLs.
-       - completion: URL used for authenticating the user via the social network on success.
+       - completion: URL used for authenticating the user via the social network in case of success.
     */
+
     public func getURLToLinkSocialNetworkToAccount(accessToken: String,
                                                    providerName: String,
                                                    loginURL: String,
@@ -985,13 +1178,13 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - platform: Name of the chosen social provider which you can enable in your [Publisher Account](https://publisher.xsolla.com/) > your Login project > **Social connections**.
-         If you do not specify it, the call gets friends from all social providers.
+         If you do not specify it, the method gets friends from all social providers.
        - offset: Number of the elements from which the list is generated.
        - limit: Maximum number of friends that are returned at a time.
        - withLoginId: Whether the social friends are from your game.
-       - completion: Instance of `SocialNetworkFriendsList` on success.
+       - completion: Instance of **SocialNetworkFriendsList** in case of success.
     */
     public func getSocialNetworkFriends(accessToken: String,
                                         platform: String,
@@ -1015,15 +1208,15 @@ extension LoginKit
     }
 
     /**
-     Begins processing to update a list of user’s friends from a social provider.
+     Begins data processing to update a list of user’s friends from a social provider.
      Note that there may be a delay in data processing because of the Xsolla Login server or provider server high loads.
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - platform: Name of the chosen social provider which you can enable in your [Publisher Account](https://publisher.xsolla.com/) > your Login project > **Social connections**.
-         If you do not specify it, the call gets friends from all social providers.
-       - completion: Empty result on success.
+         If you do not specify it, the method gets friends from all social providers.
+       - completion: Empty result in case of success.
     */
     public func updateSocialNetworkFriends(accessToken: String,
                                            platform: String,
@@ -1031,9 +1224,49 @@ extension LoginKit
     {
         api.updateSocialNetworkFriends(accessToken: accessToken, platform: platform)
         { result in
+
             switch result
             {
                 case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error.processed))
+            }
+        }
+    }
+
+    /**
+     Searches users by the `nickname` parameter and gets a list of them. Search can be performed instantly when the user starts entering the search parameter.
+
+     The workflow of using this call:
+
+     1. The user enters a nickname or tag, or nickname and tag.
+     2. The Xsolla Login server searches for users in the Login project data of the user who initiated a search.
+
+     The current user can execute this call only one time per second.
+
+     - Parameters:
+       - nickname: The search string that may contain:
+         * nickname only. Search is performed by substring at the beginning of the nickname.
+         * tag only, is used with \"#\" at the beginning. Search is performed by substring at the beginning of the tag.
+         * nickname and tag together, is used with \"#\" and without space. Search is performed by full nickname and substring at the beginning of the tag.
+       - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+       You can use the Pay Station Access Token as an alternative.
+       You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - offset: Number of the elements from which the list is generated.
+       - limit: Maximum number of users that are returned at a time.
+       - completion: Completion with `Result`: **SearchUsersByNicknameResult** in case of success and Error in case of failure.
+     */
+    public func searchUsersByNickname(nickname: String,
+                                      accessToken: String,
+                                      offset: Int?,
+                                      limit: Int?,
+                                      completion: @escaping LoginKitCompletion<SearchUsersByNicknameResult>)
+    {
+        api.searchUsersByNickname(nickname: nickname, accessToken: accessToken, offset: offset, limit: limit)
+        { result in
+
+            switch result
+            {
+                case .success(let model): completion(.success(SearchUsersByNicknameResult(fromResponse: model)))
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
@@ -1046,13 +1279,13 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - keys: List of attributes’ keys which you want to get. If you do not specify them, it returns all user attributes.
        - publisherProjectId: Project ID from Publisher Account which you want to get attributes for.
          If you do not specify it, it returns attributes without the value of this parameter.
        - userId: User ID which attributes you want to get. Returns only attributes with the `public` value of the `permission` parameter.
          If you do not specify it or put your user ID there, it returns only your attributes with any value for the `permission` parameter.
-        - completion: Array of `UserAttribute` on success.
+        - completion: Array of `UserAttribute` in case of success.
     */
     public func getClientUserAttributes(accessToken: String,
                                         keys: [String]?,
@@ -1079,13 +1312,13 @@ extension LoginKit
      - Parameters:
        - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
          You can use the Pay Station Access Token as an alternative.
-         You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+         You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
        - keys: List of attributes’ keys which you want to get. If you do not specify them, it returns all user’s attributes.
        - publisherProjectId: Project ID from Publisher Account which you want to get attributes for.
          If you do not specify it, it returns attributes without the value of this parameter.
        - userId: User ID which attributes you want to get. Returns only attributes with the `public` value of the `permission` parameter.
          If you do not specify it or put your user ID there, it returns only your attributes with any value for the `permission` parameter.
-       - completion: Array of `UserAttribute` on success.
+       - completion: Array of `UserAttribute` in case of success.
     */
     public func getClientUserReadOnlyAttributes(accessToken: String,
                                                 keys: [String]?,
@@ -1112,7 +1345,7 @@ extension LoginKit
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
           You can use the Pay Station Access Token as an alternative.
-          You can generate your own token ([learn more](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+          You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - attributes: List of attributes of the specified game.
           To add an attribute that does not exist, set this attribute to the `key` parameter.
           To update `value` of the attribute, specify its `key` parameter and set new `value`.
@@ -1120,7 +1353,7 @@ extension LoginKit
         - publisherProjectId: Project ID from Publisher Account which you want to get attributes for.
           If you do not specify it, it returns attributes without the value of this parameter.
         - removingKeys: List of attributes which you want to delete. If you specify the same attribute in `attributes` parameter, it will not be deleted.
-        - completion: Empty response on success.
+        - completion: Empty response in case of success.
     */
     public func updateClientUserAttributes(accessToken: String,
                                            attributes: [UserAttribute]?,
@@ -1142,6 +1375,32 @@ extension LoginKit
             switch result
             {
                 case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error.processed))
+            }
+        }
+    }
+
+    /**
+     Checks user’s age for a particular region. The age requirements depend on the region. Service determines the user’s location by the IP address.
+     - Parameters:
+       - birthday: User’s birth date in the `YYYY-MM-DD` format.
+       - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
+       You can use the Pay Station Access Token as an alternative.
+       You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
+       - loginProjectId: Login ID from Publisher Account.
+       - completion: Completion with `Result`: Boolean value `accepted`, shows whether the user reached the required age or not in case of success, Error in case of failure.
+     */
+    public func checkUserAge(birthday: String,
+                             accessToken: String,
+                             loginId: String,
+                             completion: @escaping LoginKitCompletion<Bool>)
+    {
+        api.checkUserAge(birthday: birthday, accessToken: accessToken, loginId: loginId)
+        { result in
+
+            switch result
+            {
+                case .success(let accepted): completion(.success(accepted))
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
@@ -1168,22 +1427,5 @@ private extension Error
         }
 
         return self
-    }
-}
-
-public enum LoginKitError: Error
-{
-    case failedURLExtraction
-    case invalidToken
-
-    internal init?(code: Int?)
-    {
-        switch code
-        {
-            case 10017: self = .invalidToken
-            case 2016: self = .invalidToken
-
-            default: return nil
-        }
     }
 }

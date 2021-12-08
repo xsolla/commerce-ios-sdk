@@ -24,6 +24,8 @@ protocol AuthenticationMainVCProtocol: BaseViewController
 
     var privacyPolicyRequestHandler: (() -> Void)? { get set }
     var passwordRecoveryRequestHandler: (() -> Void)? { get set }
+
+    var appDeveloperSettingsRequestHandler: (() -> Void)? { get set }
 }
 
 class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
@@ -38,6 +40,8 @@ class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
     var privacyPolicyRequestHandler: (() -> Void)?
     var passwordRecoveryRequestHandler: (() -> Void)?
 
+    var appDeveloperSettingsRequestHandler: (() -> Void)?
+    
     var loginVC: LoginVCProtocol!
     var signupVC: SignupVCProtocol!
     var tabbarVC: TabbarViewController!
@@ -45,6 +49,7 @@ class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
     override var navigationBarIsHidden: Bool? { true }
     
     @IBOutlet private weak var tabbarViewControllerContainer: UIView!
+    @IBOutlet private weak var logoImageView: UIImageView!
 
     // MARK: - Lifecycle
     
@@ -58,6 +63,16 @@ class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
         }
 
         setupTabbarViewController()
+        logoImageView.isUserInteractionEnabled = true
+
+        let tapGesture = TapGesture
+        { [weak self] in
+            self?.appDeveloperSettingsRequestHandler?()
+        }
+
+        tapGesture.numberOfTapsRequired = 8
+
+        logoImageView.addGestureRecognizer(tapGesture)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)

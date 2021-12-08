@@ -71,6 +71,12 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
             self?.passwordRecoveryRequestHandler()
         }
 
+        viewController.appDeveloperSettingsRequestHandler =
+        { [weak self] in
+            logger.info(.ui, domain: .example) { "Auth coordinator - appDeveloperSettingsRequestHandler" }
+            self?.appDeveloperSettingsRequestHandler()
+        }
+
         pushViewController(viewController)
     }
 
@@ -89,6 +95,7 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         { error in
 
             viewController.setState(.error(nil), animated: true)
+            self.showError(error)
             logger.error { error }
         }
     }
@@ -139,41 +146,45 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
     {
         viewController.setState(.loading(sender), animated: true)
 
-        dependencies.xsollaSDK.registerNewUser(oAuth2Params: .init(clientId: AppConfig.loginClientId,
-                                                                   state: UUID().uuidString,
-                                                                   scope: "offline",
-                                                                   redirectUri: AppConfig.redirectUrl),
-                                               username: formData.username,
-                                               password: formData.password,
-                                               email: formData.email,
-                                               acceptConsent: nil,
-                                               fields: nil,
-                                               promoEmailAgreement: nil)
+        let params = RegisterNewUserParams(username: formData.username,
+                                           password: formData.password,
+                                           email: formData.email,
+                                           acceptConsent: nil,
+                                           fields: nil,
+                                           promoEmailAgreement: nil)
+
+        let oAuth2Params = OAuth2Params(clientId: AppConfig.oAuth2ClientId,
+                                        state: UUID().uuidString,
+                                        scope: "offline",
+                                        redirectUri: AppConfig.redirectUrl)
+
+        let jwtParams = JWTGenerationParams(clientId: AppConfig.oAuth2ClientId, redirectUri: AppConfig.redirectUrl)
+
+        dependencies.xsollaSDK.registerNewUser(params: params, oAuth2Params: oAuth2Params, jwtParams: jwtParams)
         { [weak self, weak viewController] result in guard let self = self else { return }
-            switch result
+
+            if case .success(let tokenInfo) = result
             {
-                case .success(let url): do
+                viewController?.setState(.normal, animated: true)
+
+                if let tokenInfo = tokenInfo
                 {
-                    viewController?.setState(.normal, animated: true)
-
-                    guard let url = url,
-                          let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                          let authCode = urlComponents.queryItems?.first(where: { $0.name == "code" })?.value
-                    else
-                    {
-                        logger.info { "Registration info was sent to your email." }
-                        self.showRegistrationSuccessAlert()
-                        return
-                    }
-
-                    self.performAuthentication(withAuthCode: authCode)
+                    self.dependencies.loginManager.login(tokenInfo: tokenInfo)
+                    self.onFinish?(self)
+                }
+                else
+                {
+                    logger.info { "Registration info was sent to email." }
+                    self.showRegistrationSuccessAlert()
                 }
 
-                case .failure(let error): do
-                {
-                    viewController?.setState(.error(nil), animated: true)
-                    logger.error { error }
-                }
+                self.onFinish?(self)
+            }
+
+            if case .failure(let error) = result
+            {
+                viewController?.setState(.error(nil), animated: true)
+                logger.error { error }
             }
         }
     }
@@ -192,17 +203,76 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         UIApplication.shared.open(linkURL, options: [:], completionHandler: nil)
     }
 
-    func loginSocialNetworkRequestHandler(network: SocialNetwork, forVC viewController: LoginVCProtocol)
+    func appDeveloperSettingsRequestHandler()
     {
-        logger.info(.ui, domain: .example) { "Auth coordinator - socialNetworkLoginRequestHandler \(network.rawValue)" }
-        
+        let viewController = dependencies.viewControllerFactory.createAppDeveloperSettingsVC(params: .init())
+
+        viewController.actionButtonHandler =
+        { [weak self] viewController in
+            self?.popViewController()
+
+            AppConfig.setLoginId(viewController.model.loginId)
+            AppConfig.setProjectId(Int(viewController.model.projectId))
+            AppConfig.setOAuth2ClientId(Int(viewController.model.oAuthClientId))
+            AppConfig.setWebshopUrl(viewController.model.webshopUrl)
+        }
+
+        viewController.resetButtonHandler =
+        { [weak self] in
+            self?.popViewController()
+
+            AppConfig.resetToDefaults()
+        }
+
+        pushViewController(viewController)
+    }
+
+    @available(iOS 13.4, *)
+    func loginSocialNetworkAuthenticationSessionFlow(network: SocialNetwork, forVC viewController: LoginVCProtocol)
+    {
+        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        logger.info(.ui, domain: .example) { "Auth coordinator - loginSocialNetworkAuthenticationSessionFlow \(network.rawValue)" }
+
+        let oauthParams = OAuth2Params(clientId: AppConfig.oAuth2ClientId,
+                                state: UUID().uuidString,
+                                scope: "offline",
+                                redirectUri: AppConfig.customSchemeRedirectUrl)
+
+        let jwtParams = JWTGenerationParams(clientId: AppConfig.oAuth2ClientId,
+                                            redirectUri: AppConfig.customSchemeRedirectUrl)
+
+        let presentationContextProvider = WebAuthenticationPresentationContextProvider(presentationAnchor: window)
+
+        dependencies.xsollaSDK.authBySocialNetwork(network.rawValue,
+                                                   oAuth2Params: oauthParams,
+                                                   jwtParams: jwtParams,
+                                                   presentationContextProvider: presentationContextProvider)
+        { [weak self] result in
+
+            guard let self = self else { return }
+
+            if case .success(let tokenInfo) = result { self.dependencies.loginManager.login(tokenInfo: tokenInfo) }
+        }
+    }
+
+    func loginSocialNetworkCustomSchemeFlow(network: SocialNetwork, forVC viewController: LoginVCProtocol)
+    {
+        logger.info(.ui, domain: .example) { "Auth coordinator - loginSocialNetworkCustomSchemeFlow \(network.rawValue)" }
+    }
+
+    func loginSocialNetworkLegacyFlow(network: SocialNetwork, forVC viewController: LoginVCProtocol)
+    {
+        logger.info(.ui, domain: .example) { "Auth coordinator - loginSocialNetworkLegacyFlow \(network.rawValue)" }
+
         viewController.setState(.loading(nil), animated: true)
         dependencies.xsollaSDK.getLinkForSocialAuth(providerName: network.rawValue,
-                                                    oauth2params: .init(clientId: AppConfig.loginClientId,
+                                                    oAuth2Params: .init(clientId: AppConfig.oAuth2ClientId,
                                                                         state: UUID().uuidString,
                                                                         scope: "offline",
                                                                         redirectUri: AppConfig.redirectUrl))
         { [weak self, weak viewController] result in
+            
             switch result
             {
                 case .success(let url): do
@@ -220,10 +290,22 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         }
     }
     
+    func loginSocialNetworkRequestHandler(network: SocialNetwork, forVC viewController: LoginVCProtocol)
+    {
+        if #available(iOS 13.4, *)
+        {
+            loginSocialNetworkAuthenticationSessionFlow(network: network, forVC: viewController)
+        }
+        else
+        {
+            loginSocialNetworkLegacyFlow(network: network, forVC: viewController)
+        }
+    }
+    
     func moreSocialNetworksRequestHandler(forVC viewController: LoginVCProtocol)
     {
-        let socialNetworksList = dependencies.modelFactory
-            .createSocialNetworksList(params: .init(socialNetworks: SocialNetwork.allCases))
+        let socialNetworksList =
+            dependencies.modelFactory.createSocialNetworksList(params: .init(socialNetworks: SocialNetwork.allCases))
         
         let socialNetworksListVC = dependencies.viewControllerFactory.createSocialNetworksListVC(params: .none)
         socialNetworksListVC.setup(rows: socialNetworksList.search(searchText: ""))
@@ -262,7 +344,7 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
 
             vc.setState(.loading(senderView), animated: true)
 
-            xsollaSDK.resetPassword(loginProjectId: AppConfig.loginProjectID,
+            xsollaSDK.resetPassword(loginProjectId: AppConfig.loginId,
                                     username: formData.username,
                                     loginUrl: AppConfig.redirectUrl)
             { result in
@@ -357,17 +439,15 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
 
         webRedirectHandler.onRedirect =
         { [weak webVC, weak self] url in
+
             if url.absoluteString.starts(with: AppConfig.redirectUrl)
             {
                 webVC?.dismiss(animated: true, completion: nil)
 
-                self?.loginAsync.extractAuthCode(redirectUrl: url.absoluteString).then
+                switch LoginKit.shared.authCodeExtractor.extract(from: url)
                 {
-                    self?.performAuthentication(withAuthCode: $0)
-                }
-                .catch
-                {
-                    self?.showError($0)
+                    case .success(let code): self?.performAuthentication(withAuthCode: code)
+                    case .failure(let error): self?.showError(error)
                 }
 
                 return .cancel
@@ -398,7 +478,11 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         let alert = UIAlertController(title: L10n.Alert.Registration.Success.title,
                                       message: L10n.Alert.Registration.Success.message,
                                       preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: L10n.Alert.Action.ok, style: .default, handler: nil)
+        let alertAction = UIAlertAction(title: L10n.Alert.Action.ok, style: .default)
+        { _ in
+            self.onFinish?(self)
+        }
+
         alert.addAction(alertAction)
         presenter?.present(alert, animated: true, completion: nil)
     }

@@ -47,7 +47,7 @@ class LoginVC: BaseViewController, LoginVCProtocol
     @IBOutlet private weak var authenticationOptionsButton: Button!
     @IBOutlet private weak var googleButton: Button!
     @IBOutlet private weak var facebookButton: Button!
-    @IBOutlet private weak var baiduButton: Button!
+    @IBOutlet private weak var appleButton: Button!
     @IBOutlet private weak var moreButton: Button!
     
     @IBOutlet private weak var privacyPolicyLabel: UILabel!
@@ -173,12 +173,12 @@ class LoginVC: BaseViewController, LoginVCProtocol
     {
         googleButton.setupAppearance(config: Button.largeOutlined)
         facebookButton.setupAppearance(config: Button.largeOutlined)
-        baiduButton.setupAppearance(config: Button.largeOutlined)
+        appleButton.setupAppearance(config: Button.largeOutlined)
         moreButton.setupAppearance(config: Button.largeOutlined)
 
         googleButton.setImage(Asset.Images.socialGoogleIcon.tinted(.xsolla_inactiveWhite), for: .normal)
         facebookButton.setImage(Asset.Images.socialFacebookIcon.tinted(.xsolla_inactiveWhite), for: .normal)
-        baiduButton.setImage(Asset.Images.socialBaiduIcon.tinted(.xsolla_inactiveWhite), for: .normal)
+        appleButton.setImage(Asset.Images.socialAppleIcon.tinted(.xsolla_inactiveWhite), for: .normal)
         moreButton.setImage(Asset.Images.socialMoreIcon.tinted(.xsolla_inactiveWhite), for: .normal)
     }
     
@@ -243,9 +243,9 @@ class LoginVC: BaseViewController, LoginVCProtocol
         performSocialNetworkLogin(.facebook)
     }
     
-    @IBAction private func onBaiduButton(_ sender: Button)
+    @IBAction private func onAppleButton(_ sender: Button)
     {
-        performSocialNetworkLogin(.baidu)
+        performSocialNetworkLogin(.apple)
     }
     
     @IBAction private func onMoreButton(_ sender: Button)
@@ -271,10 +271,10 @@ class LoginVC: BaseViewController, LoginVCProtocol
             {
                 loginButton.isEnabled = false
                 authenticationOptionsButton.isEnabled = false
-                
+
                 if view === loginButton
                 {
-                    loginButton.setTitle(nil, for: .normal)
+                    loginButton.setTitle(nil, attributes: [:])
                     showActivityIndicator(for: loginButton)
                 }
                 

@@ -12,7 +12,6 @@
 // See the License for the specific language governing and permissions and
 
 // swiftlint:disable line_length
-// swiftlint:disable type_name
 
 import Foundation
 
@@ -22,7 +21,7 @@ protocol ModelFactoryProtocol
     func createVirtualCurrencyList(params: VirtualCurrencyListBuildParams) -> VirtualCurrencyList
     func createVirtualItemsList(params: VirtualItemsListBuildParams) -> VirtualItemsList
     func createVirtualItemsActionHandler(params: VirtualItemsActionHandlerBuildParams) -> VirtualItemsActionHandler
-    func createVirtualCurrencyBalanceProvider(params: VirtualCurrencyBalanceProviderBuildParams) -> VirtualCurrencyBalanceProvider
+    func createVirtualCurrencyBalanceFetcher(params: VirtualCurrencyBalanceFetcherBuildParams) -> VirtualCurrencyBalanceFetcher
     func createUserProfile(params: UserProfileBuildParams) -> UserProfile
     func createUserCharacter(params: UserCharacterBuildParams) -> UserCharacter
     func createSocialNetworksList(params: SocialNetworksListParams) -> SocialNetworksListProtocol
@@ -59,9 +58,9 @@ class ModelFactory: ModelFactoryProtocol
                                          store: params.store)
     }
     
-    func createVirtualCurrencyBalanceProvider(params: VirtualCurrencyBalanceProviderBuildParams) -> VirtualCurrencyBalanceProvider
+    func createVirtualCurrencyBalanceFetcher(params: VirtualCurrencyBalanceFetcherBuildParams) -> VirtualCurrencyBalanceFetcher
     {
-        return VirtualCurrencyBalanceProvider(xsollaSDK: self.params.xsollaSDK, projectId: params.projectId)
+        return VirtualCurrencyBalanceFetcher(xsollaSDK: self.params.xsollaSDK)
     }
     
     func createUserProfile(params: UserProfileBuildParams) -> UserProfile
@@ -136,10 +135,7 @@ struct VirtualItemsActionHandlerBuildParams
     let store: StoreProtocol
 }
 
-struct VirtualCurrencyBalanceProviderBuildParams
-{
-    let projectId: Int
-}
+typealias VirtualCurrencyBalanceFetcherBuildParams = EmptyParams
 
 struct UserCharacterBuildParams
 {

@@ -13,7 +13,7 @@
 
 import UIKit
 
-protocol MainVCProtocol: BaseViewController, VirtualCurrencyBalanceProviderDelegate
+protocol MainVCProtocol: BaseViewController, XsollaSDKBalanceUpdatesListener
 {
     var sideMenuRequestHandler: (() -> Void)? { get set }
     var addCurrencyHandler: (() -> Void)? { get set }
@@ -104,7 +104,7 @@ class MainVC: BaseViewController, MainVCProtocol
     }
 }
 
-extension MainVC: VirtualCurrencyBalanceProviderDelegate
+extension MainVC: VirtualCurrencyBalanceFetcherDelegate
 {
     func didRecieveCurrencyBalance(currency1Balance: VirtualCurrencyBalance, currency2Balance: VirtualCurrencyBalance)
     {

@@ -18,7 +18,7 @@ class OTPBaseSequence: OTPSequenceProtocol
 {
     typealias CodeRequestResult = Result<OTPConfirmationCode, Error>
 
-    var operationId: OTPOperationId?
+    var operationId: LoginOperationId?
     var payload: OTPRequestPayload?
 
     func startListeningConfirmationCode(completion: @escaping (Result<OTPConfirmationCode, Error>) -> Void)
@@ -29,7 +29,7 @@ class OTPBaseSequence: OTPSequenceProtocol
 
         if backgroundTask == .invalid { registerBackgroundTask() }
 
-        sdk.getConfirmationCode(projectId: AppConfig.loginProjectID, login: payload, operationId: operationId)
+        sdk.getConfirmationCode(projectId: AppConfig.loginId, login: payload, operationId: operationId)
         { [weak self] result in
 
             if let backgroundTask = self?.backgroundTask, backgroundTask != .invalid { self?.endBackgroundTask() }
@@ -45,7 +45,7 @@ class OTPBaseSequence: OTPSequenceProtocol
     }
 
     func processCodeRequestResult(_ result: CodeRequestResult,
-                                  for operationId: OTPOperationId,
+                                  for operationId: LoginOperationId,
                                   payload: String,
                                   completion: @escaping (CodeRequestResult) -> Void)
     {
@@ -78,8 +78,7 @@ class OTPBaseSequence: OTPSequenceProtocol
     func sendOTPRequest(payload: OTPRequestPayload,
                         state: OTPRequestState,
                         confirmationLink: String?,
-                        sendConfirmationLink: Bool,
-                        completion: @escaping (Result<OTPOperationId, Error>) -> Void) -> OTPRequestState
+                        completion: @escaping (Result<LoginOperationId, Error>) -> Void) -> OTPRequestState
     {
         fatalError("Must be overriden in subclass")
     }
@@ -97,11 +96,11 @@ class OTPBaseSequence: OTPSequenceProtocol
 
     var sdk: XsollaSDKProtocol
     var sendConfirmationLink: Bool = true
-    var confirmationLink: String? = AppConfig.confirmationLink
+    var confirmationLink: String? = AppConfig.passwordlessConfirmationUrl
 
-    var clientId: Int { AppConfig.loginClientId }
+    var clientId: Int { AppConfig.oAuth2ClientId }
 
-    func startSession(payload: String, operationId: OTPOperationId, codeExpirationDuration: TimeInterval)
+    func startSession(payload: String, operationId: LoginOperationId, codeExpirationDuration: TimeInterval)
     {
         invalidateSession()
 
@@ -138,44 +137,6 @@ class OTPBaseSequence: OTPSequenceProtocol
         guard let date = codeRequestDate else { return 0 }
 
         return max(codeExpirationDuration - Date().timeIntervalSince(date), 0)
-    }
-
-    func getAccessToken(from url: String, completion: @escaping ((Result<AccessTokenInfo, Error>) -> Void))
-    {
-        guard let code = extractAccessCode(from: url) else
-        {
-            completion(.failure(OTPSequenceError.authCodeExtractionFailure))
-            return
-        }
-
-        sdk.generateJWT(grantType: .authorizationCode,
-                        clientId: clientId,
-                        refreshToken: nil,
-                        clientSecret: nil,
-                        redirectUri: AppConfig.redirectUrl,
-                        authCode: code)
-        { result in
-
-            switch result
-            {
-                case .success(let tokenInfo): completion(.success(tokenInfo))
-                case .failure(let error): completion(.failure(error))
-            }
-        }
-    }
-
-    func extractAccessCode(from url: String) -> String?
-    {
-        guard let urlComponents = URLComponents(string: url) else { return nil }
-
-        return urlComponents.queryItems?.first { $0.name == "code" }?.value
-    }
-
-    func extractToken(from url: String) -> AccessToken?
-    {
-        guard let urlComponents = URLComponents(string: url) else { return nil }
-
-        return urlComponents.queryItems?.first { $0.name == "token" }?.value
     }
 
     // MARK: - Background tasks

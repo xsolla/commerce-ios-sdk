@@ -123,7 +123,7 @@ class SignupVC: BaseViewController, SignupVCProtocol
         formValidator.addValidator(formValidator.factory.createPasswordValidator(for: passwordConfirmTextField),
                                    withKey: passwordConfirmTextField.tag)
     }
-    
+
     private func setupSignupButton()
     {
         signupButton.setupAppearance(config: Button.largeContained)

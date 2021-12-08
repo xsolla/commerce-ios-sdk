@@ -34,14 +34,14 @@ public struct StoreItemInventoryOptions
         /// Defines type of expiration of a item.
         public let type: String
 
-        /// Defines value for expiration period.
+        /// Defines value for an expiration period.
         public let value: Int
     }
 }
 
 extension StoreItemInventoryOptions
 {
-    init(fromAPIResponse response: StoreResponseCommon.InventoryOptions)
+    init(fromAPIResponse response: StoreAPICommonResponse.InventoryOptions)
     {
         if let consumable = response.consumable
         {

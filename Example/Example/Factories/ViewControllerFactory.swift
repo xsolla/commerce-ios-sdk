@@ -22,6 +22,7 @@ protocol ViewControllerFactoryProtocol: AnyObject
     func createSignupVC(params: SignupVCFactoryParams) -> SignupVCProtocol
     func createLoginVC(params: LoginVCFactoryParams) -> LoginVCProtocol
     func createRecoverPasswordVC(params: RecoverPasswordVCFactoryParams) -> RecoverPasswordVCProtocol
+    func createAppDeveloperSettingsVC(params: AppDeveloperSettingsVCFactoryParams) -> AppDeveloperSettingsVCProtocol
     func createMainVC(params: MainVCFactoryParams) -> MainVCProtocol
     func createMainVCContentNavigationController() -> NavigationController
     func createVirtualItemsVC(params: VirtualItemsVCFactoryParams) -> VirtualItemsVCProtocol
@@ -119,6 +120,20 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
     {
         let viewController = StoryboardScene.AuthenticationOTP.otpInputCode.instantiate()
         viewController.configuration = params.configuration
+
+        commonSetup(viewController)
+        return viewController
+    }
+
+    func createAppDeveloperSettingsVC(params: AppDeveloperSettingsVCFactoryParams) -> AppDeveloperSettingsVCProtocol
+    {
+        let viewController = StoryboardScene.Authentication.appDeveloperSettings.instantiate()
+
+        let model = AppDeveloperSettingsVC.Model(oAuthClientId: "\(AppConfig.oAuth2ClientId)",
+                                                 loginId: "\(AppConfig.loginId)",
+                                                 projectId: "\(AppConfig.projectId)",
+                                                 webshopUrl: "\(AppConfig.webshopUrl)")
+        viewController.setup(with: model)
 
         commonSetup(viewController)
         return viewController
@@ -408,6 +423,11 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
             view.backgroundColor = .xsolla_nightBlue
         }
 
+        webViewController.configureWebView
+        { webView in
+            webView.customUserAgent = params.useragent
+        }
+
         webViewController.configureDismissButton
         { button in
 
@@ -485,7 +505,8 @@ typealias UserProfileVCFactoryParams = EmptyParams
 typealias UserProfileAvatarSelectorVCFactoryParams = EmptyParams
 typealias UpgradeAccountVCFactoryParams = EmptyParams
 typealias DevicesListVCFactoryParams = EmptyParams
-typealias WebFlowURLCallbackListenableVCFactoryParams = EmptyParams
+
+typealias AppDeveloperSettingsVCFactoryParams = EmptyParams
 
 struct MainVCFactoryParams
 {
@@ -547,4 +568,9 @@ struct OTPStartVCFactoryParams
 struct OTPInputCodeVCFactoryParams
 {
     let configuration: OTPSequenceConfiguration
+}
+
+struct WebFlowURLCallbackListenableVCFactoryParams
+{
+    let useragent: String?
 }

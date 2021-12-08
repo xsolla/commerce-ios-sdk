@@ -18,15 +18,32 @@ import Promises
 class LoginAsyncUtility: LoginAsyncUtilityProtocol
 {
     let api: XsollaSDKProtocol
-    let clientId: Int
-    let redirectURL: String
-    let scope: String
+    var clientId: Int { AppConfig.oAuth2ClientId }
+    var redirectURL: String { AppConfig.redirectUrl }
+    var scope: String { AppConfig.defaultLoginScope }
 
-    init(api: XsollaSDKProtocol, clientId: Int, redirectURL: String, scope: String)
+    var oAuth2Params: OAuth2Params
     {
+        OAuth2Params(clientId: self.clientId,
+                     state: UUID().uuidString,
+                     scope: self.scope,
+                     redirectUri: AppConfig.redirectUrl)
+    }
+
+    var jwtParams: JWTGenerationParams
+    {
+        JWTGenerationParams(clientId: self.clientId, redirectUri: self.redirectURL)
+    }
+    
+    init(api: XsollaSDKProtocol)
+    {
+        logger.debug(.initialization, domain: .example) { String(describing: Self.self) }
         self.api = api
-        self.clientId = clientId
-        self.redirectURL = redirectURL
-        self.scope = scope
+    }
+
+    deinit
+    {
+        let deinitingType = String(describing: type(of: self))
+        logger.debug(.deinitialization, domain: .example) { deinitingType }
     }
 }

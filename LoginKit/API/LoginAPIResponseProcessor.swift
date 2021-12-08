@@ -45,6 +45,18 @@ extension LoginAPIResponseProcessor: ResponseProcessor
                                            errorHandler: APIErrorHandlerProtocol,
                                            decoder: JSONDecoder?) -> Result<ResponseModel, Error>
     {
+
+        logger.debug(.networking, domain: .loginKit)
+        {
+            URLRequestLogHelper(request: request,
+                                data: data,
+                                response: response,
+                                error: error,
+                                includedKeywords: [],
+                                excludedKeywords: [],
+                                requestTime: 0)
+        }
+
         let decoder = decoder ?? self.decoder
         
         // Network error

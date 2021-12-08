@@ -12,11 +12,12 @@
 // See the License for the specific language governing and permissions and
 
 import Foundation
+import XsollaSDKLoginKit
 
 enum OTPSequenceError: Error
 {
     // Provided operationId is no equal to stored operationId, params: (provided operationId, stored operationId)
-    case operationIdMismatch(OTPOperationId, OTPOperationId?)
+    case operationIdMismatch(LoginOperationId, LoginOperationId?)
 
     // Operation ID is not set or invalid
     case invalidOperationId

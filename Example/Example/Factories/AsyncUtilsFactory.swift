@@ -24,10 +24,7 @@ class AsyncUtilsFactory: AsyncUtilsFactoryProtocol
 {
     func createLoginAsyncUtils(params: LoginAsyncUtilsFactoryParams) -> LoginAsyncUtilityProtocol
     {
-        let asyncUtility = LoginAsyncUtility(api: api,
-                                        clientId: params.clientId,
-                                        redirectURL: params.redirectURL,
-                                        scope: params.scope)
+        let asyncUtility = LoginAsyncUtility(api: api)
 
         return asyncUtility
     }
@@ -47,16 +44,18 @@ class AsyncUtilsFactory: AsyncUtilsFactoryProtocol
 
     init(api: XsollaSDKProtocol)
     {
+        logger.debug(.initialization, domain: .example) { String(describing: Self.self) }
         self.api = api
+    }
+
+    deinit
+    {
+        let deinitingType = String(describing: type(of: self))
+        logger.debug(.deinitialization, domain: .example) { deinitingType }
     }
 }
 
-struct LoginAsyncUtilsFactoryParams
-{
-    let clientId: Int
-    let redirectURL: String
-    let scope: String
-}
+typealias LoginAsyncUtilsFactoryParams = EmptyParams
 
 typealias UserProfileAsyncUtilsFactoryParams = EmptyParams
 

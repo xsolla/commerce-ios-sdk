@@ -41,7 +41,16 @@ extension StoreAPI: StoreAPIProtocol
     {
         GetItemGroupsAPIProxy(configuration).getItemGroups(projectId: projectId, completion: completion)
     }
-    
+
+    func getAllVirtualItems(projectId: Int,
+                            locale: String?,
+                            completion: @escaping (StoreAPIResult<GetAllVirtualItemsResponse>) -> Void)
+    {
+        GetAllVirtualItemsAPIProxy(configuration).getAllVirtualItems(projectId: projectId,
+                                                                     locale: locale,
+                                                                     completion: completion)
+    }
+
     func getVirtualItems(projectId: Int,
                          filterParams: StoreFilterParams,
                          completion: @escaping (StoreAPIResult<GetVirtualItemsResponse>) -> Void)
@@ -108,6 +117,7 @@ extension StoreAPI: StoreAPIProtocol
     func createOrder(accessToken: String,
                      projectId: Int,
                      itemSku: String,
+                     quantity: Int,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
@@ -118,6 +128,7 @@ extension StoreAPI: StoreAPIProtocol
         CreateOrderAPIProxy(configuration).createOrder(accessToken: accessToken,
                                                        projectId: projectId,
                                                        itemSku: itemSku,
+                                                       quantity: quantity,
                                                        currency: currency,
                                                        locale: locale,
                                                        isSandbox: isSandbox,

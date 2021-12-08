@@ -12,6 +12,7 @@
 // See the License for the specific language governing and permissions and
 
 import UIKit
+import XsollaSDKUtilities
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate
@@ -22,13 +23,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
-        // INFO: [@r.mingazov] temp code - метод, который может понадобиться
-        // paymentsKit.applicationDidFinishLaunchingWithOptions(launchOptions)
+        DeepLinkManager.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         setupRouting()
 
         return true
     }
-    
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool
+    {
+        DeepLinkManager.shared.application(app, open: url, options: options)
+
+        return true
+    }
+
     private func setupRouting()
     {
         let window = UIWindow()

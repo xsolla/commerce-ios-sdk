@@ -64,11 +64,21 @@ class VirtualCurrencyList
     {
         logger.info { "Buy action for item: \(item.name)" }
 
-        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme)
-        let paymentProjectSettings = StorePaymentProjectSettings(ui: uiSettings)
+        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme,
+                                                                size: AppConfig.paystationUISize)
+        let redirectPolicy =
+            StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,
+                                                       delay: 5,
+                                                       statusForManualRedirection: .any,
+                                                       redirectButtonCaption: L10n.Store.Params.backToTheGame)
+
+        let paymentProjectSettings = StorePaymentProjectSettings(ui: uiSettings,
+                                                                 returnUrl: AppConfig.paymentsRedirectURL,
+                                                                 redirectPolicy: redirectPolicy)
 
         dependencies.xsollaSDK.createOrder(projectId: AppConfig.projectId,
                                            itemSKU: item.sku,
+                                           quantity: 1,
                                            currency: nil,
                                            locale: nil,
                                            isSandbox: true,

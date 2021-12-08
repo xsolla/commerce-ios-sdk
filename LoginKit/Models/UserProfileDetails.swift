@@ -19,7 +19,7 @@ public struct UserProfileDetails
     /// Details of the user's ban. The value is `nil` for the users not from the ban list.
     public var ban: BanDetails?
 
-    /// User birth day.
+    /// User birthdate.
     public var birthday: Date?
 
     /// User birth date confirmed by [okname](https://www.ok-name.co.kr/).
@@ -77,13 +77,13 @@ public struct UserProfileDetails
     public var username: String?
 
     /// Whether the user is anonymous.
-    /// The anonymous user is a user created via device ID or custom ID and doesn’t have an alternative authentication method added (e.g., username/email and password).
+    /// The anonymous user is a user created via device ID or custom ID and doesn’t have an alternative authentication method added (e.g. username/email and password).
     public var isAnonymous: Bool
 
     /// Whether the user email is verified.
     public var isLastEmailConfirmed: Bool?
 
-    /// Whether the user is anonymous. The anonymous user is a user created via device ID or custom ID and doesn’t have an alternative authentication method added (e.g., username/email and password)
+    /// Whether the user is anonymous. The anonymous user is a user created via device ID or custom ID and doesn’t have an alternative authentication method added (e.g. username/email and password).
     public var isUserActive: Bool
 }
 
@@ -98,7 +98,7 @@ public extension UserProfileDetails
         /// Date until the user remains banned.
         public var dateTo: Date?
 
-        /// Reason the user ban.
+        /// Reason for the user ban.
         public var reason: String?
     }
 

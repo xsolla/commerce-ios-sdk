@@ -60,12 +60,8 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
     {
         let factory = dependencies.factories.coordinatorFactory
 
-        let loginAsyncUtilityParams = LoginAsyncUtilsFactoryParams(clientId: AppConfig.loginClientId,
-                                                                   redirectURL: AppConfig.redirectUrl,
-                                                                   scope: AppConfig.defaultLoginScope)
-
         let loginAsyncUtility =
-            dependencies.factories.asyncUtilsFactory.createLoginAsyncUtils(params: loginAsyncUtilityParams)
+            dependencies.factories.asyncUtilsFactory.createLoginAsyncUtils(params: .none)
 
         let params = AuthenticationCoordinatorFactoryParams(loginManager: dependencies.loginManager,
                                                             loginAsyncUtility: loginAsyncUtility)
@@ -78,7 +74,10 @@ class AppCoordinator: BaseCoordinator<AppCoordinator.Dependencies,
     private func getMainContainerCoordinator() -> Coordinator
     {
         let factory = dependencies.factories.coordinatorFactory
-        let coordinator = factory.createMainContainerCoordinator(presenter: presenter, params: .none)
+        let factoryParams = MainContainerCoordinatorFactoryParams(accessTokenProvider: dependencies.accessTokenProvider,
+                                                                  deepLinkManager: dependencies.deepLinkManager)
+        
+        let coordinator = factory.createMainContainerCoordinator(presenter: presenter, params: factoryParams)
         
         coordinator.onLogout = { [unowned self] in self.dependencies.loginManager.logout() }
         
@@ -108,6 +107,8 @@ extension AppCoordinator
         let factories: Factories
         let appstateProvider: AppStateProviderProtocol
         let loginManager: LoginManagerProtocol
+        let accessTokenProvider: AccessTokenProvider
+        let deepLinkManager: DeepLinkManagerProtocol
     }
     
     typealias Params = EmptyParams

@@ -25,7 +25,7 @@ public struct StoreCouponRedeemedItem
     /// Item name.
     public let name: String?
 
-    /// Type of the item: `virtual_good`, `virtual_currency`, `bundle`.
+    /// Type of the item: `virtual_good`, `virtual_currency`, and `bundle`.
     public let type: String
 
     /// Item description.
@@ -43,7 +43,7 @@ public struct StoreCouponRedeemedItem
 
 extension StoreCouponRedeemedItem
 {
-    init(fromRedeemCouponResponse response: RedeemCouponResponse.Item)
+    init(fromResponse response: RedeemCouponResponse.Item)
     {
         self.sku = response.sku
         self.groups = response.groups?.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }

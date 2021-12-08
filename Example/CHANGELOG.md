@@ -1,6 +1,16 @@
 # Changelog
 
-## [1.2.0] - 2021-09-17
+## [1.3.0] - December 2021
+
+### Added
+- Ability to open Pay Station in external browser and use deep links for tracking order payment ('createOrder')
+- Auth via FaceID/TouchID
+- 'Web Shop' button in demo
+
+### Fixed
+- Errors when linking social network accounts
+
+## [1.2.0] - September 2021
 
 ### Added
 - More social networks to log in with
@@ -13,7 +23,7 @@
 ### Fixed
 - Various minor fixes and improvements
 
-## [1.1.0] - 2021-06-17
+## [1.1.0] - June 2021
 
 ### Added
 - User profile screen

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -34,15 +34,29 @@
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="64"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inventory" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWJ-mV-QI7" userLabel="Screen Title">
-                                                <rect key="frame" x="20" y="21.5" width="71" height="21"/>
+                                                <rect key="frame" x="20" y="21.5" width="282" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="751" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KRz-hS-Mem" userLabel="Refresh button" customClass="Button" customModule="Example" customModuleProvider="target">
+                                                <rect key="frame" x="322" y="12" width="72" height="40"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" placeholder="YES" id="tRz-j8-yh6"/>
+                                                </constraints>
+                                                <state key="normal" title="BUTTON"/>
+                                                <connections>
+                                                    <action selector="onRefreshButton:" destination="zTV-bW-QNH" eventType="touchUpInside" id="Fur-oG-21E"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="KRz-hS-Mem" secondAttribute="trailing" constant="20" id="1VY-D7-6Ek"/>
+                                            <constraint firstItem="KRz-hS-Mem" firstAttribute="centerY" secondItem="sho-64-TrL" secondAttribute="centerY" id="CvP-ke-jys"/>
                                             <constraint firstItem="nWJ-mV-QI7" firstAttribute="leading" secondItem="sho-64-TrL" secondAttribute="leading" constant="20" id="Egb-p4-zEo"/>
+                                            <constraint firstItem="KRz-hS-Mem" firstAttribute="leading" secondItem="nWJ-mV-QI7" secondAttribute="trailing" constant="20" id="Nz6-g2-gYU"/>
                                             <constraint firstItem="nWJ-mV-QI7" firstAttribute="centerY" secondItem="sho-64-TrL" secondAttribute="centerY" id="OqV-yp-lNG"/>
                                             <constraint firstAttribute="height" constant="64" id="tpD-Lp-0ZN"/>
                                         </constraints>
@@ -77,6 +91,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="refreshButton" destination="KRz-hS-Mem" id="hPw-hb-bDM"/>
                         <outlet property="storeButton" destination="sgi-FS-Obs" id="6LJ-Hl-ktf"/>
                         <outlet property="tabbarViewControllerContainer" destination="qL8-rS-Pcm" id="48T-ka-LsW"/>
                         <outlet property="titleLabel" destination="nWJ-mV-QI7" id="9D1-aL-BBJ"/>

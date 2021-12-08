@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing and permissions and
 
+// swiftlint:disable function_parameter_count
+
 import Foundation
 import XsollaSDKStoreKit
 
@@ -18,6 +20,7 @@ protocol StoreProtocol: AnyObject
 {
     func purchase(itemSku: String, withCurrencySku currencySku: String, completion: @escaping StoreKitCompletion<Int>)
     func createOrder(itemSKU: String,
+                     quantity: Int,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,

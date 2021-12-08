@@ -28,7 +28,7 @@ public struct StoreVirtualItem
     /// List of attributes and their values corresponding to the item. Can be used for catalog filtering.
     public let attributes: [StoreItemAttribute]
 
-    /// Type of item: `virtual_good`, `virtual_currency`, `bundle`.
+    /// Type of item: `virtual_good`, `virtual_currency`, and `bundle`.
     public let type: String
 
     /// Item description.
@@ -55,7 +55,7 @@ public struct StoreVirtualItem
 
 extension StoreVirtualItem
 {
-    init(fromGetVirtualItemsResponse response: GetVirtualItemsResponse.Item)
+    init(fromResponse response: GetVirtualItemsResponse.Item)
     {
         self.sku = response.sku
         self.name = response.name
@@ -71,7 +71,7 @@ extension StoreVirtualItem
         self.virtualItemType = response.virtualItemType
     }
 
-    init(fromGetItemsOfGroupResponse response: GetItemsOfGroupResponse.Item)
+    init(fromResponse response: GetItemsOfGroupResponse.Item)
     {
         self.sku = response.sku
         self.name = response.name

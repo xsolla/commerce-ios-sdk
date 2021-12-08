@@ -17,18 +17,18 @@ import XsollaSDKUtilities
 public final class PaymentsKit
 {
     public static let shared = PaymentsKit()
-    
+
     private var api: PaymentsAPIProtocol
-    
+
     convenience init()
     {
         let requestPerformer = XSDKNetwork(sessionConfiguration: XSDKNetwork.defaultSessionConfiguration)
         let responseProcessor = PaymentsAPIResponseProcessor()
         let api = PaymentsAPI(requestPerformer: requestPerformer, responseProcessor: responseProcessor)
-        
+
         self.init(api: api)
     }
-    
+
     init(api: PaymentsAPIProtocol)
     {
         self.api = api
@@ -38,4 +38,16 @@ public final class PaymentsKit
 extension PaymentsKit
 {
 
+    /**
+    Creates a link for redirecting a user to a payment system.
+
+     - Parameters:
+       - paymentToken: Payment token.
+       - isSandbox: Creates an order in the sandbox mode. The option is available for the company users only. Это я скопировал из другого места, но выглядит глупо в данном контексте.
+     - Returns: URL for opening the payment UI.
+     */
+    public func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
+    {
+        api.createPaymentUrl(paymentToken: paymentToken, isSandbox: isSandbox)
+    }
 }

@@ -20,8 +20,7 @@ class OTPEmailSequence: OTPBaseSequence
     override func sendOTPRequest(payload: OTPRequestPayload,
                                  state: OTPRequestState,
                                  confirmationLink: String?,
-                                 sendConfirmationLink: Bool,
-                                 completion: @escaping (Result<OTPOperationId, Error>) -> Void) -> OTPRequestState
+                                 completion: @escaping (Result<LoginOperationId, Error>) -> Void) -> OTPRequestState
     {
         invalidateSession()
 
@@ -30,7 +29,7 @@ class OTPEmailSequence: OTPBaseSequence
         sdk.startAuthByEmail(oAuth2Params: oauthParams,
                              email: payload,
                              linkUrl: confirmationLink,
-                             sendLink: sendConfirmationLink)
+                             sendLink: AppConfig.sendEmailOTPConfirmationLink)
         { [weak self] result in
 
             switch result
@@ -51,7 +50,7 @@ class OTPEmailSequence: OTPBaseSequence
         return state
     }
 
-    override func validateOTPCode(_ code: OTPConfirmationCode,
+    override func validateOTPCode(_ code: String,
                                   completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
         guard let operationId = operationId else { completion(.failure(OTPSequenceError.invalidOperationId)); return }
@@ -59,23 +58,18 @@ class OTPEmailSequence: OTPBaseSequence
 
         guard codeExpirationInterval > 0 else { completion(.failure(OTPSequenceError.expiredCode)); return }
 
-        sdk.completeAuthByEmail(clientId: clientId, code: code, email: payload, operationId: operationId)
-        { [weak self, operationId, payload] result in
+        let jwtParams = JWTGenerationParams(clientId: clientId, redirectUri: AppConfig.redirectUrl)
 
-            guard
-                let actualOperationId = self?.operationId,
-                let actualPayload = self?.payload,
-                actualOperationId == operationId,
-                actualPayload == payload
-            else
-            {
-                completion(.failure(OTPSequenceError.invalidOTPSequence))
-                return
-            }
+        sdk.completeAuthByEmail(clientId: clientId,
+                                code: code,
+                                email: payload,
+                                operationId: operationId,
+                                jwtParams: jwtParams)
+        { result in
 
             switch result
             {
-                case .success(let loginUrl): self?.getAccessToken(from: loginUrl, completion: completion)
+                case .success(let tokenInfo): completion(.success(tokenInfo))
                 case .failure(let error): completion(.failure(error))
             }
         }

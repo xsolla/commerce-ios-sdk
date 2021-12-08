@@ -27,7 +27,7 @@ public struct StoreCurrencyPackage
     /// List of attributes and their values corresponding to the item. Can be used for catalog filtering.
     public let attributes: [StoreItemAttribute]
 
-    /// Type of the item: `virtual_good`, `virtual_currency`, `bundle`.
+    /// Type of the item: `virtual_good`, `virtual_currency`, and `bundle`.
     public let type: String
 
     /// Type of the bundle: `standard`, `virtual_currency_package`.
@@ -59,7 +59,7 @@ public struct StoreCurrencyPackage
         /// Item name.
         public let name: String
 
-        /// Type of item: `virtual_good`, `virtual_currency`, `bundle`.
+        /// Type of item: `virtual_good`, `virtual_currency`, and `bundle`.
         public let type: String
 
         /// Item description.
@@ -78,7 +78,7 @@ public struct StoreCurrencyPackage
 
 extension StoreCurrencyPackage
 {
-    init(fromAPIResponse response: GetVirtualCurrencyPackagesResponse.Item)
+    init(fromResponse response: GetVirtualCurrencyPackagesResponse.Item)
     {
         self.sku = response.sku
         self.name = response.name

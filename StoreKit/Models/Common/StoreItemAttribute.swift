@@ -25,7 +25,7 @@ public struct StoreItemAttribute
     /// Values of the attribute.
     public let values: [Value]
 
-    /// Item attribute's value
+    /// Item attribute's value.
     public struct Value
     {
         /// Unique value ID. `externalId` may only contain lowercase Latin alphanumeric characters, dashes and underscores.
@@ -38,7 +38,7 @@ public struct StoreItemAttribute
 
 extension StoreItemAttribute
 {
-    init(fromAPIResponse response: StoreResponseCommon.Attribute)
+    init(fromAPIResponse response: StoreAPICommonResponse.Attribute)
     {
         self.externalId = response.externalId
         self.name = response.name

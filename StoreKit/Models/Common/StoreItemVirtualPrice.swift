@@ -43,7 +43,7 @@ public struct StoreItemVirtualPrice
 
 extension StoreItemVirtualPrice
 {
-    init(fromAPIResponse response: StoreResponseCommon.VirtualPrice)
+    init(fromAPIResponse response: StoreAPICommonResponse.VirtualPrice)
     {
         self.amount = response.amount
         self.amountWithoutDiscount = response.amountWithoutDiscount
@@ -55,7 +55,7 @@ extension StoreItemVirtualPrice
         self.description = response.description
     }
 
-    init?(fromOptionalAPIResponse optionalResponse: StoreResponseCommon.VirtualPrice?)
+    init?(fromOptionalAPIResponse optionalResponse: StoreAPICommonResponse.VirtualPrice?)
     {
         guard let response = optionalResponse else { return nil }
 

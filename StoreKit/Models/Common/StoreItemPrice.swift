@@ -28,14 +28,14 @@ public struct StoreItemPrice
 
 extension StoreItemPrice
 {
-    init(fromAPIResponse response: StoreResponseCommon.Price)
+    init(fromAPIResponse response: StoreAPICommonResponse.Price)
     {
         self.amount = response.amount
         self.amountWithoutDiscount = response.amountWithoutDiscount
         self.currency = response.currency
     }
 
-    init?(fromOptionalAPIResponse optionalResponse: StoreResponseCommon.Price?)
+    init?(fromOptionalAPIResponse optionalResponse: StoreAPICommonResponse.Price?)
     {
         guard let response = optionalResponse else { return nil }
 

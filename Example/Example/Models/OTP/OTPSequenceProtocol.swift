@@ -15,14 +15,13 @@ import Foundation
 import XsollaSDKLoginKit
 
 typealias OTPRequestPayload = String
-typealias OTPOperationId = String
 typealias OTPRequestState = String
 typealias OTPConfirmationCode = String
 
 protocol OTPSequenceProtocol
 {
     var codeExpirationInterval: TimeInterval { get }
-    var operationId: OTPOperationId? { get }
+    var operationId: LoginOperationId? { get }
     var payload: OTPRequestPayload? { get }
 
     func invalidateSession()
@@ -31,8 +30,7 @@ protocol OTPSequenceProtocol
     func sendOTPRequest(payload: OTPRequestPayload,
                         state: OTPRequestState,
                         confirmationLink: String?,
-                        sendConfirmationLink: Bool,
-                        completion: @escaping (Result<OTPOperationId, Error>) -> Void) -> OTPRequestState
+                        completion: @escaping (Result<LoginOperationId, Error>) -> Void) -> OTPRequestState
 
     func validatePayload(_ payload: OTPRequestPayload) -> Bool
 
@@ -48,13 +46,11 @@ extension OTPSequenceProtocol
     func sendOTPRequest(payload: OTPRequestPayload,
                         state: OTPRequestState,
                         confirmationLink: String? = nil,
-                        sendConfirmationLink: Bool = false,
-                        completion: @escaping (Result<OTPOperationId, Error>) -> Void) -> OTPRequestState
+                        completion: @escaping (Result<LoginOperationId, Error>) -> Void) -> OTPRequestState
     {
         sendOTPRequest(payload: payload,
                        state: state, 
                        confirmationLink: confirmationLink,
-                       sendConfirmationLink: sendConfirmationLink,
                        completion: completion)
     }
 }

@@ -13,10 +13,15 @@
 
 import UIKit
 
-protocol InventoryVCProtocol: BaseViewController, LoadStatable { }
+protocol InventoryVCProtocol: BaseViewController, LoadStatable
+{
+    var refreshRequestHandler: (() -> Void)? { get set }
+}
 
 class InventoryVC: BaseViewController, InventoryVCProtocol
 {
+    var refreshRequestHandler: (() -> Void)?
+
     // LoadStatable
     private var loadState: LoadState = .normal
     
@@ -25,6 +30,7 @@ class InventoryVC: BaseViewController, InventoryVCProtocol
     
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var tabbarViewControllerContainer: UIView!
+    @IBOutlet private weak var refreshButton: Button!
     @IBOutlet private weak var storeButton: Button!
     
     private var tabbarChildViewControllers: [UIViewController] = []
@@ -36,6 +42,14 @@ class InventoryVC: BaseViewController, InventoryVCProtocol
     {
         super.viewDidLoad()
         titleLabel.attributedText = L10n.Inventory.title.attributed(.heading1, color: .xsolla_white)
+
+        refreshButton.setupAppearance(config: Button.smallOutlined)
+        refreshButton.setTitle(L10n.Inventory.Button.refresh,
+                               attributes: Style.button.attributes(withColor: .xsolla_white))
+
+        refreshButton.setTitle(L10n.Inventory.Button.refresh,
+                               attributes: Style.button.attributes(withColor: .xsolla_inactiveWhite),
+                               for: .disabled)
         
         setupTabbarViewController()
     }
@@ -90,6 +104,10 @@ class InventoryVC: BaseViewController, InventoryVCProtocol
     {
 
     }
+    @IBAction private func onRefreshButton(_ sender: Button)
+    {
+        refreshRequestHandler?()
+    }
 }
 
 // MARK: - State
@@ -114,6 +132,7 @@ extension InventoryVC: LoadStatable
             {
                 updateTabbarViewController()
                 activityVC?.hide(animated: true)
+                refreshButton.isEnabled = true
                 activityVC = nil
             }
             
@@ -121,6 +140,7 @@ extension InventoryVC: LoadStatable
             {
                 guard activityVC == nil else { return }
                 activityVC = ActivityIndicatingViewController.presentEmbedded(in: self, embeddingMode: .over)
+                refreshButton.isEnabled = false
             }
         }
     }

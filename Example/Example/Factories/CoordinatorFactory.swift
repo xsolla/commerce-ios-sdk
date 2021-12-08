@@ -19,10 +19,10 @@ import UIKit
 protocol CoordinatorFactoryProtocol
 {
     func createMainContainerCoordinator(presenter: Presenter?,
-                                        params: MainContainerCoordinatorFactoryParams) -> MainContainerCoordinatorProtocol
+                                        params: MainContainerCoordinatorFactoryParams) -> ContainerCoordinatorProtocol
     
     func createMainContentCoordinator(presenter: Presenter?,
-                                      params: MainContentCoordinatorFactoryParams) -> MainContentCoordinatorProtocol
+                                      params: MainContentCoordinatorFactoryParams) -> MainCoordinatorProtocol
     
     func createAuthenticationCoordinator(presenter: Presenter?,
                                          params: AuthenticationCoordinatorFactoryParams) -> AuthenticationCoordinatorProtocol
@@ -36,15 +36,17 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
     // MARK: - Public
     
     func createMainContainerCoordinator(presenter: Presenter?,
-                                        params: MainContainerCoordinatorFactoryParams) -> MainContainerCoordinatorProtocol
+                                        params: MainContainerCoordinatorFactoryParams) -> ContainerCoordinatorProtocol
     {
-        let coordinatorDependencies = MainContainerCoordinator.Dependencies(coordinatorFactory: self,
+        let coordinatorDependencies = ContainerCoordinator.Dependencies(coordinatorFactory: self,
                                                                             viewControllerFactory: self.params.viewControllerFactory,
                                                                             modelFactory: self.params.modelFactory,
                                                                             xsollaSDK: self.params.xsollaSDK,
-                                                                            asyncUtilsFactory: self.params.asyncUtilsFactory)
+                                                                            asyncUtilsFactory: self.params.asyncUtilsFactory,
+                                                                            accessTokenProvider: params.accessTokenProvider,
+                                                                            deepLinkManager: params.deepLinkManager)
         
-        let coordinator = MainContainerCoordinator(presenter: presenter,
+        let coordinator = ContainerCoordinator(presenter: presenter,
                                                    dependencies: coordinatorDependencies,
                                                    params: .none)
         
@@ -52,9 +54,9 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
     }
     
     func createMainContentCoordinator(presenter: Presenter?,
-                                      params: MainContentCoordinatorFactoryParams) -> MainContentCoordinatorProtocol
+                                      params: MainContentCoordinatorFactoryParams) -> MainCoordinatorProtocol
     {
-        let coordinatorDependencies = MainContentCoordinator.Dependencies(coordinatorFactory: self,
+        let coordinatorDependencies = MainCoordinator.Dependencies(coordinatorFactory: self,
                                                                           viewControllerFactory: self.params.viewControllerFactory,
                                                                           datasourceFactory: self.params.datasourceFactory,
                                                                           asyncUtilsFactory: self.params.asyncUtilsFactory,
@@ -62,9 +64,10 @@ class CoordinatorFactory: CoordinatorFactoryProtocol
                                                                           store: self.params.store,
                                                                           userProfile: params.userProfile)
         
-        let coordinator = MainContentCoordinator(presenter: presenter,
+        let coordinator = MainCoordinator(presenter: presenter,
                                                  dependencies: coordinatorDependencies,
-                                                 params: .init(loginAsyncUtility: params.loginAsyncUtility))
+                                                 params: .init(loginAsyncUtility: params.loginAsyncUtility,
+                                                               xsollaSDK: self.params.xsollaSDK))
         
         return coordinator
     }
@@ -173,7 +176,11 @@ extension CoordinatorFactory
     }
 }
 
-typealias MainContainerCoordinatorFactoryParams = EmptyParams
+struct MainContainerCoordinatorFactoryParams
+{
+    let accessTokenProvider: AccessTokenProvider
+    let deepLinkManager: DeepLinkManagerProtocol
+}
 
 struct AuthenticationCoordinatorFactoryParams
 {

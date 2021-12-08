@@ -20,8 +20,7 @@ class OTPPhoneSequence: OTPBaseSequence
     override func sendOTPRequest(payload: OTPRequestPayload,
                                  state: OTPRequestState,
                                  confirmationLink: String?,
-                                 sendConfirmationLink: Bool,
-                                 completion: @escaping (Result<OTPOperationId, Error>) -> Void) -> OTPRequestState
+                                 completion: @escaping (Result<LoginOperationId, Error>) -> Void) -> OTPRequestState
     {
         invalidateSession()
 
@@ -30,7 +29,7 @@ class OTPPhoneSequence: OTPBaseSequence
         sdk.startAuthByPhone(oAuth2Params: oauthParams,
                              phoneNumber: payload,
                              linkUrl: confirmationLink,
-                             sendLink: sendConfirmationLink)
+                             sendLink: AppConfig.sendPhoneOTPConfirmationLink)
         { [weak self] result in
 
             switch result
@@ -59,23 +58,18 @@ class OTPPhoneSequence: OTPBaseSequence
 
         guard codeExpirationInterval > 0 else { completion(.failure(OTPSequenceError.expiredCode)); return }
 
-        sdk.completeAuthByPhone(clientId: clientId, code: code, phoneNumber: payload, operationId: operationId)
-        { [weak self, operationId, payload] result in
+        let jwtParams = JWTGenerationParams(clientId: clientId, redirectUri: AppConfig.redirectUrl)
 
-            guard
-                let actualOperationId = self?.operationId,
-                let actualPayload = self?.payload,
-                actualOperationId == operationId,
-                actualPayload == payload
-            else
-            {
-                completion(.failure(OTPSequenceError.invalidOTPSequence))
-                return
-            }
+        sdk.completeAuthByPhone(clientId: clientId,
+                                code: code,
+                                phoneNumber: payload,
+                                operationId: operationId,
+                                jwtParams: jwtParams)
+        { result in
 
             switch result
             {
-                case .success(let loginUrl): self?.getAccessToken(from: loginUrl, completion: completion)
+                case .success(let tokenInfo): completion(.success(tokenInfo))
                 case .failure(let error): completion(.failure(error))
             }
         }

@@ -58,6 +58,34 @@ internal enum L10n {
         internal static var title: String { L10n.tr("Localizable", "Alert.unlinkDevice.title") }
       }
     }
+    internal enum AppDeveloperSettings {
+      /// Developer settings
+      internal static var title: String { L10n.tr("Localizable", "AppDeveloperSettings.title") }
+      internal enum ActionButton {
+        /// Apply
+        internal static var title: String { L10n.tr("Localizable", "AppDeveloperSettings.actionButton.title") }
+      }
+      internal enum LoginId {
+        /// Login ID
+        internal static var placeholder: String { L10n.tr("Localizable", "AppDeveloperSettings.loginId.placeholder") }
+      }
+      internal enum OauthClientId {
+        /// OAuth2 client ID
+        internal static var placeholder: String { L10n.tr("Localizable", "AppDeveloperSettings.oauthClientId.placeholder") }
+      }
+      internal enum ProjectId {
+        /// Project ID
+        internal static var placeholder: String { L10n.tr("Localizable", "AppDeveloperSettings.projectId.placeholder") }
+      }
+      internal enum ResetButton {
+        /// Reset to defaults
+        internal static var title: String { L10n.tr("Localizable", "AppDeveloperSettings.resetButton.title") }
+      }
+      internal enum WebshopUrl {
+        /// Webshop url
+        internal static var placeholder: String { L10n.tr("Localizable", "AppDeveloperSettings.webshopUrl.placeholder") }
+      }
+    }
     internal enum AttributeEditor {
       internal enum Button {
         /// Add attribute
@@ -266,6 +294,8 @@ internal enum L10n {
       /// My inventory
       internal static var title: String { L10n.tr("Localizable", "Inventory.title") }
       internal enum Button {
+        /// Refresh
+        internal static var refresh: String { L10n.tr("Localizable", "Inventory.button.refresh") }
         /// Go To Store
         internal static var toStore: String { L10n.tr("Localizable", "Inventory.button.toStore") }
       }
@@ -302,6 +332,8 @@ internal enum L10n {
         internal static var virtualCurrency: String { L10n.tr("Localizable", "Menu.item.virtualCurrency") }
         /// Virtual items
         internal static var virtualItems: String { L10n.tr("Localizable", "Menu.item.virtualItems") }
+        /// Web Shop
+        internal static var webstore: String { L10n.tr("Localizable", "Menu.item.webstore") }
       }
     }
     internal enum OTPSequenceError {
@@ -483,10 +515,16 @@ internal enum L10n {
       internal static var youtube: String { L10n.tr("Localizable", "SocialNetwork.youtube") }
     }
     internal enum SocialNetworks {
-      /// Search social networks
+      /// Search social network
       internal static var searchPlaceholder: String { L10n.tr("Localizable", "SocialNetworks.searchPlaceholder") }
-      /// Other social networks
+      /// Social networks
       internal static var title: String { L10n.tr("Localizable", "SocialNetworks.title") }
+    }
+    internal enum Store {
+      internal enum Params {
+        /// Back to the Game
+        internal static var backToTheGame: String { L10n.tr("Localizable", "Store.params.backToTheGame") }
+      }
     }
     internal enum UserProfileError {
       /// Username is missing

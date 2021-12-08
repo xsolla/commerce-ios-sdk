@@ -28,17 +28,28 @@ class Store: StoreProtocol
     }
     
     func createOrder(itemSKU: String,
+                     quantity: Int = 1,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
                      completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
     {
 
-        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme)
-        let paymentProjectSettings = StorePaymentProjectSettings(ui: uiSettings)
+        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme,
+                                                                size: AppConfig.paystationUISize)
+        let redirectPolicy =
+            StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,
+                                                       delay: 5,
+                                                       statusForManualRedirection: .any,
+                                                       redirectButtonCaption: L10n.Store.Params.backToTheGame)
+
+        let paymentProjectSettings = StorePaymentProjectSettings(ui: uiSettings,
+                                                                 returnUrl: AppConfig.paymentsRedirectURL,
+                                                                 redirectPolicy: redirectPolicy)
 
         dependencies.xsollaSDK.createOrder(projectId: AppConfig.projectId,
                                            itemSKU: itemSKU,
+                                           quantity: quantity,
                                            currency: currency,
                                            locale: locale,
                                            isSandbox: isSandbox,

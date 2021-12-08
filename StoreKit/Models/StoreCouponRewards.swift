@@ -90,7 +90,7 @@ public extension StoreCouponRewards.Reward.Item
 
 extension StoreCouponRewards
 {
-    init(fromGetCouponRewardsResponse response: GetCouponRewardsResponse)
+    init(fromResponse response: GetCouponRewardsResponse)
     {
         rewards = response.bonus.map
         { bonus in

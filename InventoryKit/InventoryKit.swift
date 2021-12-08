@@ -20,18 +20,18 @@ public typealias InventoryKitCompletion<T> = (InventoryKitResult<T>) -> Void
 public final class InventoryKit
 {
     public static let shared = InventoryKit()
-    
+
     private var api: InventoryAPIProtocol
-    
+
     convenience init()
     {
         let requestPerformer = XSDKNetwork(sessionConfiguration: XSDKNetwork.defaultSessionConfiguration)
         let responseProcessor = InventoryAPIResponseProcessor()
         let api = InventoryAPI(requestPerformer: requestPerformer, responseProcessor: responseProcessor)
-        
+
         self.init(api: api)
     }
-    
+
     init(api: InventoryAPIProtocol)
     {
         self.api = api
@@ -41,15 +41,15 @@ public final class InventoryKit
 extension InventoryKit
 {
     /**
-     Client method. Retrieves the current user’s inventory.
+     Client method. Gets the current user’s inventory.
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - projectId: Project ID.
         - platform: Publishing platform the user plays on.
-        - detailedSubscriptions: An option whether detailed subscriptions information is required.
-        - completion: Completion with `Result`: Array of `InventoryItem` on success and `Error` on failure.
+        - detailedSubscriptions: Whether detailed subscriptions information is required.
+        - completion: Completion with `Result`: Array of `InventoryItem` in case of success and `Error` in case of failure.
      */
     public func getUserInventoryItems(accessToken: String,
                                       projectId: Int,
@@ -64,34 +64,34 @@ extension InventoryKit
                 case .success(let responseModel): do
                 {
                     let items = responseModel.items.map { InventoryItem(fromAPIResponse: $0) }
-                    
+
                     guard detailedSubscriptions == true else
                     {
                         completion(.success(items))
                         return
                     }
-                    
+
                     self?.getDetailedUserSubscriptions(for: items,
                                                        accessToken: accessToken,
                                                        projectId: projectId,
                                                        platform: platform,
                                                        completion: completion)
                 }
-                
+
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
     }
-    
+
     /**
-     Client method. Retrieves the current user’s virtual balance.
+     Client method. Gets the current user’s virtual balance.
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - projectId: Project ID.
         - platform: Publishing platform the user plays on.
-        - completion: Completion with `Result`: Array of `InventoryVirtualCurrencyBalance` on success and `Error` on failure.
+        - completion: Completion with `Result`: Array of `InventoryVirtualCurrencyBalance` in case of success and `Error` in case of failure.
      */
     public func getUserVirtualCurrencyBalance(
         accessToken: String,
@@ -101,7 +101,7 @@ extension InventoryKit
     {
         api.getUserVirtualCurrencyBalance(accessToken: accessToken, projectId: projectId, platform: platform)
         { result in
-            
+
             switch result
             {
                 case .success(let responseModel): do
@@ -110,21 +110,21 @@ extension InventoryKit
                         .map { InventoryVirtualCurrencyBalance(fromAPIResponse: $0) }
                     completion(.success(currenciesBalance))
                 }
-                
+
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
     }
-    
+
     /**
-     Client method. Retrieves the current user’s subscriptions.
+     Client method. Gets the current user’s subscriptions.
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - projectId: Project ID.
         - platform: Publishing platform the user plays on.
-        - completion: Completion with `Result`: Array of `InventoryUserSubscription` on success and `Error` on failure.
+        - completion: Completion with `Result`: Array of `InventoryUserSubscription` in case of success and `Error` in case of failure.
      */
     public func getUserSubscriptions(accessToken: String,
                                      projectId: Int,
@@ -142,21 +142,21 @@ extension InventoryKit
                     let subscriptions = responseModel.items.map { InventoryUserSubscription(fromAPIResponse: $0) }
                     completion(.success(subscriptions))
                 }
-                    
+
                 case .failure(let error): completion(.failure(error.processed))
             }
         }
     }
-    
+
     /**
      Client Method. Consumes an item from the current user’s inventory.
      - Parameters:
         - accessToken: By default, the Xsolla Login User JWT (Bearer token) is used for authorization.
      You can use the Pay Station Access Token as an alternative.
-     You can generate your own token (learn more [here](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui)).
+     You can [generate your own token](https://developers.xsolla.com/api/v2/getting-started/#api_token_ui).
         - projectId: Project ID.
         - platform: Publishing platform the user plays on.
-        - consumingItem: Instance of `InventoryConsumingItem`.
+        - consumingItem: Instance of **InventoryConsumingItem**.
         - completion: Completion with `Result`: success without content or failure with `Error`.
      */
     public func consumeItem(accessToken: String,
@@ -193,17 +193,17 @@ extension InventoryKit
                              projectId: projectId,
                              platform: platform)
         { result in
-            
+
             switch result
             {
                 case .success(let subscriptions): do
                 {
                     let subscriptions = subscriptions.reduce(into: [:]) { $0[$1.sku] = $1 }
                     let items = inventoryItems.map { $0.withSubscriptionInfo(subscriptions[$0.sku]) }
-                    
+
                     completion(.success(items))
                 }
-                
+
                 case .failure(let error): completion(.failure(error.processed))
             }
         }

@@ -39,6 +39,11 @@ class LoginAPI
 
 extension LoginAPI: LoginAPIProtocol
 {
+    func logUserOut(accessToken: String, sessionType: LogoutSessionType, completion: @escaping (LoginAPIResult<Void>) -> Void)
+    {
+        LogUserOutAPIProxy(configuration).logUserOut(accessToken: accessToken, sessionType: sessionType, completion: completion)
+    }
+
     func authByUsernameAndPassword(username: String,
                                    password: String,
                                    oAuth2Params: OAuth2Params,
@@ -48,20 +53,6 @@ extension LoginAPI: LoginAPIProtocol
                                                                                    password: password,
                                                                                    oAuth2Params: oAuth2Params,
                                                                                    completion: completion)
-    }
-    
-    func authByUsernameAndPasswordJWT(
-        username: String,
-        password: String,
-        clientId: Int,
-        scope: String?,
-        completion: @escaping (LoginAPIResult<AuthByUsernameAndPasswordJWTResponse>) -> Void)
-    {
-        AuthByUsernameAndPasswordJWTAPIProxy(configuration).authByUsernameAndPassword(username: username,
-                                                                                      password: password,
-                                                                                      clientId: clientId,
-                                                                                      scope: scope,
-                                                                                      completion: completion)
     }
     
     func getLinkForSocialAuth(providerName: String,
@@ -97,39 +88,19 @@ extension LoginAPI: LoginAPIProtocol
             completion: completion)
     }
     
-    func generateJWT(grantType: String,
-                     clientId: Int,
-                     refreshToken: String?,
-                     clientSecret: String?,
-                     redirectUri: String?,
-                     authCode: String?,
+    func generateJWT(with authCode: String?,
+                     jwtParams: JWTGenerationParams,
                      completion: @escaping (LoginAPIResult<GenerateJWTResponse>) -> Void)
     {
-        GenerateJWTAPIProxy(configuration).generateJWT(grantType: grantType,
-                                                       clientId: clientId,
-                                                       refreshToken: refreshToken,
-                                                       clientSecret: clientSecret,
-                                                       redirectUri: redirectUri,
-                                                       authCode: authCode,
-                                                       completion: completion)
+        GenerateJWTAPIProxy(configuration).generateJWT(with: authCode, jwtParams: jwtParams, completion: completion)
     }
     
-    func registerNewUser(oAuth2Params: OAuth2Params,
-                         username: String,
-                         password: String,
-                         email: String,
-                         acceptConsent: Bool?,
-                         fields: [String: String]?,
-                         promoEmailAgreement: Int?,
+    func registerNewUser(params: RegisterNewUserParams,
+                         oAuth2Params: OAuth2Params,
                          completion: @escaping (LoginAPIResult<RegisterNewUserResponse>) -> Void)
     {
-        RegisterNewUserAPIProxy(configuration).registerNewUser(oAuth2Params: oAuth2Params,
-                                                               username: username,
-                                                               password: password,
-                                                               email: email,
-                                                               acceptConsent: acceptConsent,
-                                                               fields: fields,
-                                                               promoEmailAgreement: promoEmailAgreement,
+        RegisterNewUserAPIProxy(configuration).registerNewUser(params: params,
+                                                               oAuth2Params: oAuth2Params,
                                                                completion: completion)
     }
     
@@ -268,8 +239,24 @@ extension LoginAPI: LoginAPIProtocol
                                                                              completion: completion)
     }
 
+    func createCodeForLinkingAccounts(accessToken: String,
+                                      completion: @escaping (LoginAPIResult<String>) -> Void)
+    {
+        CreateCodeForLinkingAccountsAPIProxy(configuration).createCodeForLinkingAccounts(accessToken: accessToken,
+                                                                                         completion: completion)
+    }
+
     // MARK: - User Account API
-    
+
+    func getUserPublicProfile(userId: String,
+                              accessToken: String,
+                              completion: @escaping (LoginAPIResult<GetUserPublicProfileResponse>) -> Void)
+    {
+        GetUserPublicProfileAPIProxy(configuration).getUserPublicProfile(userId: userId,
+                                                                         accessToken: accessToken,
+                                                                         completion: completion)
+    }
+
     func getCurrentUserDetails(accessToken: String,
                                completion: @escaping (LoginAPIResult<GetCurrentUserDetailsResponse>) -> Void)
     {
@@ -369,7 +356,16 @@ extension LoginAPI: LoginAPIProtocol
     }
     
     // MARK: User Account: Social Networks
-    
+
+    func getLinksForSocialAuth(accessToken: String,
+                               locale: String?,
+                               completion: @escaping (LoginAPIResult<GetLinksForSocialAuthResponse>) -> Void)
+    {
+        GetLinksForSocialAuthAPIProxy(configuration).getLinksForSocialAuth(accessToken: accessToken,
+                                                                           locale: locale,
+                                                                           completion: completion)
+    }
+
     func getLinkedNetworks(accessToken: String,
                            completion: @escaping (LoginAPIResult<GetLinkedNetworksResponse>) -> Void)
     {
@@ -411,6 +407,19 @@ extension LoginAPI: LoginAPIProtocol
         UpdateSocialNetworkFriendsAPIProxy(configuration).updateSocialNetworkFriends(accessToken: accessToken,
                                                                                      platform: platform,
                                                                                      completion: completion)
+    }
+
+    func searchUsersByNickname(nickname: String,
+                               accessToken: String,
+                               offset: Int?,
+                               limit: Int?,
+                               completion: @escaping (LoginAPIResult<SearchUsersByNicknameResponse>) -> Void)
+    {
+        SearchUsersByNicknameAPIProxy(configuration).searchUsersByNickname(nickname: nickname,
+                                                                           accessToken: accessToken,
+                                                                           offset: offset,
+                                                                           limit: limit,
+                                                                           completion: completion)
     }
     
     // MARK: - User Attributes
@@ -454,6 +463,17 @@ extension LoginAPI: LoginAPIProtocol
                                         publisherProjectId: publisherProjectId,
                                         removingKeys: removingKeys,
                                         completion: completion)
+    }
+
+    func checkUserAge(birthday: String,
+                      accessToken: String,
+                      loginId: String,
+                      completion: @escaping (LoginAPIResult<Bool>) -> Void)
+    {
+        CheckUserAgeAPIProxy(configuration).checkUserAge(birthday: birthday,
+                                                         accessToken: accessToken,
+                                                         loginId: loginId,
+                                                         completion: completion)
     }
 }
 

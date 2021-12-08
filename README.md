@@ -1,8 +1,7 @@
-
 # Xsolla SDK for iOS
 This SDK is a set of classes and methods that you can integrate into your iOS app to work with Xsolla products. After integration, you can:
 * authenticate users while keeping user data safe, secure, and under your ownership
-* sell virtual goods to a worldwide audience and integrate in-app purchases (IAPs)
+* sell virtual goods to a worldwide audience and integrate in-app purchases 
 * provide users with a convenient UI to pay for in-game purchases in the game store
 * manage player’s inventory based on cross-platform cloud storage
 * grow and manage your community with the friend system and cross-platform player authentication
@@ -11,34 +10,68 @@ This SDK is a set of classes and methods that you can integrate into your iOS ap
 The SDK includes the following modules:
 
 ### LoginKit
-Contains methods for working with the [Login API](https://developers.xsolla.com/login-api/) and allows you to implement the following [Xsolla Login](https://developers.xsolla.com/doc/login/) features:
+Contains methods for working with the [Login API](https://developers.xsolla.com/login-api/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) and allows you to implement the following [Xsolla Login](https://developers.xsolla.com/doc/login/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) features:
 
-* authentication via email or username and password
-* authentication via the following social networks:
-  - Google
-  - Facebook
-  - Twitter
-  - LinkedIn
-  - Baidu
 * sign-up
+* authentication via a device ID
+* authentication via an email address or username and password
+* passwordless authentication via an email address or phone number
+* authentication via social networks
+<details>
+<summary><b>See the full list of supported social networks</b></summary>
+    <ul>
+		<li>Amazon</li>
+		<li>Apple</li>
+		<li>Baidu</li>
+		<li>Battle.net</li>
+		<li>Discord</li>
+		<li>Facebook</li>
+		<li>GitHub</li>
+		<li>Google</li>
+		<li>Kakao</li>
+		<li>LinkedIn</li>
+		<li>MSN</li>
+		<li>Mail.ru</li>
+		<li>Microsoft</li>
+		<li>Naver</li>
+		<li>Odnoklassniki</li>
+		<li>PayPal</li>
+		<li>QQ</li>
+		<li>Reddit</li>
+		<li>Steam</li>
+		<li>Twitch.tv</li>
+		<li>Twitter</li>
+		<li>VK</li>
+		<li>Vimeo</li>
+		<li>WeChat</li>
+		<li>Weibo</li>
+		<li>Xbox Live</li>
+		<li>Yahoo</li>
+		<li>Yandex</li>
+		<li>YouTube</li>
+		</ul>
+</details>
 * email confirmation
 * password reset
+* user account
+* user attributes management
+* friend system
+
 
 ### StoreKit
-Contains methods for working with the [Store API](https://developers.xsolla.com/store-api/) and allows you to implement the following [In-Game Store](https://developers.xsolla.com/doc/in-game-store/features/player-inventory/) features:
+Contains methods for working with the [Store API](https://developers.xsolla.com/in-game-store-buy-button-api/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) and allows you to implement the following [In-Game Store](https://developers.xsolla.com/doc/in-game-store/features/player-inventory/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) features:
 
 * selling virtual items and virtual currency
-* managing virtual currency balance
-* working with promotional campaigns (discounts, coupons, and promo codes)
+* working with promotional campaigns (discounts and coupons)
 
 ### InventoryKit
-Contains methods for working with the [Player Inventory API](https://developers.xsolla.com/store-api/player-inventory) and allows you to implement the following [In-Game Store](https://developers.xsolla.com/doc/in-game-store/features/player-inventory/) features:
+Contains methods for working with the [Player Inventory API](https://developers.xsolla.com/in-game-store-buy-button-api/player-inventory?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) and allows you to implement the following [In-Game Store](https://developers.xsolla.com/in-game-store-buy-button-api/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) features:
 
 * user inventory management
 * virtual currency balance management
 
 ### PaymentsKit
-Allows opening payment UI via the web to use the main [Xsolla Pay Station](https://developers.xsolla.com/doc/pay-station/) features:
+Allows opening payment UI via the web to use the main [Xsolla Pay Station](https://developers.xsolla.com/doc/pay-station/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) features:
 
 * purchases for 130+ currencies
 * purchases via 700+ payment methods
@@ -59,7 +92,7 @@ Before you integrate:
 1. Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html#getting-started).
 2. Download and install [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12).
 3. Create a new Xcode project.
-4. Register an [Xsolla Publisher Account](https://publisher.xsolla.com/signup?store_type=sdk) and set up a new project.
+4. Register an [Xsolla Publisher Account](https://publisher.xsolla.com/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) and set up a new project.
 
 ## Installation
 The library is available in CocoaPods.
@@ -81,7 +114,7 @@ To test installation, add the following line to your `AppDelegate`, where `<pod_
 import '<pod_name>'
 ```
 
-Check-out the API references available online at: <https://developers.xsolla.com/>
+Check-out the [API references](https://developers.xsolla.com/#api?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce).
 
 ## Community
 Join our [Discord server](https://discord.gg/auNFyzZx96). Connect with the Xsolla team and developers who use Xsolla products.
@@ -89,13 +122,13 @@ Join our [Discord server](https://discord.gg/auNFyzZx96). Connect with the Xsoll
 ## Documentation
 API reference:
 
- * [Login API](https://developers.xsolla.com/login-api/)
- * [Store API](https://developers.xsolla.com/store-api/)
- * [Player Inventory API](https://developers.xsolla.com/store-api/player-inventory)
+ * [Login API](https://developers.xsolla.com/login-api/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)
+ * [Store API](https://developers.xsolla.com/in-game-store-buy-button-api/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)
+ * [Player Inventory API](https://developers.xsolla.com/in-game-store-buy-button-api/player-inventory?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)
 
 ## Licence
 See the [LICENSE](LICENSE) file.
 
 ## Additional resources
-* [Xsolla official website](https://xsolla.com/)
-* [Developers documentation](https://developers.xsolla.com/)
+* [Xsolla official website](https://xsolla.com/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)
+* [Developers documentation](https://developers.xsolla.com/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)

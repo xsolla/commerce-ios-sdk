@@ -22,6 +22,10 @@ typealias StoreAPIResult<T> = Result<T, StoreAPIError>
 protocol StoreAPIProtocol
 {
     func getItemGroups(projectId: Int, completion: @escaping (StoreAPIResult<GetItemGroupsResponse>) -> Void)
+
+    func getAllVirtualItems(projectId: Int,
+                            locale: String?,
+                            completion: @escaping (StoreAPIResult<GetAllVirtualItemsResponse>) -> Void)
     
     func getVirtualItems(projectId: Int,
                          filterParams: StoreFilterParams,
@@ -54,6 +58,7 @@ protocol StoreAPIProtocol
     func createOrder(accessToken: String,
                      projectId: Int,
                      itemSku: String,
+                     quantity: Int,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
