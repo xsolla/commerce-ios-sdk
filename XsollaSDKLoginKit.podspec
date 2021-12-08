@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKLoginKit'
-  s.version      = '0.4.0'
+  s.version      = '0.4.1'
   s.summary      = 'The official Xsolla SDK for iOS used to authenticate users and to connect them via a friend system using the solution based on Xsolla Login.'
   s.description  = <<-DESC
                    The library contains methods for working with the Login API and allows you to implement the following features:
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '11.0'
   s.swift_version = '5.0'
 
-  s.source       = { :git => "git@github.com:xsolla/commerce-ios-sdk.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/xsolla/commerce-ios-sdk.git", :tag => "#{s.version}" }
 
   s.frameworks   = 'Foundation'
   s.requires_arc = true

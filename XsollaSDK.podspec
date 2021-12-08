@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDK'
-  s.version      = '0.4.0'
+  s.version      = '0.4.1'
   s.summary      = 'The official Xsolla SDKs for iOS used to work with Xsolla products.'
   s.description  = <<-DESC
                    After integrating SDKs for iOS you will be able to:
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '11.0'
   s.swift_version = '5.0'
 
-  s.source       = { :git => "git@github.com:xsolla/commerce-ios-sdk.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/xsolla/commerce-ios-sdk.git", :tag => "#{s.version}" }
 
   s.frameworks   = 'Foundation'
   s.requires_arc = true
