@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKUtilities'
-  s.version      = '0.4.1'
+  s.version      = '0.4.2'
   s.summary      = 'Shared interchange utility methods for Xsolla libraries. Not intended for direct use.'
   s.description  = <<-DESC
                    This module contains utility methods that are shared between Xsolla libraries. This pod doesn’t expose any headers and isn't intended for direct use, but rather as a dependency of Xsolla libraries.

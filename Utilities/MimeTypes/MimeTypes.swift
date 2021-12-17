@@ -58,8 +58,7 @@ public class MimeTypes
 
     private init()
     {
-        let dbText = MimeTypes.readDBFromBundle()
-        dbText.enumerateLines
+        MimeTypes.rawStringList.enumerateLines
         { line, _ in
 
             let fields = line.components(separatedBy: " ")
@@ -88,26 +87,6 @@ public class MimeTypes
     func mimeType(forExtension ext: String) -> String?
     {
         return byExtension[ext]?.mimeType
-    }
-
-    private static func readDBFromBundle() -> String
-    {
-        if let url = Bundle(for: Self.self).url(forResource: "mime-types", withExtension: "txt")
-        {
-            do
-            {
-                let contents = try String(contentsOfFile: url.path)
-                return contents
-            }
-            catch
-            {
-                preconditionFailure("mime.types db could not be loaded")
-            }
-        }
-        else
-        {
-            preconditionFailure("mime.types could not be found")
-        }
     }
 }
 
