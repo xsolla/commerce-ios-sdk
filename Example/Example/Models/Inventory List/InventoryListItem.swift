@@ -85,7 +85,7 @@ extension InventoryListItem
             case expired
         }
         
-        init?(inventoryKitUserSubscription subscription: InventoryUserSubscription?)
+        init?(inventoryKitUserSubscription subscription: TimeLimitedItem?)
         {
             guard let subscription = subscription else { return nil }
             

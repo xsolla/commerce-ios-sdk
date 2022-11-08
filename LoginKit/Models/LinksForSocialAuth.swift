@@ -13,7 +13,6 @@
 
 import Foundation
 
-
 /// Structure containing the list of links for authentication via social networks
 public struct LinksForSocialAuthElement
 {

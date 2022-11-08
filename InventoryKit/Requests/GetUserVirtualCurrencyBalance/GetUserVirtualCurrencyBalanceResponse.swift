@@ -19,17 +19,6 @@ import Foundation
 struct GetUserVirtualCurrencyBalanceResponse: Decodable
 {
     let items: [Item]
-    
-    enum CodingKeys: String, CodingKey
-    {
-        case items = "items"
-    }
-    
-    init(from decoder: Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        items = try container.decode([Item].self, forKey: .items)
-    }
 }
 
 extension GetUserVirtualCurrencyBalanceResponse
@@ -45,23 +34,12 @@ extension GetUserVirtualCurrencyBalanceResponse
         
         enum CodingKeys: String, CodingKey
         {
-            case sku = "sku"
-            case type = "type"
-            case name = "name"
-            case amount = "amount"
-            case description = "description"
+            case sku
+            case type
+            case name
+            case amount
+            case description
             case imageUrl = "image_url"
-        }
-        
-        init(from decoder: Decoder) throws
-        {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            sku = try container.decode(String.self, forKey: .sku)
-            type = try container.decode(String.self, forKey: .type)
-            name = try container.decode(String.self, forKey: .name)
-            amount = try container.decode(Int.self, forKey: .amount)
-            description = try container.decodeIfPresent(String.self, forKey: .description)
-            imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
         }
     }
 }

@@ -63,31 +63,3 @@ extension StoreOrder.Content
         public let price: StoreItemPrice?
     }
 }
-
-extension StoreOrder
-{
-    init(fromResponse response: GetOrderResponse)
-    {
-        self.orderId = response.orderId
-        self.status = response.status
-
-        if let content = response.content
-        {
-            let items = content.items?.map
-            {
-                Content.Item(sku: $0.sku,
-                             quantity: $0.quantity,
-                             isFree: $0.isFree,
-                             price: StoreItemPrice(fromOptionalAPIResponse: $0.price))
-            }
-            self.content = Content(price: StoreItemPrice(fromOptionalAPIResponse: content.price),
-                                   virtualPrice: StoreItemVirtualPrice(fromOptionalAPIResponse: content.virtualPrice),
-                                   isFree: content.isFree,
-                                   items: items)
-        }
-        else
-        {
-            self.content = nil
-        }
-    }
-}

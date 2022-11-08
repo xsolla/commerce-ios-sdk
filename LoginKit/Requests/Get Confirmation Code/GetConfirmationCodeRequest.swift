@@ -20,7 +20,7 @@ class GetConfirmationCodeRequest: LoginBaseRequest<GetConfirmationCodeRequest.Pa
                                   APIRequestProtocol
 {
     typealias ResponseModel = GetConfirmationCodeResponse
-    typealias ErrorHandler  = GetConfirmationCodeErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

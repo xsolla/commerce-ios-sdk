@@ -20,7 +20,7 @@ class GetLinkForSocialAuthRequest: LoginBaseRequest<GetLinkForSocialAuthRequest.
                                    APIRequestProtocol
 {
     typealias ResponseModel = GetLinkForSocialAuthResponse
-    typealias ErrorHandler  = GetLinkForSocialAuthErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

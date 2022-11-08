@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class GetLinkedNetworksRequest: LoginBaseRequest<GetLinkedNetworksRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetLinkedNetworksResponse
-    typealias ErrorHandler = GetLinkedNetworksErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

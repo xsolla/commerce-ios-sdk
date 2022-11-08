@@ -30,10 +30,10 @@ protocol InventoryAPIProtocol
         platform: String?,
         completion: @escaping (InventoryAPIResult<GetUserVirtualCurrencyBalanceResponse>) -> Void)
     
-    func getUserSubscriptions(accessToken: String,
-                              projectId: Int,
-                              platform: String?,
-                              completion: @escaping (InventoryAPIResult<GetUserSubscriptionsResponse>) -> Void)
+    func getTimeLimitedItems(accessToken: String,
+                             projectId: Int,
+                             platform: String?,
+                             completion: @escaping (InventoryAPIResult<GetTimeLimitedItemsResponse>) -> Void)
     
     func consumeItem(accessToken: String,
                      projectId: Int,

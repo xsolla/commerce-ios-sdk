@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -49,7 +49,8 @@
 		5B29588926A950C900FF1D2D /* LoginAsyncUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29588826A950C900FF1D2D /* LoginAsyncUtility.swift */; };
 		5B29589926A9711300FF1D2D /* AsyncUtilsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29589826A9711300FF1D2D /* AsyncUtilsFactory.swift */; };
 		5B29589B26A9884B00FF1D2D /* AccessTokenInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29589A26A9884B00FF1D2D /* AccessTokenInfo.swift */; };
-		5B2AB89625B5F5F500E57D16 /* FloatingTitleTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2AB89525B5F5F500E57D16 /* FloatingTitleTextField.swift */; };
+		5B29BF1B28B277D1000993B8 /* DemoUserCreationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29BF1A28B277D1000993B8 /* DemoUserCreationHelper.swift */; };
+		5B2B615727889F380033DD87 /* SegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2B615627889F380033DD87 /* SegmentedControl.swift */; };
 		5B2B8EC825E928F90029F4AA /* SystemFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2B8EC725E928F90029F4AA /* SystemFont.swift */; };
 		5B2C60B52613328E00AC6D47 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 5B2C60B42613328D00AC6D47 /* Podfile */; };
 		5B2C60B72613329E00AC6D47 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 5B2C60B62613329E00AC6D47 /* .swiftlint.yml */; };
@@ -224,6 +225,7 @@
 		5BF76CA525BAC86900616FEA /* FormValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF76CA425BAC86900616FEA /* FormValidator.swift */; };
 		5BFCCEAC2714524100F93B20 /* AppDeveloperSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFCCEAB2714524100F93B20 /* AppDeveloperSettingsVC.swift */; };
 		5BFE837B265D24D10086F05A /* AttributeEditorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFE837A265D24D10086F05A /* AttributeEditorVC.swift */; };
+		5BFE9DAC275A71B0008960DC /* FloatingTitleTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2AB89525B5F5F500E57D16 /* FloatingTitleTextField.swift */; };
 		7E09190625DA532E00260DA7 /* XsollaSDKProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E09190525DA532E00260DA7 /* XsollaSDKProtocol.swift */; };
 		7E0E995E26A83573000B697A /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0E995D26A83573000B697A /* UIImage.swift */; };
 		7E20B74125D2A2A80037A391 /* VirtualCurrencyBalance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E20B74025D2A2A80037A391 /* VirtualCurrencyBalance.swift */; };
@@ -236,7 +238,6 @@
 		7E567DF825E6467A00D486DB /* ThreadSafeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E567DF725E6467A00D486DB /* ThreadSafeArray.swift */; };
 		7E567E1D25E66C3300D486DB /* InventoryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E567E1C25E66C3300D486DB /* InventoryListItem.swift */; };
 		7E567E3225E66F1300D486DB /* AtomicPropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E567E3125E66F1300D486DB /* AtomicPropertyWrapper.swift */; };
-		7E596C2C25C17CD70045D277 /* BottomPopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E596C2B25C17CD70045D277 /* BottomPopupVC.swift */; };
 		7E596C5725C184690045D277 /* WebBrowserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E596C5625C184690045D277 /* WebBrowserVC.swift */; };
 		7E71FA1526B0360A00C2387D /* ConnectedDevicesListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E71FA1426B0360A00C2387D /* ConnectedDevicesListVC.swift */; };
 		7E71FA2526B0385E00C2387D /* ConnectedDevicesListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7E71FA2426B0385E00C2387D /* ConnectedDevicesListItemCell.xib */; };
@@ -250,23 +251,6 @@
 		7EEC1D0B25CC073200969618 /* RecoverPasswordFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEC1D0A25CC073200969618 /* RecoverPasswordFormData.swift */; };
 		7EEC1D1825CC246F00969618 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEC1D1725CC246F00969618 /* ActivityIndicator.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		5B2A095F264BC75C0039456A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7EC5C033264559F700CBBF22;
-			remoteInfo = SubscriptionsKit;
-		};
-		5B2A0961264BC75C0039456A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7EC5C03C264559F700CBBF22;
-			remoteInfo = SubscriptionsKitTests;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		5B00C4F825C2D28A0063B87B /* BalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceView.swift; sourceTree = "<group>"; };
@@ -310,8 +294,9 @@
 		5B29588826A950C900FF1D2D /* LoginAsyncUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAsyncUtility.swift; sourceTree = "<group>"; };
 		5B29589826A9711300FF1D2D /* AsyncUtilsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncUtilsFactory.swift; sourceTree = "<group>"; };
 		5B29589A26A9884B00FF1D2D /* AccessTokenInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInfo.swift; sourceTree = "<group>"; };
-		5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SubscriptionsKit.xcodeproj; path = ../SubscriptionsKit/SubscriptionsKit.xcodeproj; sourceTree = "<group>"; };
+		5B29BF1A28B277D1000993B8 /* DemoUserCreationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoUserCreationHelper.swift; sourceTree = "<group>"; };
 		5B2AB89525B5F5F500E57D16 /* FloatingTitleTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTitleTextField.swift; sourceTree = "<group>"; };
+		5B2B615627889F380033DD87 /* SegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControl.swift; sourceTree = "<group>"; };
 		5B2B8EC725E928F90029F4AA /* SystemFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemFont.swift; sourceTree = "<group>"; };
 		5B2C60B42613328D00AC6D47 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		5B2C60B62613329E00AC6D47 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = SOURCE_ROOT; };
@@ -501,7 +486,6 @@
 		7E567DF725E6467A00D486DB /* ThreadSafeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeArray.swift; sourceTree = "<group>"; };
 		7E567E1C25E66C3300D486DB /* InventoryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryListItem.swift; sourceTree = "<group>"; };
 		7E567E3125E66F1300D486DB /* AtomicPropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicPropertyWrapper.swift; sourceTree = "<group>"; };
-		7E596C2B25C17CD70045D277 /* BottomPopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomPopupVC.swift; sourceTree = "<group>"; };
 		7E596C5625C184690045D277 /* WebBrowserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBrowserVC.swift; sourceTree = "<group>"; };
 		7E71FA1426B0360A00C2387D /* ConnectedDevicesListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDevicesListVC.swift; sourceTree = "<group>"; };
 		7E71FA2426B0385E00C2387D /* ConnectedDevicesListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConnectedDevicesListItemCell.xib; sourceTree = "<group>"; };
@@ -515,16 +499,6 @@
 		7EEC1D0A25CC073200969618 /* RecoverPasswordFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverPasswordFormData.swift; sourceTree = "<group>"; };
 		7EEC1D1725CC246F00969618 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		5BDF75482594C31E00BB9350 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5B00C4EE25C2D2820063B87B /* Views */ = {
@@ -609,15 +583,6 @@
 				5B1D110125E5680D00FF2AB4 /* Store.swift */,
 			);
 			path = Store;
-			sourceTree = "<group>";
-		};
-		5B2A0953264BC75C0039456A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */,
-				5B2A0962264BC75C0039456A /* SubscriptionsKitTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		5B2C60B32613326B00AC6D47 /* Misc */ = {
@@ -900,7 +865,6 @@
 				5B6042DB25A5A78000561E99 /* Authentication */,
 				5B6042D825A5A76500561E99 /* Main */,
 				5B6042E625A5A95500561E99 /* SideMenu */,
-				7E596C2B25C17CD70045D277 /* BottomPopupVC.swift */,
 				7E596C5625C184690045D277 /* WebBrowserVC.swift */,
 				7EA3B07825EE219C00051F3C /* PaystationVC.swift */,
 				5B7D463926BD2B940029B117 /* WebFlowURLCallbackListenableVC.swift */,
@@ -926,6 +890,7 @@
 				5BA9056925A4BB5F0057C6DC /* BaseViewController.swift */,
 				5B2834F525D43DD30060C075 /* BaseTableViewController.swift */,
 				5B4CEE1D25B0C86A009C2BE4 /* TabbarViewController.swift */,
+				5B2B615627889F380033DD87 /* SegmentedControl.swift */,
 				5B2AB89525B5F5F500E57D16 /* FloatingTitleTextField.swift */,
 				5B06AE5325B713A4001FE7E5 /* TextFieldDelegateProxy.swift */,
 				5BCE098E25B753AB00543708 /* Button.swift */,
@@ -1244,6 +1209,7 @@
 				5BFB6D64264BE7EA00D2F74D /* AsyncUtilities */,
 				7E09190525DA532E00260DA7 /* XsollaSDKProtocol.swift */,
 				7E20B79C25D572700037A391 /* XsollaSDK.swift */,
+				5B29BF1A28B277D1000993B8 /* DemoUserCreationHelper.swift */,
 			);
 			path = XsollaSDK;
 			sourceTree = "<group>";
@@ -1289,14 +1255,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BDF75752594C32000BB9350 /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
-				25FF47253DD5F0258DE34AD5 /* [CP] Check Pods Manifest.lock */,
 				5BFC552125A8D4F500C163E4 /* GUARD, TODO, FIXME warnings */,
 				5B9DBC2E25A37C2600883FBA /* SwiftGen */,
 				5B9DBBE625A3678A00883FBA /* SwiftLint */,
 				5BDF75472594C31E00BB9350 /* Sources */,
-				5BDF75482594C31E00BB9350 /* Frameworks */,
 				5BDF75492594C31E00BB9350 /* Resources */,
-				231F80BAC61159267D66593D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1332,35 +1295,12 @@
 			mainGroup = 5BDF75422594C31E00BB9350;
 			productRefGroup = 5BDF754C2594C31E00BB9350 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 5B2A0953264BC75C0039456A /* Products */;
-					ProjectRef = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				5BDF754A2594C31E00BB9350 /* Example */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = XsollaSDKSubscriptionsKit.framework;
-			remoteRef = 5B2A095F264BC75C0039456A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5B2A0962264BC75C0039456A /* SubscriptionsKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SubscriptionsKitTests.xctest;
-			remoteRef = 5B2A0961264BC75C0039456A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5BDF75492594C31E00BB9350 /* Resources */ = {
@@ -1415,45 +1355,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		231F80BAC61159267D66593D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		25FF47253DD5F0258DE34AD5 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Example-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5B9DBBE625A3678A00883FBA /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1560,6 +1461,7 @@
 				5BEDB08F26C3C03A00513288 /* AsyncUtilityProtocol.swift in Sources */,
 				5BA2A9A025CD78C300DA250D /* VirtualCurrencyListDatasource.swift in Sources */,
 				5B65C50525E6A860003A5A37 /* BundlePreviewDataSource.swift in Sources */,
+				5B2B615727889F380033DD87 /* SegmentedControl.swift in Sources */,
 				5B6042FB25A5ADD600561E99 /* AuthenticationMainVC.swift in Sources */,
 				7EC5BF912643BC7500CBBF22 /* PhoneNumberValidator.swift in Sources */,
 				5BE2B45C26AC29AF00539F01 /* UpgradeAccountVC.swift in Sources */,
@@ -1576,7 +1478,6 @@
 				5B1B8A0D273A961600268779 /* VirtualCurrencyCoordinator.swift in Sources */,
 				5BF76C9925BAB92600616FEA /* UserInputValidatorFactory.swift in Sources */,
 				7E20B79D25D572700037A391 /* XsollaSDK.swift in Sources */,
-				7E596C2C25C17CD70045D277 /* BottomPopupVC.swift in Sources */,
 				5BC544582695CB45008C768D /* OTPInputCodeVC.swift in Sources */,
 				5BDC0F3526B07B7B005F8E76 /* UICollectionView.swift in Sources */,
 				5B13F2C325DD6D61000E24FE /* VirtualItemsListItem.swift in Sources */,
@@ -1593,7 +1494,6 @@
 				5B40473225B2D266000A6111 /* Style.swift in Sources */,
 				5BA2A99C25CD77AC00DA250D /* ModelFactory.swift in Sources */,
 				5BA9056D25A4BD530057C6DC /* CoordinatorFactory.swift in Sources */,
-				5B2AB89625B5F5F500E57D16 /* FloatingTitleTextField.swift in Sources */,
 				5B23D7A326E7606600F2751D /* XSDKNetworkError.swift in Sources */,
 				5B191E0225DAF62400810D9A /* VirtualItemsList.swift in Sources */,
 				5BA2A9A225CD7CAE00DA250D /* Factories.swift in Sources */,
@@ -1617,6 +1517,7 @@
 				5B1B8A0B273A960100268779 /* VirtualItemsCoordinator.swift in Sources */,
 				7E20B74125D2A2A80037A391 /* VirtualCurrencyBalance.swift in Sources */,
 				5B407A6226A04AC3000884EC /* OTPSequenceProtocol.swift in Sources */,
+				5BFE9DAC275A71B0008960DC /* FloatingTitleTextField.swift in Sources */,
 				5B57806825C881B10020DBA4 /* InventoryCell.swift in Sources */,
 				5B3B645C25D578EB00E53F9D /* CurrencyProvider.swift in Sources */,
 				5BDC0F2326B06C2D005F8E76 /* LinkedSocialNetworksListView.swift in Sources */,
@@ -1624,6 +1525,7 @@
 				7E30B9DF26A6B1DC007D305B /* SocialNetworksList.swift in Sources */,
 				5B65C51025E6D8A9003A5A37 /* StoreBundle+ItemPriceProvider.swift in Sources */,
 				5B6042F925A5ADD600561E99 /* SignupVC.swift in Sources */,
+				5B29BF1B28B277D1000993B8 /* DemoUserCreationHelper.swift in Sources */,
 				5BF76C9E25BAB96C00616FEA /* DefaultStringValidator.swift in Sources */,
 				5BA2A99E25CD77BA00DA250D /* DatasourceFactory.swift in Sources */,
 				5BEDB09126C3C0EE00513288 /* LoginAsyncUtilitySocialNetworksProtocol.swift in Sources */,
@@ -1765,7 +1667,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1829,7 +1730,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1859,14 +1759,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xolla.sdk.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xsolla.sdk.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_PNG_TEXT = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1878,14 +1782,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xolla.sdk.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xsolla.sdk.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_PNG_TEXT = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

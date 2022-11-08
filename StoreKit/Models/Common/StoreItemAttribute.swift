@@ -35,13 +35,3 @@ public struct StoreItemAttribute
         public let value: String
     }
 }
-
-extension StoreItemAttribute
-{
-    init(fromAPIResponse response: StoreAPICommonResponse.Attribute)
-    {
-        self.externalId = response.externalId
-        self.name = response.name
-        self.values = response.values.map { Value(externalId: $0.externalId, value: $0.value) }
-    }
-}

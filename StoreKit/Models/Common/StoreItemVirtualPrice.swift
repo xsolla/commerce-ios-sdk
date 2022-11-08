@@ -40,32 +40,3 @@ public struct StoreItemVirtualPrice
     /// Virtual currency description.
     public let description: String?
 }
-
-extension StoreItemVirtualPrice
-{
-    init(fromAPIResponse response: StoreAPICommonResponse.VirtualPrice)
-    {
-        self.amount = response.amount
-        self.amountWithoutDiscount = response.amountWithoutDiscount
-        self.sku = response.sku
-        self.isDefault = response.isDefault
-        self.imageUrl = response.imageUrl
-        self.name = response.name
-        self.type = response.type
-        self.description = response.description
-    }
-
-    init?(fromOptionalAPIResponse optionalResponse: StoreAPICommonResponse.VirtualPrice?)
-    {
-        guard let response = optionalResponse else { return nil }
-
-        self.amount = response.amount
-        self.amountWithoutDiscount = response.amountWithoutDiscount
-        self.sku = response.sku
-        self.isDefault = response.isDefault
-        self.imageUrl = response.imageUrl
-        self.name = response.name
-        self.type = response.type
-        self.description = response.description
-    }
-}

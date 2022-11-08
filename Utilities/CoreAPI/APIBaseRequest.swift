@@ -61,10 +61,19 @@ open class APIBaseRequest
     {
         guard var urlComponents = URLComponents(string: path) else { fatalError("Endpoint path error") }
 
-        let queryItems = self.queryParameters.map
-        { key, value in
-            return URLQueryItem(name: key, value: String(describing: value))
+        let queryItems = self.queryParameters.compactMap
+        { (key, value) -> [URLQueryItem] in
+
+            guard let value = value else { return [] }
+
+            if let array = value as? [CustomStringConvertible]
+            {
+                return array.map { URLQueryItem(name: "\(key)[]", value: String(describing: $0)) }
+            }
+
+            return [URLQueryItem(name: key, value: String(describing: value))]
         }
+        .flatMap { $0 }
 
         if !queryItems.isEmpty { urlComponents.queryItems = queryItems }
 
@@ -75,7 +84,7 @@ open class APIBaseRequest
 
     // MARK: - Query String
 
-    public typealias QueryParameters = [String: String]
+    public typealias QueryParameters = [String: CustomStringConvertible?]
 
     open var specialQueryParameters: QueryParameters { [:] }
 

@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class LinkDeviceToAccountRequest: LoginBaseRequest<LinkDeviceToAccountRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler = LinkDeviceToAccountErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

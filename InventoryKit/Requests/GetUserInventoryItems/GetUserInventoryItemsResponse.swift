@@ -19,17 +19,6 @@ import Foundation
 struct GetUserInventoryItemsResponse: Decodable
 {
     let items: [Item]
-    
-    enum CodingKeys: String, CodingKey
-    {
-        case items = "items"
-    }
-    
-    init(from decoder: Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        items = try container.decode([Item].self, forKey: .items)
-    }
 }
 
 extension GetUserInventoryItemsResponse
@@ -51,32 +40,16 @@ extension GetUserInventoryItemsResponse
         enum CodingKeys: String, CodingKey
         {
             case instanceId = "instance_id"
-            case sku = "sku"
-            case type = "type"
-            case name = "name"
-            case quantity = "quantity"
-            case description = "description"
+            case sku
+            case type
+            case name
+            case quantity
+            case description
             case imageUrl = "image_url"
-            case groups = "groups"
-            case attributes = "attributes"
+            case groups
+            case attributes
             case remainingUses = "remaining_uses"
             case virtualItemType = "virtual_item_type"
-        }
-        
-        init(from decoder: Decoder) throws
-        {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            instanceId = try container.decodeIfPresent(String.self, forKey: .instanceId)
-            sku = try container.decode(String.self, forKey: .sku)
-            type = try container.decode(String.self, forKey: .type)
-            name = try container.decode(String.self, forKey: .name)
-            quantity = try container.decodeIfPresent(Int.self, forKey: .quantity)
-            description = try container.decodeIfPresent(String.self, forKey: .description)
-            imageUrl = try container.decode(String.self, forKey: .imageUrl)
-            groups = try container.decode([Group].self, forKey: .groups)
-            attributes = try container.decode([Attribute].self, forKey: .attributes)
-            remainingUses = try container.decodeIfPresent(Int.self, forKey: .remainingUses)
-            virtualItemType = try container.decodeIfPresent(String.self, forKey: .virtualItemType)
         }
     }
 }
@@ -91,14 +64,7 @@ extension GetUserInventoryItemsResponse.Item
         enum CodingKeys: String, CodingKey
         {
             case externalId = "external_id"
-            case name = "name"
-        }
-        
-        init(from decoder: Decoder) throws
-        {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            externalId = try container.decode(String.self, forKey: .externalId)
-            name = try container.decode(String.self, forKey: .name)
+            case name
         }
     }
     
@@ -111,16 +77,8 @@ extension GetUserInventoryItemsResponse.Item
         enum CodingKeys: String, CodingKey
         {
             case externalId = "external_id"
-            case name = "name"
-            case values = "values"
-        }
-        
-        init(from decoder: Decoder) throws
-        {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            externalId = try container.decode(String.self, forKey: .externalId)
-            name = try container.decode(String.self, forKey: .name)
-            values = try container.decode([Value].self, forKey: .values)
+            case name
+            case values
         }
     }
 }
@@ -135,14 +93,7 @@ extension GetUserInventoryItemsResponse.Item.Attribute
         enum CodingKeys: String, CodingKey
         {
             case externalId = "external_id"
-            case value = "value"
-        }
-        
-        init(from decoder: Decoder) throws
-        {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            externalId = try container.decode(String.self, forKey: .externalId)
-            value = try container.decode(String.self, forKey: .value)
+            case value
         }
     }
 }

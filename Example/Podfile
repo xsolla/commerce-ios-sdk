@@ -9,16 +9,6 @@ target 'Example' do
   pod 'SwiftLint'
   pod 'SwiftGen'
   
-  pod 'MaterialComponents/Tabs+TabBarView'
-  pod 'MaterialComponents/Tabs+TabBarViewTheming'
-  
-  pod 'MaterialComponents/TextFields'
-  
-  pod 'MaterialComponents/Buttons'
-  pod 'MaterialComponents/Buttons+Theming'
-
-  pod 'MaterialComponents/BottomSheet'
-
   pod 'PromisesSwift'
   pod 'SDWebImage'
   pod 'IQKeyboardManager'

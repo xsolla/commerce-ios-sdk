@@ -68,7 +68,6 @@ class VirtualCurrencyVC: BaseViewController, VirtualCurrencyVCProtocol
         
         for group in groups
         {
-            let tabbarItem = UITabBarItem(title: group.name, image: nil, selectedImage: nil)
             let viewController = factory.createTableviewVC(params: .none)
             let groupDataSource = dataSource.getGroupDatasource(for: group.index)
             
@@ -82,7 +81,7 @@ class VirtualCurrencyVC: BaseViewController, VirtualCurrencyVCProtocol
             tableView.separatorStyle = .none
             tableView.estimatedRowHeight = 200
             
-            items.append(TabbarViewController.Item(tabbarItem: tabbarItem, viewController: viewController))
+            items.append(TabbarViewController.Item(title: group.name, viewController: viewController))
         }
         
         return items

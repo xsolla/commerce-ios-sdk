@@ -45,6 +45,10 @@ protocol LoginAPIProtocol
                              socialNetworkAccessTokenSecret: String?,
                              socialNetworkOpenId: String?,
                              completion: @escaping (LoginAPIResult<AuthBySocialNetworkResponse>) -> Void)
+
+    func deleteLinkedNetwork(accessToken: String,
+                             providerName: String,
+                             completion: @escaping (LoginAPIResult<Void>) -> Void)
     
     func generateJWT(with authCode: String?,
                      jwtParams: JWTGenerationParams,
@@ -52,17 +56,20 @@ protocol LoginAPIProtocol
     
     func registerNewUser(params: RegisterNewUserParams,
                          oAuth2Params: OAuth2Params,
+                         locale: String?,
                          completion: @escaping (LoginAPIResult<RegisterNewUserResponse>) -> Void)
     
     func resetPassword(loginProjectId: String,
                        username: String,
                        loginUrl: String?,
+                       locale: String?,
                        completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     
     func startAuthByEmail(oAuth2Params: OAuth2Params,
                           email: String,
                           linkUrl: String?,
                           sendLink: Bool,
+                          locale: String?,
                           completion: @escaping (LoginAPIResult<StartAuthByEmailResponse>) -> Void)
     
     func completeAuthByEmail(clientId: Int,
@@ -92,6 +99,7 @@ protocol LoginAPIProtocol
                                 redirectUri: String,
                                 state: String,
                                 username: String,
+                                locale: String?,
                                 completion: @escaping (LoginAPIResult<Void>) -> Void)
 
     func authWithDeviceId(oAuth2Params: OAuth2Params,
@@ -204,7 +212,7 @@ protocol LoginAPIProtocol
     func updateSocialNetworkFriends(accessToken: String,
                                     platform: String,
                                     completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
-    
+
     // MARK: - User Attributes
     
     func getClientUserAttributes(accessToken: String,

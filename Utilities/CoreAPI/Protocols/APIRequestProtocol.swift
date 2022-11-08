@@ -30,7 +30,7 @@ public protocol APIRequestProtocol
     var customJSONDecoder: JSONDecoder? { get }
     var errorHandler: ErrorHandler { get }
 
-    func perform(completionHandler: Callback) -> NetworkTask
+    func perform(_ completionHandler: Callback) -> NetworkTask
     func handleSuccess(model: ResponseModel, completionHandler: Callback)
     func handleFailure(error: ErrorType, completionHandler: Callback)
 }
@@ -38,7 +38,7 @@ public protocol APIRequestProtocol
 extension APIRequestProtocol
 {
     @discardableResult
-    public func perform(completionHandler: Callback) -> NetworkTask
+    public func perform(_ completionHandler: Callback) -> NetworkTask
     {
         let request = self.request
         let processor = apiConfiguration.responseProcessor

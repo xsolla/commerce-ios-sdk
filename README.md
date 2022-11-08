@@ -1,7 +1,7 @@
 # Xsolla SDK for iOS
 This SDK is a set of classes and methods that you can integrate into your iOS app to work with Xsolla products. After integration, you can:
 * authenticate users while keeping user data safe, secure, and under your ownership
-* sell virtual goods to a worldwide audience and integrate in-app purchases 
+* sell virtual goods to a worldwide audience and integrate in-app purchases
 * provide users with a convenient UI to pay for in-game purchases in the game store
 * manage player’s inventory based on cross-platform cloud storage
 * grow and manage your community with the friend system and cross-platform player authentication
@@ -51,6 +51,7 @@ Contains methods for working with the [Login API](https://developers.xsolla.com/
 		<li>YouTube</li>
 		</ul>
 </details>
+
 * email confirmation
 * password reset
 * user account
@@ -116,9 +117,6 @@ import '<pod_name>'
 
 Check-out the [API references](https://developers.xsolla.com/#api?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce).
 
-## Community
-Join our [Discord server](https://discord.gg/auNFyzZx96). Connect with the Xsolla team and developers who use Xsolla products.
-
 ## Documentation
 API reference:
 
@@ -126,8 +124,17 @@ API reference:
  * [Store API](https://developers.xsolla.com/in-game-store-buy-button-api/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)
  * [Player Inventory API](https://developers.xsolla.com/in-game-store-buy-button-api/player-inventory?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)
 
+## Contacts
+ * [Support team and feedback](https://xsolla.com/partner-support)
+ * [Integration team](mailto:integration@xsolla.com)
+
 ## Licence
 See the [LICENSE](LICENSE) file.
+
+## Charge policy
+Xsolla offers the necessary tools to help you build and grow your gaming business, including personalized support at every stage. The terms of payment are determined by the contract that can be signed via Publisher Account.
+
+**The cost of using all Xsolla products is up to 5% of the amount you receive for the sale of the game and in-game goods**. Contact your Account Manager to clarify the terms and conditions.
 
 ## Additional resources
 * [Xsolla official website](https://xsolla.com/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce)

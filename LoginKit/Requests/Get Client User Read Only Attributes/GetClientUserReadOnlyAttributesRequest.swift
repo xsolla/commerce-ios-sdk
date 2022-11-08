@@ -20,7 +20,7 @@ class GetClientUserReadOnlyAttributesRequest: LoginBaseRequest<GetClientUserRead
                                               APIRequestProtocol
 {
     typealias ResponseModel = GetClientUserReadOnlyAttributesResponse
-    typealias ErrorHandler = GetClientUserReadOnlyAttributesErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

@@ -20,7 +20,7 @@ class AuthBySocialNetworkRequest: LoginBaseRequest<AuthBySocialNetworkRequest.Pa
                                   APIRequestProtocol
 {
     typealias ResponseModel = AuthBySocialNetworkResponse
-    typealias ErrorHandler  = AuthBySocialNetworkErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

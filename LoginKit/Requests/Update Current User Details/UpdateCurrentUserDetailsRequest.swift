@@ -20,7 +20,7 @@ import XsollaSDKUtilities
 class UpdateCurrentUserDetailsRequest: LoginBaseRequest<UpdateCurrentUserDetailsRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = UpdateCurrentUserDetailsResponse
-    typealias ErrorHandler = UpdateCurrentUserDetailsErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

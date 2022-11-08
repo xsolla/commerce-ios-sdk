@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class GetCurrentUserPhoneRequest: LoginBaseRequest<GetCurrentUserPhoneRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetCurrentUserPhoneResponse
-    typealias ErrorHandler = GetCurrentUserPhoneErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

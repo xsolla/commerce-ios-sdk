@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class CompleteAuthByEmailRequest: LoginBaseRequest<CompleteAuthByEmailRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = CompleteAuthByEmailResponse
-    typealias ErrorHandler = CompleteAuthByEmailErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

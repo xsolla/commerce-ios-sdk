@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class GetUserEmailRequest: LoginBaseRequest<GetUserEmailRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetUserEmailResponse
-    typealias ErrorHandler = GetUserEmailErorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

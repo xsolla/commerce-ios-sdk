@@ -64,7 +64,7 @@ class PaymentsBaseRequest<ParamsType: RequestParams>: APIBaseRequest
          "sdk_v": kitVersion ?? ""]
     }
     
-    var analyticsHeaders: APIBaseRequest.QueryParameters
+    var analyticsHeaders: APIBaseRequest.HTTPHeaders
     {
         ["X-ENGINE": "IOS",
          "X-ENGINE-V": iOSVersion.uppercased(),

@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class StartAuthByPhoneRequest: LoginBaseRequest<StartAuthByPhoneRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = StartAuthByPhoneResponse
-    typealias ErrorHandler = StartAuthByPhoneErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

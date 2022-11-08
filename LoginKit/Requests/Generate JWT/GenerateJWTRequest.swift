@@ -20,7 +20,7 @@ class GenerateJWTRequest: LoginBaseRequest<GenerateJWTRequest.Params>,
                           APIRequestProtocol
 {
     typealias ResponseModel = GenerateJWTResponse
-    typealias ErrorHandler  = GenerateJWTErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

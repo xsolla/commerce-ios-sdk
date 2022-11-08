@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class DeleteCurrentUserPhoneRequest: LoginBaseRequest<DeleteCurrentUserPhoneRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler = DeleteCurrentUserPhoneErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

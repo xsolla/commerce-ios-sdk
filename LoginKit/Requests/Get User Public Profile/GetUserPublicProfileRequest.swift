@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class GetUserPublicProfileRequest: LoginBaseRequest<GetUserPublicProfileRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetUserPublicProfileResponse
-    typealias ErrorHandler = GetUserPublicProfileErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

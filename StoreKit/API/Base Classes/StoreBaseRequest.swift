@@ -32,7 +32,7 @@ class StoreBaseRequest<ParamsType: RequestParams>: APIBaseRequest
         let deinitingType = String(describing: type(of: self))
         logger.debug(.deinitialization, domain: .storeKit) { deinitingType }
     }
-    
+
     override var headers: APIBaseRequest.HTTPHeaders
     {
         var headers = defaultHeaders
@@ -64,7 +64,7 @@ class StoreBaseRequest<ParamsType: RequestParams>: APIBaseRequest
          "sdk_v": kitVersion ?? ""]
     }
     
-    var analyticsHeaders: APIBaseRequest.QueryParameters
+    var analyticsHeaders: APIBaseRequest.HTTPHeaders
     {
         ["X-ENGINE": "IOS",
          "X-ENGINE-V": iOSVersion.uppercased(),

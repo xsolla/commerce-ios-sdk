@@ -12,7 +12,6 @@
 // See the License for the specific language governing and permissions and
 
 import UIKit
-import MaterialComponents.MaterialTabs_TabBarViewTheming
 
 // swiftlint:disable type_name
 
@@ -64,7 +63,6 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         viewController.tabbarVC = TabbarViewController.create(with: tabbarWithDividerScheme)
         { controller in
             
-            controller.tabsLayoutStyle = .fixed
             controller.containerTop = 0
         }
 
@@ -160,11 +158,10 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
     func createVirtualItemsVC(params: VirtualItemsVCFactoryParams) -> VirtualItemsVCProtocol
     {
         let viewController = StoryboardScene.VirtualItems.virtualItems.instantiate()
-        
+
         viewController.tabbarVC = TabbarViewController.create(with: tabbarDefaultScheme)
         { controller in
             
-            controller.tabsLayoutStyle = .scrollableCentered
             controller.containerTop = Shape.tabbarBottomMargin
         }
         
@@ -193,11 +190,10 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
     func createVirtualCurrencyVC(params: VirtualCurrencyVCFactoryParams) -> VirtualCurrencyVCProtocol
     {
         let viewController = StoryboardScene.VirtualCurrency.virtualCurrency.instantiate()
-        
+
         viewController.tabbarVC = TabbarViewController.create(with: tabbarDefaultScheme)
         { controller in
             
-            controller.tabsLayoutStyle = .scrollableCentered
             controller.containerTop = Shape.tabbarBottomMargin
         }
         
@@ -211,11 +207,10 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
     func createInventoryVC(params: InventoryVCFactoryParams) -> InventoryVCProtocol
     {
         let viewController = StoryboardScene.Inventory.inventory.instantiate()
-        
+
         viewController.tabbarVC = TabbarViewController.create(with: tabbarDefaultScheme)
         { controller in
             
-            controller.tabsLayoutStyle = .scrollableCentered
             controller.containerTop = Shape.tabbarBottomMargin
         }
         
@@ -323,18 +318,9 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
         let readonlyTableVCParams = UserAttributesTableVCFactoryParams(dataSource: params.readonlyDataSource)
         let readonlyAttributesTableVC = createReadonlyUserAttributesTableVC(params: readonlyTableVCParams)
 
-        let customAttributesTabbarItem = UITabBarItem(title: params.customDataSource.title,
-                                                      image: nil,
-                                                      selectedImage: nil)
-
-        let readonlyAttributesTabbarItem = UITabBarItem(title: params.readonlyDataSource.title,
-                                                        image: nil,
-                                                        selectedImage: nil)
-
         viewController.tabbarVC = TabbarViewController.create(with: tabbarDefaultScheme)
         { controller in
 
-            controller.tabsLayoutStyle = .scrollableCentered
             controller.containerTop = Shape.tabbarBottomMargin
         }
 
@@ -348,8 +334,8 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
 
         viewController.tabbarVC.setup(with:
         [
-            .init(tabbarItem: readonlyAttributesTabbarItem, viewController: readonlyAttributesTableVC),
-            .init(tabbarItem: customAttributesTabbarItem, viewController: customAttributesTableVC)
+            .init(title: params.readonlyDataSource.title, viewController: readonlyAttributesTableVC),
+            .init(title: params.customDataSource.title, viewController: customAttributesTableVC)
         ])
         
         return viewController
@@ -446,30 +432,28 @@ class ViewControllerFactory: ViewControllerFactoryProtocol
     
     // MARK: - Theming
     
-    private var tabbarDefaultScheme: MDCContainerScheme =
+    private var tabbarDefaultScheme: TabbarViewController.TabbarScheme =
     {
-        let scheme = MDCContainerScheme()
-        
-        scheme.colorScheme.surfaceColor = .xsolla_black
-        scheme.colorScheme.primaryColor = .xsolla_white
-        scheme.colorScheme.onSurfaceColor = .xsolla_inactiveWhite
-        scheme.colorScheme.onBackgroundColor = .xsolla_clear
+        var scheme = TabbarViewController.TabbarScheme()
 
-        scheme.typographyScheme.button = .xolla_button
-        
+        scheme.titleFont = .xolla_button
+        scheme.normalTitleColor = .xsolla_inactiveWhite
+        scheme.selectedTitleColor = .xsolla_white
+        scheme.selectorColor = .xsolla_magenta
+        scheme.dividerColor = .clear
+
         return scheme
     }()
-    
-    private var tabbarWithDividerScheme: MDCContainerScheme =
+
+    private var tabbarWithDividerScheme: TabbarViewController.TabbarScheme =
     {
-        let scheme = MDCContainerScheme()
-        
-        scheme.colorScheme.surfaceColor = .xsolla_clear
-        scheme.colorScheme.primaryColor = .xsolla_white
-        scheme.colorScheme.onSurfaceColor = .xsolla_inactiveWhite
-        scheme.colorScheme.onBackgroundColor = .xsolla_inactiveWhite
-        
-        scheme.typographyScheme.button = .xolla_button
+        var scheme = TabbarViewController.TabbarScheme()
+
+        scheme.titleFont = .xolla_button
+        scheme.normalTitleColor = .xsolla_inactiveWhite
+        scheme.selectedTitleColor = .xsolla_white
+        scheme.selectorColor = .xsolla_magenta
+        scheme.dividerColor = .xsolla_inactiveWhite
         
         return scheme
     }()

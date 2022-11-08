@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class StartAuthByEmailRequest: LoginBaseRequest<StartAuthByEmailRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = StartAuthByEmailResponse
-    typealias ErrorHandler = StartAuthByEmailErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void
@@ -32,9 +32,12 @@ class StartAuthByEmailRequest: LoginBaseRequest<StartAuthByEmailRequest.Params>,
     
     override var specialQueryParameters: QueryParameters
     {
-        var queryParams = ["response_type": params.responseType,
-                           "client_id": String(params.clientId),
-                           "state": params.state]
+        var queryParams = [
+            "response_type": params.responseType,
+            "client_id": String(params.clientId),
+            "state": params.state,
+            "locale": params.locale
+        ]
         
         if let scope = params.scope { queryParams["scope"] = scope }
         if let redirectUri = params.redirectUri { queryParams["redirect_uri"] = redirectUri }
@@ -70,6 +73,7 @@ extension StartAuthByEmailRequest
         let email: String
         let linkUrl: String?
         let sendLink: Bool
+        let locale: String?
     }
 
     // swiftlint:disable nesting

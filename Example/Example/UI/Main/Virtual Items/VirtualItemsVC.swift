@@ -66,7 +66,6 @@ class VirtualItemsVC: BaseViewController, VirtualItemsVCProtocol
         
         for group in groups
         {
-            let tabbarItem = UITabBarItem(title: group.name, image: nil, selectedImage: nil)
             let viewController = factory.createTableviewVC(params: .none)
             let groupDataSource = dataSource.getGroupDatasource(for: group.index)
             
@@ -79,7 +78,7 @@ class VirtualItemsVC: BaseViewController, VirtualItemsVCProtocol
             tableView.showsVerticalScrollIndicator = true
             tableView.separatorStyle = .none
 
-            items.append(TabbarViewController.Item(tabbarItem: tabbarItem, viewController: viewController))
+            items.append(TabbarViewController.Item(title: group.name, viewController: viewController))
         }
         
         return items

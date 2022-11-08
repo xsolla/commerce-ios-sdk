@@ -20,7 +20,7 @@ class ResetPasswordRequest: LoginBaseRequest<ResetPasswordRequest.Params>,
                             APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler  = ResetPasswordErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void
@@ -35,7 +35,12 @@ class ResetPasswordRequest: LoginBaseRequest<ResetPasswordRequest.Params>,
     
     override var specialQueryParameters: QueryParameters
     {
-        var queryParams = ["projectId": params.loginProjectId]
+        var queryParams =
+        [
+            "projectId": params.loginProjectId,
+            "login_url": params.loginUrl,
+            "locale": params.locale
+        ]
         
         if let loginUrl = params.loginUrl { queryParams["login_url"] = loginUrl }
         
@@ -62,5 +67,6 @@ extension ResetPasswordRequest
         let loginProjectId: String
         let username: String
         let loginUrl: String?
+        let locale: String?
     }
 }

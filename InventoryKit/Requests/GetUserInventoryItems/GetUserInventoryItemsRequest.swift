@@ -20,7 +20,7 @@ class GetUserInventoryItemsRequest: InventoryBaseRequest<GetUserInventoryItemsRe
                                     APIRequestProtocol
 {
     typealias ResponseModel = GetUserInventoryItemsResponse
-    typealias ErrorHandler  = GetUserInventoryItemsErrorHandler
+    typealias ErrorHandler  = InventoryAPIDefaultErrorHandler
     typealias ErrorModel    = InventoryAPIErrorModel
     typealias ErrorType     = InventoryAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

@@ -47,22 +47,7 @@ public struct StoreVirtualCurrency
 
     /// Defines the inventory item options.
     public let inventoryOptions: StoreItemInventoryOptions
-}
-
-extension StoreVirtualCurrency
-{
-    init(fromResponse response: GetVirtualCurrencyResponse.Item)
-    {
-        self.sku = response.sku
-        self.name = response.name
-        self.groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        self.attributes = response.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-        self.type = response.type
-        self.description = response.description
-        self.imageUrl = response.imageUrl
-        self.isFree = response.isFree
-        self.virtualPrices = response.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-        self.inventoryOptions = StoreItemInventoryOptions(fromAPIResponse: response.inventoryOptions)
-        self.price = StoreItemPrice(fromOptionalAPIResponse: response.price)
-    }
+    
+    /// Promotion settings in Store.
+    public let promotions: [StoreItemPromotion]
 }

@@ -21,13 +21,15 @@ typealias StoreAPIResult<T> = Result<T, StoreAPIError>
 
 protocol StoreAPIProtocol
 {
-    func getItemGroups(projectId: Int, completion: @escaping (StoreAPIResult<GetItemGroupsResponse>) -> Void)
-
-    func getAllVirtualItems(projectId: Int,
+    // MARK: - Virtual items & currency
+    
+    func getAllVirtualItems(accessToken: String?,
+                            projectId: Int,
                             locale: String?,
                             completion: @escaping (StoreAPIResult<GetAllVirtualItemsResponse>) -> Void)
     
-    func getVirtualItems(projectId: Int,
+    func getVirtualItems(accessToken: String?,
+                         projectId: Int,
                          filterParams: StoreFilterParams,
                          completion: @escaping (StoreAPIResult<GetVirtualItemsResponse>) -> Void)
     
@@ -35,20 +37,34 @@ protocol StoreAPIProtocol
                             filterParams: StoreFilterParams,
                             completion: @escaping (StoreAPIResult<GetVirtualCurrencyResponse>) -> Void)
     
-    func getVirtualCurrencyPackages(projectId: Int,
+    func getVirtualCurrencyPackages(accessToken: String?,
+                                    projectId: Int,
                                     filterParams: StoreFilterParams,
                                     completion: @escaping (StoreAPIResult<GetVirtualCurrencyPackagesResponse>) -> Void)
     
-    func getItemsOfGroup(projectId: Int,
+    // MARK: - Item groups
+    
+    func getItemGroups(projectId: Int, completion: @escaping (StoreAPIResult<GetItemGroupsResponse>) -> Void)
+    
+    func getItemsOfGroup(accessToken: String?,
+                         projectId: Int,
                          externalId: String,
                          filterParams: StoreFilterParams,
                          completion: @escaping (StoreAPIResult<GetItemsOfGroupResponse>) -> Void)
     
-    func getBundlesList(projectId: Int,
+    // MARK: - Bundle
+    
+    func getBundlesList(accessToken: String?,
+                        projectId: Int,
                         filterParams: StoreFilterParams,
                         completion: @escaping (StoreAPIResult<GetBundlesListResponse>) -> Void)
     
-    func getBundle(projectId: Int, sku: String, completion: @escaping (StoreAPIResult<GetBundleResponse>) -> Void)
+    func getBundle(accessToken: String?,
+                   projectId: Int,
+                   sku: String,
+                   completion: @escaping (StoreAPIResult<GetBundleResponse>) -> Void)
+    
+    // MARK: - Order
     
     func getOrder(projectId: Int,
                   orderId: String,
@@ -66,6 +82,26 @@ protocol StoreAPIProtocol
                      customParameters: [String: String]?,
                      completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
     
+    func createOrderFromParticularCart(accessToken: String,
+                                       projectId: Int,
+                                       cartId: String,
+                                       quantity: Int,
+                                       currency: String?,
+                                       locale: String?,
+                                       isSandbox: Bool,
+                                       paymentProjectSettings: StorePaymentProjectSettings?,
+                                       customParameters: [String: String]?,
+                                       completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    
+    func createOrderFromCurrentCart(accessToken: String,
+                                    projectId: Int,
+                                    currency: String?,
+                                    locale: String?,
+                                    isSandbox: Bool,
+                                    paymentProjectSettings: StorePaymentProjectSettings?,
+                                    customParameters: [String: String]?,
+                                    completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    
     func purchaseItemByVirtualCurrency(
         projectId: Int,
         accessToken: String,
@@ -74,6 +110,8 @@ protocol StoreAPIProtocol
         platform: String?,
         customParameters: Encodable?,
         completion: @escaping ((StoreAPIResult<PurchaseItemByVirtualCurrencyResponse>) -> Void))
+    
+    // MARK: - Coupons & Promocodes
     
     func redeemCoupon(accessToken: String,
                       projectId: Int,
@@ -85,4 +123,137 @@ protocol StoreAPIProtocol
                           projectId: Int,
                           couponCode: String,
                           completion: @escaping (StoreAPIResult<GetCouponRewardsResponse>) -> Void)
+    
+    func redeemPromocode(accessToken: String,
+                         projectId: Int,
+                         bodyParams: RedeemPromocodeRequest.BodyParams,
+                         completion: @escaping (StoreAPIResult<PromocodeResponse>) -> Void)
+    
+    func removePromocodeFromCart(accessToken: String,
+                                 projectId: Int,
+                                 bodyParams: RemovePromocodeFromCartRequest.BodyParams,
+                                 completion: @escaping (StoreAPIResult<PromocodeResponse>) -> Void)
+    
+    func getPromocodeRewards(accessToken: String,
+                             projectId: Int,
+                             promocodeCode: String,
+                             completion: @escaping (StoreAPIResult<GetPromocodeRewardsResponse>) -> Void)
+    
+    // MARK: - Cart
+    
+    func getCartByCartId(accessToken: String,
+                         projectId: Int,
+                         cartId: String,
+                         currency: String?,
+                         locale: String?,
+                         completion: @escaping (StoreAPIResult<GetCartByCartIdResponse>) -> Void)
+    
+    func getCurrentUserCart(accessToken: String,
+                            projectId: Int,
+                            currency: String?,
+                            locale: String?,
+                            completion: @escaping (StoreAPIResult<GetCurrentUserCartResponse>) -> Void)
+    
+    func deleteAllCartItemsByCartId(accessToken: String,
+                                    projectId: Int,
+                                    cartId: String,
+                                    completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    
+    func deleteAllCartItemsFromCurrentCart(accessToken: String,
+                                           projectId: Int,
+                                           completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    
+    func fillCartWithItems(accessToken: String,
+                           projectId: Int,
+                           items: [FillCartWithItemsRequest.Body.Item],
+                           completion: @escaping (StoreAPIResult<FillCartWithItemsResponse>) -> Void)
+    
+    func fillSpecificCartWithItems(accessToken: String,
+                                   projectId: Int,
+                                   cartId: String,
+                                   items: [FillSpecificCartWithItemsRequest.Body.Item],
+                                   completion: @escaping (StoreAPIResult<FillSpecificCartWithItemsResponse>) -> Void)
+    
+    func updateCartItemByCartId(accessToken: String,
+                                projectId: Int,
+                                cartId: String,
+                                itemSKU: String,
+                                quantity: Int,
+                                completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    
+    func deleteCartItemByCartId(accessToken: String,
+                                projectId: Int,
+                                cartId: String,
+                                itemSKU: String,
+                                completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    
+    func updateCartItemFromCurrentCart(accessToken: String,
+                                       projectId: Int,
+                                       itemSKU: String,
+                                       quantity: Int,
+                                       completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    
+    func deleteCartItemFromCurrentCart(accessToken: String,
+                                       projectId: Int,
+                                       itemSKU: String,
+                                       completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    
+    // MARK: - Games
+    
+    func getGamesList(projectId: Int,
+                      limit: Int?,
+                      offset: Int?,
+                      locale: String?,
+                      country: String?,
+                      additionalFields: [String]?,
+                      completion: @escaping (StoreAPIResult<GetGamesListResponse>) -> Void)
+
+    func getGamesListByGroup(projectId: Int,
+                             externalId: String,
+                             limit: Int?,
+                             offset: Int?,
+                             locale: String?,
+                             country: String?,
+                             additionalFields: [String]?,
+                             completion: @escaping (StoreAPIResult<GetGamesListResponse>) -> Void)
+
+    func getGameBySku(projectId: Int,
+                      itemSku: String,
+                      locale: String?,
+                      country: String?,
+                      additionalFields: [String]?,
+                      completion: @escaping (StoreAPIResult<GameResponse>) -> Void)
+
+    func getGameKeyBySku(projectId: Int,
+                         itemSku: String,
+                         locale: String?,
+                         country: String?,
+                         additionalFields: [String]?,
+                         completion: @escaping (StoreAPIResult<GameKeyResponse>) -> Void)
+
+    func getGameKeysByGroup(projectId: Int,
+                            externalId: String,
+                            limit: Int?,
+                            offset: Int?,
+                            locale: String?,
+                            country: String?,
+                            additionalFields: [String]?,
+                            completion: @escaping (StoreAPIResult<[GameKeyResponse]>) -> Void)
+
+    func getDRMList(projectId: Int,
+                    completion: @escaping (StoreAPIResult<DRMListResponse>) -> Void)
+
+    func getUserGamesList(accessToken: String,
+                          projectId: Int,
+                          limit: Int?,
+                          offset: Int?,
+                          sandbox: Int?,
+                          additionalFields: [String]?,
+                          completion: @escaping (StoreAPIResult<UserGamesListResponse>) -> Void)
+
+    func redeemGameCode(accessToken: String,
+                        projectId: Int,
+                        code: String,
+                        sandbox: Bool?,
+                        completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
 }

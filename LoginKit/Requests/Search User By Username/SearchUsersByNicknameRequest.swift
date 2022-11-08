@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class SearchUsersByNicknameRequest: LoginBaseRequest<SearchUsersByNicknameRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = SearchUsersByNicknameResponse
-    typealias ErrorHandler = SearchUsersByNicknameErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

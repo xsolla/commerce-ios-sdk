@@ -134,7 +134,7 @@ extension XsollaSDK: XsollaSDKProtocol
                                    password: String,
                                    oAuth2Params: OAuth2Params,
                                    jwtParams: JWTGenerationParams,
-                                   completion: @escaping LoginKitCompletion<AccessTokenInfo>)
+                                   completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
         login.authByUsernameAndPassword(username: username,
                                         password: password,
@@ -145,7 +145,7 @@ extension XsollaSDK: XsollaSDKProtocol
     
     func getLinkForSocialAuth(providerName: String,
                               oAuth2Params: OAuth2Params,
-                              completion: @escaping LoginKitCompletion<URL>)
+                              completion: @escaping (Result<URL, Error>) -> Void)
     {
         login.getLinkForSocialAuth(providerName: providerName, oAuth2Params: oAuth2Params, completion: completion)
     }
@@ -156,7 +156,7 @@ extension XsollaSDK: XsollaSDKProtocol
                              socialNetworkAccessToken: String,
                              socialNetworkAccessTokenSecret: String?,
                              socialNetworkOpenId: String?,
-                             completion: @escaping LoginKitCompletion<AccessTokenInfo>)
+                             completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
         login.authBySocialNetwork(oAuth2Params: oAuth2Params,
                                   jwtParams: jwtParams,
@@ -187,6 +187,11 @@ extension XsollaSDK: XsollaSDKProtocol
                 }
             }
         }
+    }
+
+    func createDemoUser(completion: @escaping ((Result<DemoUserCreationHelper.AccessTokenInfo, Error>) -> Void))
+    {
+        DemoUserCreationHelper.shared.createDemoUser(completion: completion)
     }
 
     func registerNewUser(params: RegisterNewUserParams,
@@ -897,7 +902,7 @@ extension XsollaSDK
     func getUserVirtualCurrencyBalance(
         projectId: Int,
         platform: String?,
-        completion: @escaping InventoryKitCompletion<[InventoryVirtualCurrencyBalance]>)
+        completion: @escaping (Result<[InventoryVirtualCurrencyBalance], Error>) -> Void)
     {
         let inventory = self.inventory
         startTokenDependentTask
@@ -909,24 +914,24 @@ extension XsollaSDK
                                                     completion: completion) }
     }
     
-    func getUserSubscriptions(projectId: Int,
-                              platform: String?,
-                              completion: @escaping InventoryKitCompletion<[InventoryUserSubscription]>)
+    func getTimeLimitedItems(projectId: Int,
+                             platform: String?,
+                             completion: @escaping (Result<[TimeLimitedItem], Error>) -> Void)
     {
         let inventory = self.inventory
         startTokenDependentTask
         { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
             
-            inventory.getUserSubscriptions(accessToken: token,
-                                           projectId: projectId,
-                                           platform: platform,
-                                           completion: completion) }
+            inventory.getTimeLimitedItems(accessToken: token,
+                                          projectId: projectId,
+                                          platform: platform,
+                                          completion: completion) }
     }
     
     func consumeItem(projectId: Int,
                      platform: String?,
                      consumingItem: InventoryConsumingItem,
-                     completion: @escaping InventoryKitCompletion<Void>)
+                     completion: @escaping (Result<Void, Error>) -> Void)
     {
         let inventory = self.inventory
         startTokenDependentTask
@@ -942,7 +947,7 @@ extension XsollaSDK
     func getUserInventoryItems(projectId: Int,
                                platform: String?,
                                detailedSubscriptions: Bool?,
-                               completion: @escaping InventoryKitCompletion<[InventoryItem]>)
+                               completion: @escaping (Result<[InventoryItem], Error>) -> Void)
     {
         let inventory = self.inventory
         startTokenDependentTask
@@ -960,59 +965,99 @@ extension XsollaSDK
 
 extension XsollaSDK
 {
-    func getItemGroups(projectId: Int, completion: @escaping StoreKitCompletion<[StoreItemGroup]>)
+    func getItemGroups(projectId: Int, completion: @escaping (Result<[StoreItemGroup], Error>) -> Void)
     {
         store.getItemGroups(projectId: projectId, completion: completion)
     }
     
     func getVirtualItems(projectId: Int,
                          filterParams: StoreFilterParams,
-                         completion: @escaping StoreKitCompletion<[StoreVirtualItem]>)
+                         completion: @escaping (Result<[StoreVirtualItem], Error>) -> Void)
     {
-        store.getVirtualItems(projectId: projectId, filterParams: filterParams, completion: completion)
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+
+            self?.store.getVirtualItems(accessToken: token,
+                                        projectId: projectId,
+                                        filterParams: filterParams,
+                                        completion: completion)
+        }
     }
     
     func getVirtualCurrency(projectId: Int,
                             filterParams: StoreFilterParams,
-                            completion: @escaping StoreKitCompletion<[StoreVirtualCurrency]>)
+                            completion: @escaping (Result<[StoreVirtualCurrency], Error>) -> Void)
     {
-        store.getVirtualCurrency(projectId: projectId, filterParams: filterParams, completion: completion)
+        store.getVirtualCurrency(projectId: projectId,
+                                 filterParams: filterParams,
+                                 completion: completion)
     }
     
     func getVirtualCurrencyPackages(projectId: Int,
                                     filterParams: StoreFilterParams,
-                                    completion: @escaping StoreKitCompletion<[StoreCurrencyPackage]>)
+                                    completion: @escaping (Result<[StoreCurrencyPackage], Error>) -> Void)
     {
-        store.getVirtualCurrencyPackages(projectId: projectId, filterParams: filterParams, completion: completion)
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+
+            self?.store.getVirtualCurrencyPackages(accessToken: token,
+                                                   projectId: projectId,
+                                                   filterParams: filterParams,
+                                                   completion: completion)
+        }
     }
     
     func getItemsOfGroup(projectId: Int,
                          externalId: String,
                          filterParams: StoreFilterParams,
-                         completion: @escaping StoreKitCompletion<[StoreVirtualItem]>)
+                         completion: @escaping (Result<[StoreVirtualItem], Error>) -> Void)
     {
-        store.getItemsOfGroup(projectId: projectId,
-                              externalId: externalId,
-                              filterParams: filterParams,
-                              completion: completion)
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+
+            self?.store.getItemsOfGroup(accessToken: token,
+                                        projectId: projectId,
+                                        externalId: externalId,
+                                        filterParams: filterParams,
+                                        completion: completion)
+        }
     }
     
     func getBundlesList(projectId: Int,
                         filterParams: StoreFilterParams,
-                        completion: @escaping StoreKitCompletion<[StoreBundle]>)
+                        completion: @escaping (Result<[StoreBundle], Error>) -> Void)
     {
-        store.getBundlesList(projectId: projectId, filterParams: filterParams, completion: completion)
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+
+            self?.store.getBundlesList(accessToken: token,
+                                       projectId: projectId,
+                                       filterParams: filterParams,
+                                       completion: completion)
+        }
     }
     
-    func getBundle(projectId: Int, sku: String, completion: @escaping StoreKitCompletion<StoreBundle>)
+    func getBundle(projectId: Int, sku: String, completion: @escaping (Result<StoreBundle, Error>) -> Void)
     {
-        store.getBundle(projectId: projectId, sku: sku, completion: completion)
+        startTokenDependentTask
+        { [weak self] token in
+            guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+
+            self?.store.getBundle(accessToken: token,
+                                  projectId: projectId,
+                                  sku: sku,
+                                  completion: completion)
+        }
     }
     
     func getOrder(projectId: Int,
                   orderId: String,
                   authorizationType: StoreAuthorizationType,
-                  completion: @escaping StoreKitCompletion<StoreOrder>)
+                  completion: @escaping (Result<StoreOrder, Error>) -> Void)
     {
         store.getOrder(projectId: projectId,
                        orderId: orderId,
@@ -1028,7 +1073,7 @@ extension XsollaSDK
                      isSandbox: Bool,
                      paymentProjectSettings: StorePaymentProjectSettings?,
                      customParameters: [String: String]?,
-                     completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
+                     completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
     {
         let store = self.store
         startTokenDependentTask
@@ -1051,7 +1096,7 @@ extension XsollaSDK
                                        virtualCurrencySKU: String,
                                        platform: String?,
                                        customParameters: Encodable?,
-                                       completion: @escaping (StoreKitCompletion<Int>))
+                                       completion: @escaping ((Result<Int, Error>) -> Void))
     {
         let store = self.store
         startTokenDependentTask
@@ -1069,7 +1114,7 @@ extension XsollaSDK
     func redeemCoupon(projectId: Int,
                       couponCode: String,
                       selectedUnitItems: [String: String]?,
-                      completion: @escaping StoreKitCompletion<[StoreCouponRedeemedItem]>)
+                      completion: @escaping (Result<[StoreRedeemedCouponItem], Error>) -> Void)
     {
         let store = self.store
         startTokenDependentTask
@@ -1084,7 +1129,7 @@ extension XsollaSDK
     
     func getCouponRewards(projectId: Int,
                           couponCode: String,
-                          completion: @escaping StoreKitCompletion<StoreCouponRewards>)
+                          completion: @escaping (Result<StoreCouponRewards, Error>) -> Void)
     {
         let store = self.store
         startTokenDependentTask

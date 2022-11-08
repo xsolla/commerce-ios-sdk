@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class AuthWithDeviceIdRequest: LoginBaseRequest<AuthWithDeviceIdRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = AuthWithDeviceIdResponse
-    typealias ErrorHandler = AuthWithDeviceIdErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

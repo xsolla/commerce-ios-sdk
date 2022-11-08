@@ -25,22 +25,3 @@ public struct StoreItemPrice
     /// Default purchase currency. Three-letter code per ISO 4217.
     public let currency: String?
 }
-
-extension StoreItemPrice
-{
-    init(fromAPIResponse response: StoreAPICommonResponse.Price)
-    {
-        self.amount = response.amount
-        self.amountWithoutDiscount = response.amountWithoutDiscount
-        self.currency = response.currency
-    }
-
-    init?(fromOptionalAPIResponse optionalResponse: StoreAPICommonResponse.Price?)
-    {
-        guard let response = optionalResponse else { return nil }
-
-        self.amount = response.amount
-        self.amountWithoutDiscount = response.amountWithoutDiscount
-        self.currency = response.currency
-    }
-}

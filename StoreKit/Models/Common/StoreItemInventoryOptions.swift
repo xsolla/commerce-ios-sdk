@@ -38,27 +38,3 @@ public struct StoreItemInventoryOptions
         public let value: Int
     }
 }
-
-extension StoreItemInventoryOptions
-{
-    init(fromAPIResponse response: StoreAPICommonResponse.InventoryOptions)
-    {
-        if let consumable = response.consumable
-        {
-            self.consumable = Consumable(usagesCount: consumable.usagesCount)
-        }
-        else
-        {
-            self.consumable = nil
-        }
-
-        if let expirationPeriod = response.expirationPeriod
-        {
-            self.expirationPeriod = ExpirationPeriod(type: expirationPeriod.type, value: expirationPeriod.value)
-        }
-        else
-        {
-            self.expirationPeriod = nil
-        }
-    }
-}

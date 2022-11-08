@@ -20,7 +20,7 @@ class ResendConfirmationLinkRequest: LoginBaseRequest<ResendConfirmationLinkRequ
                                      APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler  = ResendConfirmationLinkHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void
@@ -38,7 +38,8 @@ class ResendConfirmationLinkRequest: LoginBaseRequest<ResendConfirmationLinkRequ
         [
             "client_id": String(params.clientId),
             "redirect_uri": params.redirectUri,
-            "state": params.state
+            "state": params.state,
+            "locale": params.locale
         ]
     }
 
@@ -63,5 +64,6 @@ extension ResendConfirmationLinkRequest
         let redirectUri: String
         let state: String
         let username: String
+        let locale: String?
     }
 }

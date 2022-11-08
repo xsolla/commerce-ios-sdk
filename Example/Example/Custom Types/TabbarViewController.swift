@@ -11,9 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing and permissions and
 
-import UIKit
-import MaterialComponents.MaterialTabs_TabBarView
-import MaterialComponents.MaterialTabs_TabBarViewTheming
+import UIKit 
 
 protocol TabbarViewControllerDelegate: AnyObject
 {
@@ -25,47 +23,49 @@ class TabbarViewController: BaseViewController
 {
     weak var delegate: TabbarViewControllerDelegate?
     
-    private let tabbar = MDCTabBarView(frame: .zero)
+    private let tabbar = SegmentedControl(frame: .zero)
     private let container = UIScrollView(frame: .zero)
     private let stack = UIStackView(frame: .zero)
  
-    private var tabBarLeadingConstraint: NSLayoutConstraint!
-    private var tabBarTrailingConstraint: NSLayoutConstraint!
-    private var containerLeadingConstraint: NSLayoutConstraint!
-    private var containerTrailingConstraint: NSLayoutConstraint!
-    private var containerTopConstraint: NSLayoutConstraint!
+    private var tabBarHeightConstraint = NSLayoutConstraint()
+    private var tabBarLeadingConstraint = NSLayoutConstraint()
+    private var tabBarTrailingConstraint = NSLayoutConstraint()
+    private var containerLeadingConstraint = NSLayoutConstraint()
+    private var containerTrailingConstraint = NSLayoutConstraint()
+    private var containerTopConstraint = NSLayoutConstraint()
     
     private var items: [Item] = []
     private var currentSelectedIndex: Int = 0
     private var interactivePageSelectionEnabled = true
     
+    var tabBarHeight: CGFloat = 60 { didSet { updateConstraints() } }
     var tabBarLeading: CGFloat = 0 { didSet { updateConstraints() } }
     var tabBarTrailing: CGFloat = 0 { didSet { updateConstraints() } }
     var containerTop: CGFloat = 0 { didSet { updateConstraints() } }
     var containerLeading: CGFloat = 0 { didSet { updateConstraints() } }
     var containerTrailing: CGFloat = 0 { didSet { updateConstraints() } }
     
-    var tabsLayoutStyle: MDCTabBarViewLayoutStyle
-    {
-        get { tabbar.preferredLayoutStyle }
-        set { tabbar.preferredLayoutStyle = newValue }
-    }
-    
     // MARK: - Public methods
 
-    func applyThemingScheme(_ scheme: MDCContainerScheming)
+    func applyThemingScheme(_ scheme: TabbarScheme)
     {
-        tabbar.applySurfaceTheme(withScheme: scheme)
-        tabbar.bottomDividerColor = scheme.colorScheme.onBackgroundColor
+        tabbar.titleFont = scheme.titleFont
+        tabbar.selectedTitleColor = scheme.selectedTitleColor
+        tabbar.normalTitleColor = scheme.normalTitleColor
+        tabbar.selectorColor = scheme.selectorColor
+        tabbar.selectorHeight = scheme.selectorHeight
+        tabbar.selectorBottom = scheme.selectorBottom
+        tabbar.dividerColor = scheme.dividerColor
+        tabbar.dividerHeight = scheme.dividerHeight
     }
 
     func setup(with items: [Item])
     {
         invalidateItems()
         
+        tabbar.setup(withTitles: items.map { $0.title })
         for item in items
         {
-            tabbar.items.append(item.tabbarItem)
             add(childViewController: item.viewController)
         }
         
@@ -81,7 +81,7 @@ class TabbarViewController: BaseViewController
         let index = (0..<items.count).contains(itemIndex) ? itemIndex : 0
         
         currentSelectedIndex = index
-        tabbar.setSelectedItem(items[index].tabbarItem, animated: animated)
+        tabbar.setSelectedItem(at: itemIndex, animated: animated)
         
         if updateOffset
         {
@@ -95,7 +95,7 @@ class TabbarViewController: BaseViewController
     private func invalidateItems()
     {
         items.forEach { self.remove(childViewController: $0.viewController) }
-        tabbar.items = []
+        tabbar.removeAllItems()
         items = []
         currentSelectedIndex = 0
     }
@@ -124,11 +124,6 @@ class TabbarViewController: BaseViewController
         container.setContentOffset(CGPoint(x: offset, y: 0), animated: animated)
     }
     
-    private func getIndex(for item: UITabBarItem) -> Int?
-    {
-        items.firstIndex { $0.tabbarItem == item }
-    }
-    
     private func getIndex(for offset: CGFloat) -> Int
     {
         let width = container.frame.width
@@ -139,11 +134,12 @@ class TabbarViewController: BaseViewController
     
     private func updateConstraints()
     {
-        if let constraint = tabBarLeadingConstraint { constraint.constant = tabBarLeading }
-        if let constraint = tabBarTrailingConstraint { constraint.constant = -tabBarTrailing }
-        if let constraint = containerTopConstraint { constraint.constant = containerTop }
-        if let constraint = containerLeadingConstraint { constraint.constant = containerLeading }
-        if let constraint = containerTrailingConstraint { constraint.constant = -containerTrailing }
+        tabBarHeightConstraint.constant = tabBarHeight
+        tabBarLeadingConstraint.constant = tabBarLeading
+        tabBarTrailingConstraint.constant = -tabBarTrailing
+        containerTopConstraint.constant = containerTop
+        containerLeadingConstraint.constant = containerLeading
+        containerTrailingConstraint.constant = -containerTrailing
     }
     
     // MARK: - Setup
@@ -152,7 +148,7 @@ class TabbarViewController: BaseViewController
     {
         view.addSubview(tabbar)
         tabbar.translatesAutoresizingMaskIntoConstraints = false
-        tabbar.tabBarDelegate = self
+        tabbar.delegate = self
     }
 
     private func setupContainer()
@@ -175,6 +171,7 @@ class TabbarViewController: BaseViewController
     
     private func setupConstraints()
     {
+        tabBarHeightConstraint = tabbar.heightAnchor.constraint(equalToConstant: tabBarHeight)
         tabBarLeadingConstraint = tabbar.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         tabBarTrailingConstraint = tabbar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         containerTopConstraint = container.topAnchor.constraint(equalTo: tabbar.bottomAnchor, constant: containerTop)
@@ -187,6 +184,7 @@ class TabbarViewController: BaseViewController
             tabbar.topAnchor.constraint(equalTo: view.topAnchor),
             tabBarLeadingConstraint,
             tabBarTrailingConstraint,
+            tabBarHeightConstraint,
 
             containerTopConstraint,
             containerLeadingConstraint,
@@ -221,42 +219,54 @@ class TabbarViewController: BaseViewController
     
     struct Item
     {
-        let tabbarItem: UITabBarItem
+        let title: String
         let viewController: UIViewController
+    }
+
+    struct TabbarScheme
+    {
+        // Title
+        public var titleFont: UIFont = .systemFont(ofSize: 17)
+        public var selectedTitleColor: UIColor = .black
+        public var normalTitleColor: UIColor = .gray
+
+        // Selector
+        public var selectorColor: UIColor = .black
+        public var selectorHeight: CGFloat = 2
+        public var selectorBottom: CGFloat = 0
+
+        // Divider
+        public var dividerColor: UIColor = .black
+        public var dividerHeight: CGFloat = 1
     }
 }
 
 extension TabbarViewController
 {
-    static func create(with scheme: MDCContainerScheming,
+    static func create(with scheme: TabbarScheme,
                        config: ((TabbarViewController) -> Void)? = nil) -> TabbarViewController
     {
         let viewController = TabbarViewController()
         viewController.applyThemingScheme(scheme)
-        
+
         config?(viewController)
         
         return viewController
     }
 }
 
-extension TabbarViewController: MDCTabBarViewDelegate
+extension TabbarViewController: SegmentedControlDelegate
 {
-    func tabBarView(_ tabBarView: MDCTabBarView, shouldSelect item: UITabBarItem) -> Bool
+    func didSelectItem(at index: Int, in segmentedControl: SegmentedControl)
     {
-        guard let delegate = delegate, let index = getIndex(for: item) else { return true }
-        
-        return delegate.tabBarController(self, shouldSelect: items[index].viewController)
+        interactivePageSelectionEnabled = false
+        scrollContent(to: index, animated: true)
+        delegate?.tabBarController(self, didSelect: items[index].viewController)
     }
-    
-    func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem)
+
+    func shouldSelectItem(at index: Int, in segmentedControl: SegmentedControl) -> Bool
     {
-        if let index = getIndex(for: item)
-        {
-            interactivePageSelectionEnabled = false
-            scrollContent(to: index, animated: true)
-            delegate?.tabBarController(self, didSelect: items[index].viewController)
-        }
+        delegate?.tabBarController(self, shouldSelect: items[index].viewController) ?? true
     }
 }
 

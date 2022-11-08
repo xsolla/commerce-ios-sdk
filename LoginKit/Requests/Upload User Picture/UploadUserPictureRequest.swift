@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class UploadUserPictureRequest: LoginBaseRequest<UploadUserPictureRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = UploadUserPictureResponse
-    typealias ErrorHandler = UploadUserPictureErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

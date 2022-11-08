@@ -65,6 +65,14 @@ extension LoginManagerProtocol
               expireDate: tokenInfo.expireDate,
               notifyDelegate: notifyDelegate)
     }
+
+    func login(tokenInfo: DemoUserCreationHelper.AccessTokenInfo, notifyDelegate: Bool = true)
+    {
+        login(accessToken: tokenInfo.accessToken,
+              refreshToken: tokenInfo.refreshToken,
+              expireDate: tokenInfo.expiresIn.flatMap { Date().addingTimeInterval(TimeInterval($0)) },
+              notifyDelegate: notifyDelegate)
+    }
 }
 
 protocol LoginManagerDelegate: AnyObject

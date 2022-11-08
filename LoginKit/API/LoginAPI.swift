@@ -41,7 +41,18 @@ extension LoginAPI: LoginAPIProtocol
 {
     func logUserOut(accessToken: String, sessionType: LogoutSessionType, completion: @escaping (LoginAPIResult<Void>) -> Void)
     {
-        LogUserOutAPIProxy(configuration).logUserOut(accessToken: accessToken, sessionType: sessionType, completion: completion)
+        let params = LogUserOutRequest.Params(accessToken: accessToken, sessionType: sessionType)
+        let request = LogUserOutRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func authByUsernameAndPassword(username: String,
@@ -49,10 +60,24 @@ extension LoginAPI: LoginAPIProtocol
                                    oAuth2Params: OAuth2Params,
                                    completion: @escaping (LoginAPIResult<AuthByUsernameAndPasswordResponse>) -> Void)
     {
-        AuthByUsernameAndPasswordAPIProxy(configuration).authByUsernameAndPassword(username: username,
-                                                                                   password: password,
-                                                                                   oAuth2Params: oAuth2Params,
-                                                                                   completion: completion)
+        let params = AuthByUsernameAndPasswordRequest.Params(username: username,
+                                                             password: password,
+                                                             responseType: oAuth2Params.responseType,
+                                                             clientId: oAuth2Params.clientId,
+                                                             state: oAuth2Params.state,
+                                                             scope: oAuth2Params.scope,
+                                                             redirectUri: oAuth2Params.redirectUri)
+
+        let request = AuthByUsernameAndPasswordRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getLinkForSocialAuth(providerName: String,
@@ -63,13 +88,23 @@ extension LoginAPI: LoginAPIProtocol
                               redirectUri: String?,
                               completion: @escaping (LoginAPIResult<GetLinkForSocialAuthResponse>) -> Void)
     {
-        GetLinkForSocialAuthAPIProxy(configuration).getLinkForSocialAuth(providerName: providerName,
-                                                                         clientId: clientId,
-                                                                         state: state,
-                                                                         responseType: responseType,
-                                                                         scope: scope,
-                                                                         redirectUri: redirectUri,
-                                                                         completion: completion)
+        let params = GetLinkForSocialAuthRequest.Params(providerName: providerName,
+                                                        clientId: clientId,
+                                                        state: state,
+                                                        responseType: responseType,
+                                                        scope: scope,
+                                                        redirectUri: redirectUri)
+
+        let request = GetLinkForSocialAuthRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func authBySocialNetwork(oAuth2Params: OAuth2Params,
@@ -79,53 +114,149 @@ extension LoginAPI: LoginAPIProtocol
                              socialNetworkOpenId: String?,
                              completion: @escaping (LoginAPIResult<AuthBySocialNetworkResponse>) -> Void)
     {
-        AuthBySocialNetworkAPIProxy(configuration).authBySocialNetwork(
-            oAuth2Params: oAuth2Params,
+        let params = AuthBySocialNetworkRequest.Params(
             providerName: providerName,
+            clientId: oAuth2Params.clientId,
+            responseType: oAuth2Params.responseType,
+            state: oAuth2Params.state,
+            redirectUri: oAuth2Params.redirectUri,
+            scope: oAuth2Params.scope,
             socialNetworkAccessToken: socialNetworkAccessToken,
             socialNetworkAccessTokenSecret: socialNetworkAccessTokenSecret,
-            socialNetworkOpenId: socialNetworkOpenId,
-            completion: completion)
+            socialNetworkOpenId: socialNetworkOpenId)
+
+        let request = AuthBySocialNetworkRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
-    
+
+    func deleteLinkedNetwork(accessToken: String,
+                             providerName: String,
+                             completion: @escaping (LoginAPIResult<Void>) -> Void)
+    {
+        let params =  DeleteLinkedNetworkRequest.Params(accessToken: accessToken, providerName: providerName)
+
+        let request = DeleteLinkedNetworkRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
+
+    }
+
     func generateJWT(with authCode: String?,
                      jwtParams: JWTGenerationParams,
                      completion: @escaping (LoginAPIResult<GenerateJWTResponse>) -> Void)
     {
-        GenerateJWTAPIProxy(configuration).generateJWT(with: authCode, jwtParams: jwtParams, completion: completion)
+        let params = GenerateJWTRequest.Params(grantType: jwtParams.grantType.rawValue,
+                                               clientId: jwtParams.clientId,
+                                               refreshToken: jwtParams.refreshToken,
+                                               clientSecret: jwtParams.clientSecret,
+                                               redirectUri: jwtParams.redirectUri,
+                                               authCode: authCode)
+
+        let request = GenerateJWTRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func registerNewUser(params: RegisterNewUserParams,
                          oAuth2Params: OAuth2Params,
+                         locale: String?,
                          completion: @escaping (LoginAPIResult<RegisterNewUserResponse>) -> Void)
     {
-        RegisterNewUserAPIProxy(configuration).registerNewUser(params: params,
-                                                               oAuth2Params: oAuth2Params,
-                                                               completion: completion)
+        let bodyParams = RegisterNewUserRequest.Params.BodyParams(username: params.username,
+                                                                  password: params.password,
+                                                                  email: params.email,
+                                                                  acceptConsent: params.acceptConsent,
+                                                                  fields: params.fields,
+                                                                  promoEmailAgreement: params.promoEmailAgreement)
+
+        let params = RegisterNewUserRequest.Params(responseType: oAuth2Params.responseType,
+                                                   clientId: oAuth2Params.clientId,
+                                                   locale: locale,
+                                                   state: oAuth2Params.state,
+                                                   scope: oAuth2Params.scope,
+                                                   redirectUri: oAuth2Params.redirectUri,
+                                                   bodyParams: bodyParams)
+
+        let request = RegisterNewUserRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func resetPassword(loginProjectId: String,
                        username: String,
                        loginUrl: String?,
+                       locale: String?,
                        completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        ResetPasswordAPIProxy(configuration).resetPassword(loginProjectId: loginProjectId,
-                                                           username: username,
-                                                           loginUrl: loginUrl,
-                                                           completion: completion)
+        let params = ResetPasswordRequest.Params(loginProjectId: loginProjectId, username: username, loginUrl: loginUrl, locale: locale)
+        let request = ResetPasswordRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func startAuthByEmail(oAuth2Params: OAuth2Params,
                           email: String,
                           linkUrl: String?,
                           sendLink: Bool,
+                          locale: String? = nil,
                           completion: @escaping (LoginAPIResult<StartAuthByEmailResponse>) -> Void)
     {
-        StartAuthByEmailAPIProxy(configuration).startAuthByEmail(oAuth2Params: oAuth2Params,
-                                                                 email: email,
-                                                                 linkUrl: linkUrl,
-                                                                 sendLink: sendLink,
-                                                                 completion: completion)
+        let params = StartAuthByEmailRequest.Params(responseType: oAuth2Params.responseType,
+                                                    clientId: oAuth2Params.clientId,
+                                                    scope: oAuth2Params.scope,
+                                                    state: oAuth2Params.state,
+                                                    redirectUri: oAuth2Params.redirectUri,
+                                                    email: email,
+                                                    linkUrl: linkUrl,
+                                                    sendLink: sendLink,
+                                                    locale: locale)
+
+        let request = StartAuthByEmailRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func completeAuthByEmail(clientId: Int,
@@ -134,11 +265,21 @@ extension LoginAPI: LoginAPIProtocol
                              operationId: String,
                              completion: @escaping (LoginAPIResult<CompleteAuthByEmailResponse>) -> Void)
     {
-        CompleteAuthByEmailAPIProxy(configuration).completeAuthByEmail(clientId: clientId,
-                                                                       code: code,
-                                                                       email: email,
-                                                                       operationId: operationId,
-                                                                       completion: completion)
+        let params = CompleteAuthByEmailRequest.Params(clientId: clientId,
+                                                       code: code,
+                                                       email: email,
+                                                       operationId: operationId)
+
+        let request = CompleteAuthByEmailRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func startAuthByPhone(oAuth2Params: OAuth2Params,
@@ -147,11 +288,25 @@ extension LoginAPI: LoginAPIProtocol
                           sendLink: Bool,
                           completion: @escaping (LoginAPIResult<StartAuthByPhoneResponse>) -> Void)
     {
-        StartAuthByPhoneAPIProxy(configuration).startAuthByPhone(oAuth2Params: oAuth2Params,
-                                                                 phoneNumber: phoneNumber,
-                                                                 linkUrl: linkUrl,
-                                                                 sendLink: sendLink,
-                                                                 completion: completion)
+        let params = StartAuthByPhoneRequest.Params(responseType: oAuth2Params.responseType,
+                                                    clientId: oAuth2Params.clientId,
+                                                    scope: oAuth2Params.scope,
+                                                    state: oAuth2Params.state,
+                                                    redirectUri: oAuth2Params.redirectUri,
+                                                    phoneNumber: phoneNumber,
+                                                    linkUrl: linkUrl,
+                                                    sendLink: sendLink)
+
+        let request = StartAuthByPhoneRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func completeAuthByPhone(clientId: Int,
@@ -160,11 +315,21 @@ extension LoginAPI: LoginAPIProtocol
                              phoneNumber: String,
                              completion: @escaping (LoginAPIResult<CompleteAuthByPhoneResponse>) -> Void)
     {
-        CompleteAuthByPhoneAPIProxy(configuration).completeAuthByPhone(clientId: clientId,
-                                                                       code: code,
-                                                                       operationId: operationId,
-                                                                       phoneNumber: phoneNumber,
-                                                                       completion: completion)
+        let params = CompleteAuthByPhoneRequest.Params(clientId: clientId,
+                                                       code: code,
+                                                       operationId: operationId,
+                                                       phoneNumber: phoneNumber)
+
+        let request = CompleteAuthByPhoneRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func getConfirmationCode(projectId: String,
@@ -172,23 +337,47 @@ extension LoginAPI: LoginAPIProtocol
                              operationId: String,
                              completion: @escaping (LoginAPIResult<String>) -> Void)
     {
-        GetConfirmationCodeAPIProxy(configuration).getConfirmationCode(projectId: projectId,
-                                                                       login: login,
-                                                                       operationId: operationId,
-                                                                       completion: completion)
+        let params = GetConfirmationCodeRequest.Params(projectId: projectId,
+                                                       login: login,
+                                                       operationId: operationId)
+
+        let request = GetConfirmationCodeRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+
+            switch result
+            {
+                case .success(let model): completion(.success(model.code))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func resendConfirmationLink(clientId: Int,
                                 redirectUri: String,
                                 state: String,
                                 username: String,
+                                locale: String?,
                                 completion: @escaping (LoginAPIResult<Void>) -> Void)
     {
-        ResendConfirmationLinkAPIProxy(configuration).resendConfirmationLink(clientId: clientId,
-                                                                             redirectUri: redirectUri,
-                                                                             state: state,
-                                                                             username: username,
-                                                                             completion: completion)
+        let params = ResendConfirmationLinkRequest.Params(clientId: clientId,
+                                                          redirectUri: redirectUri,
+                                                          state: state,
+                                                          username: username,
+                                                          locale: locale)
+
+        let request = ResendConfirmationLinkRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+
+            switch result
+            {
+                case .success: completion(.success(()))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func authWithDeviceId(oAuth2Params: OAuth2Params,
@@ -196,12 +385,38 @@ extension LoginAPI: LoginAPIProtocol
                           deviceId: String,
                           completion: @escaping (LoginAPIResult<AuthWithDeviceIdResponse>) -> Void)
     {
-        AuthWithDeviceIdAPIProxy(configuration).authWithDeviceId(oAuth2Params: oAuth2Params, device: device, deviceId: deviceId, completion: completion)
+        let params = AuthWithDeviceIdRequest.Params(responseType: oAuth2Params.responseType,
+                                                    clientId: oAuth2Params.clientId,
+                                                    scope: oAuth2Params.scope,
+                                                    state: oAuth2Params.state,
+                                                    redirectUri: oAuth2Params.redirectUri,
+                                                    device: device,
+                                                    deviceId: deviceId)
+
+        let request = AuthWithDeviceIdRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getUserDevices(accessToken: String, completion: @escaping (LoginAPIResult<GetUserDevicesResponse>) -> Void)
     {
-        GetUserDevicesAPIProxy(configuration).getUserDevices(accessToken: accessToken, completion: completion)
+        let request = GetUserDevicesRequest(params: .init(accessToken: accessToken), apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func linkDeviceToAccount(device: String,
@@ -209,19 +424,36 @@ extension LoginAPI: LoginAPIProtocol
                              accessToken: String,
                              completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        LinkDeviceToAccountAPIProxy(configuration).linkDeviceToAccount(device: device,
-                                                                       deviceId: deviceId,
-                                                                       accessToken: accessToken,
-                                                                       completion: completion)
+        let params = LinkDeviceToAccountRequest.Params(device: device, deviceId: deviceId, accessToken: accessToken)
+
+        let request = LinkDeviceToAccountRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func unlinkDeviceFromAccount(deviceId: String,
                                  accessToken: String,
                                  completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        UnlinkDeviceFromAccountAPIProxy(configuration).unlinkDeviceFromAccount(deviceId: deviceId,
-                                                                               accessToken: accessToken,
-                                                                               completion: completion)
+        let params = UnlinkDeviceFromAccountRequest.Params(deviceId: deviceId, accessToken: accessToken)
+
+        let request = UnlinkDeviceFromAccountRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func addUsernameAndPassword(accessToken: String,
@@ -232,18 +464,43 @@ extension LoginAPI: LoginAPIProtocol
                                 redirectUri: String?,
                                 completion: @escaping (LoginAPIResult<AddUsernameAndPasswordResponse>) -> Void)
     {
-        AddUsernameAndPasswordAPIProxy(configuration).addUsernameAndPassword(accessToken: accessToken,
-                                                                             username: username,
-                                                                             password: password,
-                                                                             email: email,
-                                                                             completion: completion)
+        let bodyParams = AddUsernameAndPasswordRequest.Body(username: username,
+                                                            password: password,
+                                                            email: email,
+                                                            promoEmailAgreement: promoEmailAgreement ? 1 : 0)
+
+        let params = AddUsernameAndPasswordRequest.Params(accessToken: accessToken,
+                                                          redirectUri: redirectUri,
+                                                          bodyParams: bodyParams)
+
+        let request = AddUsernameAndPasswordRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func createCodeForLinkingAccounts(accessToken: String,
                                       completion: @escaping (LoginAPIResult<String>) -> Void)
     {
-        CreateCodeForLinkingAccountsAPIProxy(configuration).createCodeForLinkingAccounts(accessToken: accessToken,
-                                                                                         completion: completion)
+        let params = CreateCodeForLinkingAccountsRequest.Params(accessToken: accessToken)
+
+        let request = CreateCodeForLinkingAccountsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+
+            switch result
+            {
+                case .success(let model): completion(.success(model.code))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     // MARK: - User Account API
@@ -252,16 +509,34 @@ extension LoginAPI: LoginAPIProtocol
                               accessToken: String,
                               completion: @escaping (LoginAPIResult<GetUserPublicProfileResponse>) -> Void)
     {
-        GetUserPublicProfileAPIProxy(configuration).getUserPublicProfile(userId: userId,
-                                                                         accessToken: accessToken,
-                                                                         completion: completion)
+        let params = GetUserPublicProfileRequest.Params(accessToken: accessToken, userId: userId)
+
+        let request = GetUserPublicProfileRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func getCurrentUserDetails(accessToken: String,
                                completion: @escaping (LoginAPIResult<GetCurrentUserDetailsResponse>) -> Void)
     {
-        GetCurrentUserDetailsAPIProxy(configuration).getCurrentUserDetails(accessToken: accessToken,
-                                                                           completion: completion)
+        let request = GetCurrentUserDetailsRequest(params: .init(accessToken: accessToken),
+                                                   apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func updateCurrentUserDetails(accessToken: String,
@@ -272,57 +547,122 @@ extension LoginAPI: LoginAPIProtocol
                                   nickname: String?,
                                   completion: @escaping (LoginAPIResult<UpdateCurrentUserDetailsResponse>) -> Void)
     {
-        UpdateCurrentUserDetailsAPIProxy(configuration).updateCurrentUserDetails(accessToken: accessToken,
-                                                                                 birthday: birthday,
-                                                                                 firstName: firstName,
-                                                                                 lastName: lastName,
-                                                                                 gender: gender,
-                                                                                 nickname: nickname,
-                                                                                 completion: completion)
+        let params = UpdateCurrentUserDetailsRequest.Params(accessToken: accessToken,
+                                                            birthday: birthday,
+                                                            firstName: firstName,
+                                                            lastName: lastName,
+                                                            gender: gender,
+                                                            nickname: nickname)
+
+        let request = UpdateCurrentUserDetailsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getUserEmail(accessToken: String,
                       completion: @escaping (LoginAPIResult<GetUserEmailResponse>) -> Void)
     {
-        GetUserEmailAPIProxy(configuration).getUserEmail(accessToken: accessToken, completion: completion)
+        let request = GetUserEmailRequest(params: .init(accessToken: accessToken),
+                                          apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func deleteUserPicture(accessToken: String, completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        DeleteUserPictureAPIProxy(configuration).deleteUserPicture(accessToken: accessToken, completion: completion)
+        let request = DeleteUserPictureRequest(params: .init(accessToken: accessToken),
+                                               apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func uploadUserPicture(accessToken: String,
                            imageURL: URL,
                            completion: @escaping (LoginAPIResult<UploadUserPictureResponse>) -> Void)
     {
-        UploadUserPictureAPIProxy(configuration).uploadUserPicture(accessToken: accessToken,
-                                                                   imageURL: imageURL,
-                                                                   completion: completion)
+        let params = UploadUserPictureRequest.Params(accessToken: accessToken, imageURL: imageURL)
+
+        let request = UploadUserPictureRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getCurrentUserPhone(accessToken: String,
                              completion: @escaping (LoginAPIResult<GetCurrentUserPhoneResponse>) -> Void)
     {
-        GetCurrentUserPhoneAPIProxy(configuration).getCurrentUserPhone(accessToken: accessToken, completion: completion)
+        let request = GetCurrentUserPhoneRequest(params: .init(accessToken: accessToken),
+                                                 apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func updateCurrentUserPhone(accessToken: String,
                                 phoneNumber: String,
                                 completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        UpdateCurrentUserPhoneAPIProxy(configuration).updateCurrentUserPhone(accessToken: accessToken,
-                                                                             phoneNumber: phoneNumber,
-                                                                             completion: completion)
+        let params = UpdateCurrentUserPhoneRequest.Params(accessToken: accessToken, phoneNumber: phoneNumber)
+        let request = UpdateCurrentUserPhoneRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func deleteCurrentUserPhone(accessToken: String,
                                 phoneNumber: String,
                                 completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        DeleteCurrentUserPhoneAPIProxy(configuration).deleteCurrentUserPhone(accessToken: accessToken,
-                                                                             phoneNumber: phoneNumber,
-                                                                             completion: completion)
+        let params = DeleteCurrentUserPhoneRequest.Params(accessToken: accessToken, phoneNumber: phoneNumber)
+        let request = DeleteCurrentUserPhoneRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     // MARK: User Account: User Friends
@@ -335,13 +675,23 @@ extension LoginAPI: LoginAPIProtocol
                                limit: Int?,
                                completion: @escaping (LoginAPIResult<GetCurrentUserFriendsResponse>) -> Void)
     {
-        GetCurrentUserFriendsAPIProxy(configuration).getCurrentUserFriends(accessToken: accessToken,
-                                                                           listType: listType,
-                                                                           sortType: sortType,
-                                                                           sortOrder: sortOrder,
-                                                                           after: after,
-                                                                           limit: limit,
-                                                                           completion: completion)
+        let params = GetCurrentUserFriendsRequest.Params(accessToken: accessToken,
+                                                         listType: listType,
+                                                         sortType: sortType,
+                                                         sortOrder: sortOrder,
+                                                         after: after,
+                                                         limit: limit)
+
+        let request = GetCurrentUserFriendsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func updateCurrentUserFriends(accessToken: String,
@@ -349,10 +699,20 @@ extension LoginAPI: LoginAPIProtocol
                                   userID: String,
                                   completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        UpdateCurrentUserFriendsAPIProxy(configuration).updateCurrentUserFriends(accessToken: accessToken,
-                                                                                 action: action,
-                                                                                 userID: userID,
-                                                                                 completion: completion)
+        let params = UpdateCurrentUserFriendsRequest.Params(accessToken: accessToken,
+                                                            action: action,
+                                                            userID: userID)
+
+        let request = UpdateCurrentUserFriendsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     // MARK: User Account: Social Networks
@@ -361,15 +721,35 @@ extension LoginAPI: LoginAPIProtocol
                                locale: String?,
                                completion: @escaping (LoginAPIResult<GetLinksForSocialAuthResponse>) -> Void)
     {
-        GetLinksForSocialAuthAPIProxy(configuration).getLinksForSocialAuth(accessToken: accessToken,
-                                                                           locale: locale,
-                                                                           completion: completion)
+        let params = GetLinksForSocialAuthRequest.Params(accessToken: accessToken, locale: locale)
+
+        let request = GetLinksForSocialAuthRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func getLinkedNetworks(accessToken: String,
                            completion: @escaping (LoginAPIResult<GetLinkedNetworksResponse>) -> Void)
     {
-        GetLinkedNetworksAPIProxy(configuration).getLinkedNetworks(accessToken: accessToken, completion: completion)
+        let params = GetLinkedNetworksRequest.Params(accessToken: accessToken)
+
+        let request = GetLinkedNetworksRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getURLToLinkSocialNetworkToAccount(
@@ -378,11 +758,20 @@ extension LoginAPI: LoginAPIProtocol
         loginURL: String,
         completion: @escaping (LoginAPIResult<GetURLToLinkSocialNetworkToAccountResponse>) -> Void)
     {
-        GetURLToLinkSocialNetworkToAccountAPIProxy(configuration)
-            .getURLToLinkSocialNetworkToAccount(accessToken: accessToken,
-                                                providerName: providerName,
-                                                loginURL: loginURL,
-                                                completion: completion)
+        let params = GetURLToLinkSocialNetworkToAccountRequest.Params(accessToken: accessToken,
+                                                                      providerName: providerName,
+                                                                      loginURL: loginURL)
+
+        let request = GetURLToLinkSocialNetworkToAccountRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getSocialNetworkFriends(accessToken: String,
@@ -392,21 +781,39 @@ extension LoginAPI: LoginAPIProtocol
                                  withLoginId: Bool,
                                  completion: @escaping (LoginAPIResult<GetSocialNetworkFriendsResponse>) -> Void)
     {
-        GetSocialNetworkFriendsAPIProxy(configuration).getSocialNetworkFriends(accessToken: accessToken,
-                                                                               platform: platform,
-                                                                               offset: offset,
-                                                                               limit: limit,
-                                                                               withLoginId: withLoginId,
-                                                                               completion: completion)
+        let params = GetSocialNetworkFriendsRequest.Params(accessToken: accessToken,
+                                                           platform: platform,
+                                                           offset: offset,
+                                                           limit: limit,
+                                                           withLoginId: withLoginId)
+
+        let request = GetSocialNetworkFriendsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func updateSocialNetworkFriends(accessToken: String,
                                     platform: String,
                                     completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        UpdateSocialNetworkFriendsAPIProxy(configuration).updateSocialNetworkFriends(accessToken: accessToken,
-                                                                                     platform: platform,
-                                                                                     completion: completion)
+        let params = UpdateSocialNetworkFriendsRequest.Params(accessToken: accessToken, platfrom: platform)
+        let request = UpdateSocialNetworkFriendsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func searchUsersByNickname(nickname: String,
@@ -415,11 +822,21 @@ extension LoginAPI: LoginAPIProtocol
                                limit: Int?,
                                completion: @escaping (LoginAPIResult<SearchUsersByNicknameResponse>) -> Void)
     {
-        SearchUsersByNicknameAPIProxy(configuration).searchUsersByNickname(nickname: nickname,
-                                                                           accessToken: accessToken,
-                                                                           offset: offset,
-                                                                           limit: limit,
-                                                                           completion: completion)
+        let params = SearchUsersByNicknameRequest.Params(nickname: nickname,
+                                                         accessToken: accessToken,
+                                                         offset: offset,
+                                                         limit: limit)
+
+        let request = SearchUsersByNicknameRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     // MARK: - User Attributes
@@ -430,11 +847,21 @@ extension LoginAPI: LoginAPIProtocol
                                  userId: String?,
                                  completion: @escaping (LoginAPIResult<GetClientUserAttributesResponse>) -> Void)
     {
-        GetClientUserAttributesAPIProxy(configuration).getClientUserAttributes(accessToken: accessToken,
-                                                                               keys: keys,
-                                                                               publisherProjectId: publisherProjectId,
-                                                                               userId: userId,
-                                                                               completion: completion)
+        let bodyParams = GetClientUserAttributesRequest.Body(keys: keys,
+                                                             publisherProjectId: publisherProjectId,
+                                                             userId: userId)
+        let params = GetClientUserAttributesRequest.Params(accessToken: accessToken, bodyParams: bodyParams)
+
+        let request = GetClientUserAttributesRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getClientUserReadOnlyAttributes(accessToken: String,
@@ -443,12 +870,21 @@ extension LoginAPI: LoginAPIProtocol
                                          userId: String?,
                                          completion: @escaping (LoginAPIResult<GetClientUserReadOnlyAttributesResponse>) -> Void)
     {
-        GetClientUserReadOnlyAttributesAPIProxy(configuration)
-            .getClientUserReadOnlyAttributes(accessToken: accessToken,
-                                             keys: keys,
-                                             publisherProjectId: publisherProjectId,
-                                             userId: userId,
-                                             completion: completion)
+        let bodyParams = GetClientUserReadOnlyAttributesRequest.Body(keys: keys,
+                                                                     publisherProjectId: publisherProjectId,
+                                                                     userId: userId)
+        let params = GetClientUserReadOnlyAttributesRequest.Params(accessToken: accessToken, bodyParams: bodyParams)
+
+        let request = GetClientUserReadOnlyAttributesRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func updateClientUserAttributes(accessToken: String,
@@ -457,12 +893,21 @@ extension LoginAPI: LoginAPIProtocol
                                     removingKeys: [String]?,
                                     completion: @escaping (LoginAPIResult<APIEmptyResponse>) -> Void)
     {
-        UpdateClientUserAttributesAPIProxy(configuration)
-            .updateClientUserAttributes(accessToken: accessToken,
-                                        attributes: attributes,
-                                        publisherProjectId: publisherProjectId,
-                                        removingKeys: removingKeys,
-                                        completion: completion)
+        let bodyParams = UpdateClientUserAttributesRequest.Body(attributes: attributes,
+                                                                publisherProjectId: publisherProjectId,
+                                                                removingKeys: removingKeys)
+        let params = UpdateClientUserAttributesRequest.Params(accessToken: accessToken, bodyParams: bodyParams)
+
+        let request = UpdateClientUserAttributesRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 
     func checkUserAge(birthday: String,
@@ -470,10 +915,20 @@ extension LoginAPI: LoginAPIProtocol
                       loginId: String,
                       completion: @escaping (LoginAPIResult<Bool>) -> Void)
     {
-        CheckUserAgeAPIProxy(configuration).checkUserAge(birthday: birthday,
-                                                         accessToken: accessToken,
-                                                         loginId: loginId,
-                                                         completion: completion)
+        let params = CheckUserAgeRequest.Params(birthday: birthday,
+                                                accessToken: accessToken,
+                                                loginId: loginId)
+
+        let request = CheckUserAgeRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel.accepted))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 }
 

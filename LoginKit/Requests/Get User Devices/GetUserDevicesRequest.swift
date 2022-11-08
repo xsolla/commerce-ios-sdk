@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class GetUserDevicesRequest: LoginBaseRequest<GetUserDevicesRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetUserDevicesResponse
-    typealias ErrorHandler = GetUserDevicesErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void
@@ -34,7 +34,7 @@ class GetUserDevicesRequest: LoginBaseRequest<GetUserDevicesRequest.Params>, API
 
     override var customJSONDecoder: JSONDecoder?
     {
-        let decoder = JSONDecoder()
+        let decoder = super.customJSONDecoder ?? JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
         return decoder

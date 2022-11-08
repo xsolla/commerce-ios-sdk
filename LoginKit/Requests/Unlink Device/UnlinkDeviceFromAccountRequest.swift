@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class UnlinkDeviceFromAccountRequest: LoginBaseRequest<UnlinkDeviceFromAccountRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler = UnlinkDeviceFromAccountErrorHandel
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

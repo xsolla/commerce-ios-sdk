@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class GetClientUserAttributesRequest: LoginBaseRequest<GetClientUserAttributesRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetClientUserAttributesResponse
-    typealias ErrorHandler = GetClientUserAttributesErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

@@ -37,81 +37,149 @@ class StoreAPI
 
 extension StoreAPI: StoreAPIProtocol
 {
-    func getItemGroups(projectId: Int, completion: @escaping (StoreAPIResult<GetItemGroupsResponse>) -> Void)
-    {
-        GetItemGroupsAPIProxy(configuration).getItemGroups(projectId: projectId, completion: completion)
-    }
-
-    func getAllVirtualItems(projectId: Int,
+    // MARK: - Virtual items & currency
+    
+    func getAllVirtualItems(accessToken: String?,
+                            projectId: Int,
                             locale: String?,
                             completion: @escaping (StoreAPIResult<GetAllVirtualItemsResponse>) -> Void)
     {
-        GetAllVirtualItemsAPIProxy(configuration).getAllVirtualItems(projectId: projectId,
-                                                                     locale: locale,
-                                                                     completion: completion)
+        let params = GetAllVirtualItemsRequest.Params(accessToken: accessToken,
+                                                      projectId: projectId,
+                                                      locale: locale)
+        
+        GetAllVirtualItemsRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
-
-    func getVirtualItems(projectId: Int,
+    
+    func getVirtualItems(accessToken: String?,
+                         projectId: Int,
                          filterParams: StoreFilterParams,
                          completion: @escaping (StoreAPIResult<GetVirtualItemsResponse>) -> Void)
     {
-        GetVirtualItemsAPIProxy(configuration).getVirtualItems(projectId: projectId,
-                                                               filterParams: filterParams,
-                                                               completion: completion)
+        let params = GetVirtualItemsRequest.Params(accessToken: accessToken,
+                                                   projectId: projectId,
+                                                   limit: filterParams.limit,
+                                                   offset: filterParams.offset,
+                                                   locale: filterParams.locale,
+                                                   additionalFields: filterParams.additionalFields,
+                                                   country: filterParams.country)
+        
+        GetVirtualItemsRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
     func getVirtualCurrency(projectId: Int,
                             filterParams: StoreFilterParams,
                             completion: @escaping (StoreAPIResult<GetVirtualCurrencyResponse>) -> Void)
     {
-        GetVirtualCurrencyAPIProxy(configuration).getVirtualCurrency(projectId: projectId,
-                                                                     filterParams: filterParams,
-                                                                     completion: completion)
+        let params = GetVirtualCurrencyRequest.Params(projectId: projectId,
+                                                      limit: filterParams.limit,
+                                                      offset: filterParams.offset,
+                                                      locale: filterParams.locale,
+                                                      additionalFields: filterParams.additionalFields,
+                                                      country: filterParams.country)
+        
+        GetVirtualCurrencyRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
-    func getVirtualCurrencyPackages(projectId: Int,
+    func getVirtualCurrencyPackages(accessToken: String?,
+                                    projectId: Int,
                                     filterParams: StoreFilterParams,
                                     completion: @escaping (StoreAPIResult<GetVirtualCurrencyPackagesResponse>) -> Void)
     {
-        GetVirtualCurrencyPackagesAPIProxy(configuration).getVirtualCurrencyPackages(projectId: projectId,
-                                                                                     filterParams: filterParams,
-                                                                                     completion: completion)
+        let params = GetVirtualCurrencyPackagesRequest.Params(accessToken: accessToken,
+                                                              projectId: projectId,
+                                                              limit: filterParams.limit,
+                                                              offset: filterParams.offset,
+                                                              locale: filterParams.locale,
+                                                              additionalFields: filterParams.additionalFields,
+                                                              country: filterParams.country)
+        
+        GetVirtualCurrencyPackagesRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
-    func getItemsOfGroup(projectId: Int,
+    // MARK: - Item groups
+    
+    func getItemGroups(projectId: Int, completion: @escaping (StoreAPIResult<GetItemGroupsResponse>) -> Void)
+    {
+        GetItemGroupsRequest(params: .init(projectId: projectId), apiConfiguration: configuration).perform(completion)
+    }
+    
+    func getItemsOfGroup(accessToken: String?,
+                         projectId: Int,
                          externalId: String,
                          filterParams: StoreFilterParams,
                          completion: @escaping (StoreAPIResult<GetItemsOfGroupResponse>) -> Void)
     {
-        GetItemsOfGroupAPIProxy(configuration).getItemsOfGroup(projectId: projectId,
-                                                               externalId: externalId,
-                                                               filterParams: filterParams,
-                                                               completion: completion)
+        let params = GetItemsOfGroupRequest.Params(accessToken: accessToken,
+                                                   projectId: projectId,
+                                                   externalId: externalId,
+                                                   limit: filterParams.limit,
+                                                   offset: filterParams.offset,
+                                                   locale: filterParams.locale,
+                                                   additionalFields: filterParams.additionalFields,
+                                                   country: filterParams.country)
+        
+        GetItemsOfGroupRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
-    func getBundlesList(projectId: Int,
+    // MARK: - Bundle
+    
+    func getBundlesList(accessToken: String?,
+                        projectId: Int,
                         filterParams: StoreFilterParams,
                         completion: @escaping (StoreAPIResult<GetBundlesListResponse>) -> Void)
     {
-        GetBundlesListAPIProxy(configuration).getBundlesList(projectId: projectId,
-                                                           filterParams: filterParams,
-                                                           completion: completion)
+        let params = GetBundlesListRequest.Params(accessToken: accessToken,
+                                                  projectId: projectId,
+                                                  limit: filterParams.limit,
+                                                  offset: filterParams.offset,
+                                                  locale: filterParams.locale,
+                                                  additionalFields: filterParams.additionalFields,
+                                                  country: filterParams.country)
+        
+        GetBundlesListRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
-    func getBundle(projectId: Int, sku: String, completion: @escaping (StoreAPIResult<GetBundleResponse>) -> Void)
+    func getBundle(accessToken: String?,
+                   projectId: Int,
+                   sku: String,
+                   completion: @escaping (StoreAPIResult<GetBundleResponse>) -> Void)
     {
-        GetBundleAPIProxy(configuration).getBundle(projectId: projectId, sku: sku, completion: completion)
+        GetBundleRequest(params: .init(accessToken: accessToken,
+                         projectId: projectId,
+                         sku: sku),
+                         apiConfiguration: configuration)
+            .perform(completion)
     }
+    
+    // MARK: - Order
     
     func getOrder(projectId: Int,
                   orderId: String,
                   authorizationType: StoreAuthorizationType,
                   completion: @escaping (StoreAPIResult<GetOrderResponse>) -> Void)
     {
-        GetOrderAPIProxy(configuration).getOrder(projectId: projectId,
-                                                 orderId: orderId,
-                                                 authorizationType: authorizationType,
-                                                 completion: completion)
+        var accessToken: String?
+        var unauthorizedId: String?
+        var unauthorizedUserEmail: String?
+        
+        switch authorizationType
+        {
+            case let .authorized(token):
+                accessToken = token
+
+            case let .unauthorized(id, email):
+                unauthorizedId = id
+                unauthorizedUserEmail = email
+        }
+        
+        let params = GetOrderRequest.Params(projectId: projectId,
+                                            orderId: orderId,
+                                            accessToken: accessToken,
+                                            unauthorizedId: unauthorizedId,
+                                            unauthorizedUserEmail: unauthorizedUserEmail)
+        
+        GetOrderRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
     func createOrder(accessToken: String,
@@ -125,36 +193,88 @@ extension StoreAPI: StoreAPIProtocol
                      customParameters: [String: String]?,
                      completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
     {
-        CreateOrderAPIProxy(configuration).createOrder(accessToken: accessToken,
-                                                       projectId: projectId,
-                                                       itemSku: itemSku,
-                                                       quantity: quantity,
-                                                       currency: currency,
-                                                       locale: locale,
-                                                       isSandbox: isSandbox,
-                                                       paymentProjectSettings: paymentProjectSettings,
-                                                       customParameters: customParameters,
-                                                       completion: completion)
+        let bodyParams = CreateOrderRequest.Params.BodyParams(currency: currency,
+                                                              quantity: quantity,
+                                                              locale: locale,
+                                                              sandbox: isSandbox,
+                                                              settings: paymentProjectSettings,
+                                                              customParameters: customParameters)
+        
+        let params = CreateOrderRequest.Params(projectId: projectId,
+                                               accessToken: accessToken,
+                                               itemSKU: itemSku,
+                                               bodyParams: bodyParams)
+        
+        CreateOrderRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
-    func purchaseItemByVirtualCurrency(
-        projectId: Int,
-        accessToken: String,
-        itemSku: String,
-        virtualCurrencySku: String,
-        platform: String?,
-        customParameters: Encodable?,
-        completion: @escaping ((StoreAPIResult<PurchaseItemByVirtualCurrencyResponse>) -> Void))
+    func createOrderFromParticularCart(accessToken: String,
+                                       projectId: Int,
+                                       cartId: String,
+                                       quantity: Int,
+                                       currency: String?,
+                                       locale: String?,
+                                       isSandbox: Bool,
+                                       paymentProjectSettings: StorePaymentProjectSettings?,
+                                       customParameters: [String: String]?,
+                                       completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
     {
-        let proxy = PurchaseItemByVirtualCurrencyAPIProxy(configuration)
-        proxy.purchaseItemByVirtualCurrency(projectId: projectId,
-                                            accessToken: accessToken,
-                                            itemSku: itemSku,
-                                            virtualCurrencySku: virtualCurrencySku,
-                                            platform: platform,
-                                            customParameters: customParameters,
-                                            completion: completion)
+        let bodyParams = CreateOrderFromParticularCartRequest.BodyParams(currency: currency,
+                                                                         quantity: quantity,
+                                                                         locale: locale,
+                                                                         sandbox: isSandbox,
+                                                                         settings: paymentProjectSettings,
+                                                                         customParameters: customParameters)
+        
+        let params = CreateOrderFromParticularCartRequest.Params(projectId: projectId,
+                                                                 cartId: cartId,
+                                                                 accessToken: accessToken,
+                                                                 bodyParams: bodyParams)
+        
+        CreateOrderFromParticularCartRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
+    
+    func createOrderFromCurrentCart(accessToken: String,
+                                    projectId: Int,
+                                    currency: String?,
+                                    locale: String?,
+                                    isSandbox: Bool,
+                                    paymentProjectSettings: StorePaymentProjectSettings?,
+                                    customParameters: [String: String]?,
+                                    completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    {
+        let bodyParams = CreateOrderFromCurrentCartRequest.BodyParams(currency: currency,
+                                                                      locale: locale,
+                                                                      sandbox: isSandbox,
+                                                                      settings: paymentProjectSettings,
+                                                                      customParameters: customParameters)
+        
+        let params = CreateOrderFromCurrentCartRequest.Params(projectId: projectId,
+                                                              accessToken: accessToken,
+                                                              bodyParams: bodyParams)
+        
+        CreateOrderFromCurrentCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func purchaseItemByVirtualCurrency(projectId: Int,
+                                       accessToken: String,
+                                       itemSku: String,
+                                       virtualCurrencySku: String,
+                                       platform: String?,
+                                       customParameters: Encodable?,
+                                       completion: @escaping ((StoreAPIResult<PurchaseItemByVirtualCurrencyResponse>) -> Void))
+    {
+        let params = PurchaseItemByVirtualCurrencyRequest.Params(projectId: projectId,
+                                                                 accessToken: accessToken,
+                                                                 itemSku: itemSku,
+                                                                 virtualCurrencySku: virtualCurrencySku,
+                                                                 platform: platform,
+                                                                 customParameters: customParameters)
+        
+        PurchaseItemByVirtualCurrencyRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    // MARK: - Coupons & Promocodes
     
     func redeemCoupon(accessToken: String,
                       projectId: Int,
@@ -162,11 +282,14 @@ extension StoreAPI: StoreAPIProtocol
                       selectedUnitItems: [String: String]?,
                       completion: @escaping (StoreAPIResult<RedeemCouponResponse>) -> Void)
     {
-        RedeemCouponAPIProxy(configuration).redeemCoupon(accessToken: accessToken,
-                                                         projectId: projectId,
-                                                         couponCode: couponCode,
-                                                         selectedUnitItems: selectedUnitItems,
-                                                         completion: completion)
+        let bodyParams = RedeemCouponRequest.Params.BodyParams(couponCode: couponCode,
+                                                               selectedUnitItems: selectedUnitItems)
+        
+        let params = RedeemCouponRequest.Params(accessToken: accessToken,
+                                                projectId: projectId,
+                                                bodyParams: bodyParams)
+        
+        RedeemCouponRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
     func getCouponRewards(accessToken: String,
@@ -174,10 +297,312 @@ extension StoreAPI: StoreAPIProtocol
                           couponCode: String,
                           completion: @escaping (StoreAPIResult<GetCouponRewardsResponse>) -> Void)
     {
-        GetCouponRewardsAPIProxy(configuration).getCouponRewards(accessToken: accessToken,
+        let params = GetCouponRewardsRequest.Params(accessToken: accessToken,
+                                                    projectId: projectId,
+                                                    couponCode: couponCode)
+        
+        GetCouponRewardsRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func redeemPromocode(accessToken: String,
+                         projectId: Int,
+                         bodyParams: RedeemPromocodeRequest.BodyParams,
+                         completion: @escaping (StoreAPIResult<PromocodeResponse>) -> Void)
+    {
+        let params = RedeemPromocodeRequest.Params(accessToken: accessToken,
+                                                   projectId: projectId,
+                                                   bodyParams: bodyParams)
+        
+        RedeemPromocodeRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func removePromocodeFromCart(accessToken: String,
+                                 projectId: Int,
+                                 bodyParams: RemovePromocodeFromCartRequest.BodyParams,
+                                 completion: @escaping (StoreAPIResult<PromocodeResponse>) -> Void)
+    {
+        let params = RemovePromocodeFromCartRequest.Params(accessToken: accessToken,
+                                                           projectId: projectId,
+                                                           bodyParams: bodyParams)
+        
+        RemovePromocodeFromCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func getPromocodeRewards(accessToken: String,
+                             projectId: Int,
+                             promocodeCode: String,
+                             completion: @escaping (StoreAPIResult<GetPromocodeRewardsResponse>) -> Void)
+    {
+        let params = GetPromocodeRewardsRequest.Params(accessToken: accessToken,
+                                                       projectId: projectId,
+                                                       promocodeCode: promocodeCode)
+        
+        GetPromocodeRewardsRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    // MARK: - Cart
+    
+    func getCartByCartId(accessToken: String,
+                         projectId: Int,
+                         cartId: String,
+                         currency: String?,
+                         locale: String?,
+                         completion: @escaping (StoreAPIResult<GetCartByCartIdResponse>) -> Void)
+    {
+        let params = GetCartByCartIdRequest.Params(accessToken: accessToken,
+                                                   projectId: projectId,
+                                                   cartId: cartId,
+                                                   currency: currency,
+                                                   locale: locale)
+        
+        GetCartByCartIdRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func getCurrentUserCart(accessToken: String,
+                            projectId: Int,
+                            currency: String?,
+                            locale: String?,
+                            completion: @escaping (StoreAPIResult<GetCurrentUserCartResponse>) -> Void)
+    {
+        let params = GetCurrentUserCartRequest.Params(accessToken: accessToken,
+                                                      projectId: projectId,
+                                                      currency: currency,
+                                                      locale: locale)
+        
+        GetCurrentUserCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func deleteAllCartItemsByCartId(accessToken: String,
+                                    projectId: Int,
+                                    cartId: String,
+                                    completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = DeleteAllCartItemsByCartIdRequest.Params(accessToken: accessToken,
+                                                              projectId: projectId,
+                                                              cartId: cartId)
+        
+        DeleteAllCartItemsByCartIdRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func deleteAllCartItemsFromCurrentCart(accessToken: String,
+                                           projectId: Int,
+                                           completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = DeleteAllCartItemsFromCurrentCartRequest.Params(accessToken: accessToken, projectId: projectId)
+        
+        DeleteAllCartItemsFromCurrentCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func fillCartWithItems(accessToken: String,
+                           projectId: Int,
+                           items: [FillCartWithItemsRequest.Body.Item],
+                           completion: @escaping (StoreAPIResult<FillCartWithItemsResponse>) -> Void)
+    {
+        let params = FillCartWithItemsRequest.Params(accessToken: accessToken, projectId: projectId, items: items)
+        
+        FillCartWithItemsRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func fillSpecificCartWithItems(accessToken: String,
+                                   projectId: Int,
+                                   cartId: String,
+                                   items: [FillSpecificCartWithItemsRequest.Body.Item],
+                                   completion: @escaping (StoreAPIResult<FillSpecificCartWithItemsResponse>)
+                                   -> Void)
+    {
+        let params = FillSpecificCartWithItemsRequest.Params(accessToken: accessToken,
+                                                             projectId: projectId,
+                                                             cartId: cartId,
+                                                             items: items)
+        
+        FillSpecificCartWithItemsRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func updateCartItemByCartId(accessToken: String,
+                                projectId: Int,
+                                cartId: String,
+                                itemSKU: String,
+                                quantity: Int,
+                                completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = UpdateCartItemByCartIdRequest.Params(accessToken: accessToken,
+                                                          projectId: projectId,
+                                                          cartId: cartId,
+                                                          itemSKU: itemSKU,
+                                                          quantity: quantity)
+        
+        UpdateCartItemByCartIdRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func deleteCartItemByCartId(accessToken: String,
+                                projectId: Int,
+                                cartId: String,
+                                itemSKU: String,
+                                completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = DeleteCartItemByCartIdRequest.Params(accessToken: accessToken,
+                                                          projectId: projectId,
+                                                          cartId: cartId,
+                                                          itemSKU: itemSKU)
+        
+        DeleteCartItemByCartIdRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func updateCartItemFromCurrentCart(accessToken: String,
+                                       projectId: Int,
+                                       itemSKU: String,
+                                       quantity: Int,
+                                       completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = UpdateCartItemFromCurrentCartRequest.Params(accessToken: accessToken,
                                                                  projectId: projectId,
-                                                                 couponCode: couponCode,
-                                                                 completion: completion)
+                                                                 itemSKU: itemSKU,
+                                                                 quantity: quantity)
+        
+        UpdateCartItemFromCurrentCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+    
+    func deleteCartItemFromCurrentCart(accessToken: String,
+                                       projectId: Int,
+                                       itemSKU: String,
+                                       completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = DeleteCartItemFromCurrentCartRequest.Params(accessToken: accessToken,
+                                                                 projectId: projectId,
+                                                                 itemSKU: itemSKU)
+        
+        DeleteCartItemFromCurrentCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    // MARK: - Games
+
+    func getGamesList(projectId: Int,
+                      limit: Int?,
+                      offset: Int?,
+                      locale: String?,
+                      country: String?,
+                      additionalFields: [String]?,
+                      completion: @escaping (StoreAPIResult<GetGamesListResponse>) -> Void)
+    {
+        let params = GetGamesListRequest.Params(projectId: projectId,
+                                                limit: limit,
+                                                offset: offset,
+                                                locale: locale,
+                                                country: country,
+                                                additionalFields: additionalFields)
+
+        GetGamesListRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func getGamesListByGroup(projectId: Int,
+                             externalId: String,
+                             limit: Int?,
+                             offset: Int?,
+                             locale: String?,
+                             country: String?,
+                             additionalFields: [String]?,
+                             completion: @escaping (StoreAPIResult<GetGamesListResponse>) -> Void)
+    {
+        let params = GetGamesListByGroupRequest.Params(projectId: projectId,
+                                                       externalId: externalId,
+                                                       limit: limit,
+                                                       offset: offset,
+                                                       locale: locale,
+                                                       country: country,
+                                                       additionalFields: additionalFields)
+
+        GetGamesListByGroupRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func getGameBySku(projectId: Int,
+                      itemSku: String,
+                      locale: String?,
+                      country: String?,
+                      additionalFields: [String]?,
+                      completion: @escaping (StoreAPIResult<GameResponse>) -> Void)
+    {
+        let params = GetGameBySkuRequest.Params(projectId: projectId,
+                                                itemSku: itemSku,
+                                                locale: locale,
+                                                country: country,
+                                                additionalFields: additionalFields)
+
+        GetGameBySkuRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func getGameKeyBySku(projectId: Int,
+                         itemSku: String,
+                         locale: String?,
+                         country: String?,
+                         additionalFields: [String]?,
+                         completion: @escaping (StoreAPIResult<GameKeyResponse>) -> Void)
+    {
+        let params = GetGameKeyBySkuRequest.Params(projectId: projectId,
+                                                   itemSku: itemSku,
+                                                   locale: locale,
+                                                   country: country,
+                                                   additionalFields: additionalFields)
+
+        GetGameKeyBySkuRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func getGameKeysByGroup(projectId: Int,
+                            externalId: String,
+                            limit: Int?,
+                            offset: Int?,
+                            locale: String?,
+                            country: String?,
+                            additionalFields: [String]?,
+                            completion: @escaping (StoreAPIResult<[GameKeyResponse]>) -> Void)
+    {
+        let params = GetGameKeysByGroupRequest.Params(projectId: projectId,
+                                                      externalId: externalId,
+                                                      limit: limit,
+                                                      offset: offset,
+                                                      locale: locale,
+                                                      country: country,
+                                                      additionalFields: additionalFields)
+
+        GetGameKeysByGroupRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func getDRMList(projectId: Int,
+                    completion: @escaping (StoreAPIResult<DRMListResponse>) -> Void)
+    {
+        let params = GetDrmListRequest.Params(projectId: projectId)
+
+        GetDrmListRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func getUserGamesList(accessToken: String,
+                          projectId: Int,
+                          limit: Int?,
+                          offset: Int?,
+                          sandbox: Int?,
+                          additionalFields: [String]?,
+                          completion: @escaping (StoreAPIResult<UserGamesListResponse>) -> Void)
+    {
+        let params = GetUserGamesListRequest.Params(accessToken: accessToken,
+                                                    projectId: projectId,
+                                                    limit: limit,
+                                                    offset: offset,
+                                                    sandbox: sandbox,
+                                                    additionalFields: additionalFields)
+
+        GetUserGamesListRequest(params: params, apiConfiguration: configuration).perform(completion)
+    }
+
+    func redeemGameCode(accessToken: String,
+                        projectId: Int,
+                        code: String,
+                        sandbox: Bool?,
+                        completion: @escaping (StoreAPIResult<APIEmptyResponse>) -> Void)
+    {
+        let params = RedeemGameCodeRequest.Params(accessToken: accessToken,
+                                                  projectId: projectId,
+                                                  bodyParams: .init(code: code, sandbox: sandbox))
+
+        RedeemGameCodeRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
 }
 
@@ -186,7 +611,7 @@ extension StoreAPI
     var configuration: StoreAPIConfiguration
     {
         StoreAPIConfiguration(requestPerformer: requestPerformer,
-                                  responseProcessor: responseProcessor,
-                                  apiBasePath: "https://store.xsolla.com/api")
+                              responseProcessor: responseProcessor,
+                              apiBasePath: "https://store.xsolla.com/api")
     }
 }

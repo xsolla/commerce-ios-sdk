@@ -50,7 +50,7 @@ public struct InventoryItem
     public let virtualItemType: VirtualItemType?
 
     /// Detailed subscription info. `Nil if item is not a subscription or info isn't loaded.
-    public let detailedSubscriptionInfo: InventoryUserSubscription?
+    public let detailedSubscriptionInfo: TimeLimitedItem?
 }
 
 extension InventoryItem
@@ -73,40 +73,7 @@ extension InventoryItem
 
 extension InventoryItem
 {
-    init(fromAPIResponse apiResponseModel: GetUserInventoryItemsResponse.Item)
-    {
-        guard let itemType = ItemType(rawValue: apiResponseModel.type) else
-        {
-            fatalError("Unsupported item type")
-        }
-
-        self.instanceId = apiResponseModel.instanceId
-        self.sku = apiResponseModel.sku
-        self.type = itemType
-        self.name = apiResponseModel.name
-        self.quantity = apiResponseModel.quantity
-        self.description = apiResponseModel.description
-        self.imageUrl = apiResponseModel.imageUrl
-        self.remainingUses = apiResponseModel.remainingUses
-        self.virtualItemType = VirtualItemType(rawValue: apiResponseModel.virtualItemType ?? "")
-
-        self.groups = apiResponseModel.groups.map { InventoryItemGroup(externalId: $0.externalId, name: $0.name) }
-
-        self.attributes = apiResponseModel.attributes.map
-        { attribute in
-
-            let values = attribute.values.map
-            {
-                InventoryItemAttribute.Value(externalId: $0.externalId, value: $0.value)
-            }
-
-            return InventoryItemAttribute(externalId: attribute.externalId, name: attribute.name, values: values)
-        }
-
-        self.detailedSubscriptionInfo = nil
-    }
-
-    func withSubscriptionInfo(_ subscriptionInfo: InventoryUserSubscription?) -> InventoryItem
+    func withSubscriptionInfo(_ subscriptionInfo: TimeLimitedItem?) -> InventoryItem
     {
         let inventoryItem = InventoryItem(instanceId: self.instanceId,
                                           sku: self.sku,

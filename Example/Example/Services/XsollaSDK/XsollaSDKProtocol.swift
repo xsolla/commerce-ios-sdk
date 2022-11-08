@@ -36,11 +36,11 @@ protocol XsollaSDKProtocol: AnyObject
                                    password: String,
                                    oAuth2Params: OAuth2Params,
                                    jwtParams: JWTGenerationParams,
-                                   completion: @escaping LoginKitCompletion<AccessTokenInfo>)
+                                   completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     
     func getLinkForSocialAuth(providerName: String,
                               oAuth2Params: OAuth2Params,
-                              completion: @escaping LoginKitCompletion<URL>)
+                              completion: @escaping (Result<URL, Error>) -> Void)
     
     func authBySocialNetwork(oAuth2Params: OAuth2Params,
                              jwtParams: JWTGenerationParams,
@@ -48,11 +48,13 @@ protocol XsollaSDKProtocol: AnyObject
                              socialNetworkAccessToken: String,
                              socialNetworkAccessTokenSecret: String?,
                              socialNetworkOpenId: String?,
-                             completion: @escaping LoginKitCompletion<AccessTokenInfo>)
+                             completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     
     func generateJWT(with authCode: String?,
                      jwtParams: JWTGenerationParams,
                      completion: ((Result<AccessTokenInfo, Error>) -> Void)?)
+
+    func createDemoUser(completion: @escaping ((Result<DemoUserCreationHelper.AccessTokenInfo, Error>) -> Void))
 
     func registerNewUser(params: RegisterNewUserParams,
                          oAuth2Params: OAuth2Params,
@@ -178,56 +180,55 @@ protocol XsollaSDKProtocol: AnyObject
     
     // MARK: - InventoryKit
     
-    func getUserVirtualCurrencyBalance(
-        projectId: Int,
-        platform: String?,
-        completion: @escaping InventoryKitCompletion<[InventoryVirtualCurrencyBalance]>)
+    func getUserVirtualCurrencyBalance(projectId: Int,
+                                       platform: String?,
+                                       completion: @escaping (Result<[InventoryVirtualCurrencyBalance], Error>) -> Void)
     
-    func getUserSubscriptions(projectId: Int,
-                              platform: String?,
-                              completion: @escaping InventoryKitCompletion<[InventoryUserSubscription]>)
+    func getTimeLimitedItems(projectId: Int,
+                             platform: String?,
+                             completion: @escaping (Result<[TimeLimitedItem], Error>) -> Void)
     
     func consumeItem(projectId: Int,
                      platform: String?,
                      consumingItem: InventoryConsumingItem,
-                     completion: @escaping InventoryKitCompletion<Void>)
+                     completion: @escaping (Result<Void, Error>) -> Void)
     
     func getUserInventoryItems(projectId: Int,
                                platform: String?,
                                detailedSubscriptions: Bool?,
-                               completion: @escaping InventoryKitCompletion<[InventoryItem]>)
+                               completion: @escaping (Result<[InventoryItem], Error>) -> Void)
     
     // MARK: - StoreKit
     
-    func getItemGroups(projectId: Int, completion: @escaping StoreKitCompletion<[StoreItemGroup]>)
+    func getItemGroups(projectId: Int, completion: @escaping (Result<[StoreItemGroup], Error>) -> Void)
     
     func getVirtualItems(projectId: Int,
                          filterParams: StoreFilterParams,
-                         completion: @escaping StoreKitCompletion<[StoreVirtualItem]>)
+                         completion: @escaping (Result<[StoreVirtualItem], Error>) -> Void)
     
     func getVirtualCurrency(projectId: Int,
                             filterParams: StoreFilterParams,
-                            completion: @escaping StoreKitCompletion<[StoreVirtualCurrency]>)
+                            completion: @escaping (Result<[StoreVirtualCurrency], Error>) -> Void)
     
     func getVirtualCurrencyPackages(projectId: Int,
                                     filterParams: StoreFilterParams,
-                                    completion: @escaping StoreKitCompletion<[StoreCurrencyPackage]>)
+                                    completion: @escaping (Result<[StoreCurrencyPackage], Error>) -> Void)
     
     func getItemsOfGroup(projectId: Int,
                          externalId: String,
                          filterParams: StoreFilterParams,
-                         completion: @escaping StoreKitCompletion<[StoreVirtualItem]>)
+                         completion: @escaping (Result<[StoreVirtualItem], Error>) -> Void)
     
     func getBundlesList(projectId: Int,
                         filterParams: StoreFilterParams,
-                        completion: @escaping StoreKitCompletion<[StoreBundle]>)
+                        completion: @escaping (Result<[StoreBundle], Error>) -> Void)
     
-    func getBundle(projectId: Int, sku: String, completion: @escaping StoreKitCompletion<StoreBundle>)
+    func getBundle(projectId: Int, sku: String, completion: @escaping (Result<StoreBundle, Error>) -> Void)
     
     func getOrder(projectId: Int,
                   orderId: String,
                   authorizationType: StoreAuthorizationType,
-                  completion: @escaping StoreKitCompletion<StoreOrder>)
+                  completion: @escaping (Result<StoreOrder, Error>) -> Void)
     
     func createOrder(projectId: Int,
                      itemSKU: String,
@@ -237,23 +238,23 @@ protocol XsollaSDKProtocol: AnyObject
                      isSandbox: Bool,
                      paymentProjectSettings: StorePaymentProjectSettings?,
                      customParameters: [String: String]?,
-                     completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
+                     completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
     
     func purchaseItemByVirtualCurrency(projectId: Int,
                                        itemSKU: String,
                                        virtualCurrencySKU: String,
                                        platform: String?,
                                        customParameters: Encodable?,
-                                       completion: @escaping StoreKitCompletion<Int>)
+                                       completion: @escaping (Result<Int, Error>) -> Void)
     
     func redeemCoupon(projectId: Int,
                       couponCode: String,
                       selectedUnitItems: [String: String]?,
-                      completion: @escaping StoreKitCompletion<[StoreCouponRedeemedItem]>)
+                      completion: @escaping (Result<[StoreRedeemedCouponItem], Error>) -> Void)
     
     func getCouponRewards(projectId: Int,
                           couponCode: String,
-                          completion: @escaping StoreKitCompletion<StoreCouponRewards>)
+                          completion: @escaping (Result<StoreCouponRewards, Error>) -> Void)
 
     func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
 }

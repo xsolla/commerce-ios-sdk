@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class CompleteAuthByPhoneRequest: LoginBaseRequest<CompleteAuthByPhoneRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = CompleteAuthByPhoneResponse
-    typealias ErrorHandler = CompleteAuthByPhoneErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

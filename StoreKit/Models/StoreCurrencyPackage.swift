@@ -50,6 +50,9 @@ public struct StoreCurrencyPackage
 
     /// Virtual currency package content.
     public let content: [ContentItem]
+    
+    /// Promotion settings in Store.
+    public let promotions: [StoreItemPromotion]
 
     public struct ContentItem
     {
@@ -73,35 +76,5 @@ public struct StoreCurrencyPackage
 
         /// Defines the inventory item options.
         public let inventoryOptions: StoreItemInventoryOptions
-    }
-}
-
-extension StoreCurrencyPackage
-{
-    init(fromResponse response: GetVirtualCurrencyPackagesResponse.Item)
-    {
-        self.sku = response.sku
-        self.name = response.name
-        self.groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        self.attributes = response.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-        self.type = response.type
-        self.bundleType = response.bundleType
-        self.description = response.description
-        self.imageUrl = response.imageUrl
-        self.isFree = response.isFree
-        self.virtualPrices = response.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-        self.price = StoreItemPrice(fromOptionalAPIResponse: response.price)
-        self.content = response.content.map
-        {
-            let inventoryOptions = StoreItemInventoryOptions(fromAPIResponse: $0.inventoryOptions)
-
-            return StoreCurrencyPackage.ContentItem(sku: $0.sku,
-                                                    name: $0.name,
-                                                    type: $0.type,
-                                                    description: $0.description,
-                                                    imageUrl: $0.imageUrl,
-                                                    quantity: $0.quantity,
-                                                    inventoryOptions: inventoryOptions)
-        }
     }
 }

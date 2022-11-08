@@ -15,27 +15,16 @@ import Foundation
 
 public struct StoreVirtualItemShort
 {
-        /// Unique item ID. The SKU may only contain lowercase Latin alphanumeric characters,
-        /// periods, dashes, and underscores.
-        public let sku: String
-
-        /// Item name.
-        public let name: String
-
-        /// Groups the item belongs to.
-        public let groups: [StoreItemGroupShort]
-
-        /// Item description.
-        public let description: String?
-}
-
-extension StoreVirtualItemShort
-{
-    init(fromResponse response: GetAllVirtualItemsResponse.Item)
-    {
-        sku = response.sku
-        name = response.name
-        groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        description = response.description
-    }
+    /// Unique item ID. The SKU may only contain lowercase Latin alphanumeric characters,
+    /// periods, dashes, and underscores.
+    public let sku: String
+    
+    /// Item name.
+    public let name: String
+    
+    /// Groups the item belongs to.
+    public let groups: [StoreItemGroupShort]
+    
+    /// Item description.
+    public let description: String?
 }

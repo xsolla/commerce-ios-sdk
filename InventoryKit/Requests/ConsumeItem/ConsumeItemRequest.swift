@@ -22,7 +22,7 @@ class ConsumeItemRequest: InventoryBaseRequest<ConsumeItemRequest.Params>,
                           APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler  = ConsumeItemErrorHandler
+    typealias ErrorHandler  = InventoryAPIDefaultErrorHandler
     typealias ErrorModel    = InventoryAPIErrorModel
     typealias ErrorType     = InventoryAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

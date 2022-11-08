@@ -185,6 +185,7 @@ extension Style
 
 extension Style
 {
+    static let `default` = Style(font: SystemFont.regular.size(14), lineHeight: 24, kern: 0, align: .natural)
     static let button = Style(font: SystemFont.bold.size(18), lineHeight: 24, kern: 0, align: .natural)
     static let label = Style(font: SystemFont.bold.size(14), lineHeight: 16, kern: 0, align: .natural)
     static let heading1 = Style(font: SystemFont.bold.size(20), lineHeight: 24, kern: 0.15, align: .natural)

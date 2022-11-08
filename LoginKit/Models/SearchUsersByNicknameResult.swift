@@ -13,7 +13,6 @@
 
 import Foundation
 
-
 /// Structure contains the results of the search by nickname
 public struct SearchUsersByNicknameResult
 {

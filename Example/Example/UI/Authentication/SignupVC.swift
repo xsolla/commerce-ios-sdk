@@ -101,7 +101,7 @@ class SignupVC: BaseViewController, SignupVCProtocol
 
         formValidator.addValidator(formValidator.factory.createDefaultValidator(for: emailTextField),
                                    withKey: emailTextField.tag)
-        
+
         // Password
         passwordTextField.placeholder = L10n.Form.Field.Password.placeholder
         passwordTextField.secure = true
@@ -109,6 +109,11 @@ class SignupVC: BaseViewController, SignupVCProtocol
         passwordTextField.tag = 3
         passwordTextField.delegate = self
         passwordTextField.configureTextFieldDefaults()
+
+        if #available(iOS 12.0, *)
+        {
+            passwordTextField.configureTextField { textField in textField.textContentType = .oneTimeCode }
+        }
         
         formValidator.addValidator(formValidator.factory.createPasswordValidator(for: passwordTextField),
                                    withKey: passwordTextField.tag)
@@ -119,6 +124,11 @@ class SignupVC: BaseViewController, SignupVCProtocol
         passwordConfirmTextField.tag = 4
         passwordConfirmTextField.delegate = self
         passwordConfirmTextField.configureTextFieldDefaults()
+
+        if #available(iOS 12.0, *)
+        {
+            passwordConfirmTextField.configureTextField { textField in textField.textContentType = .oneTimeCode }
+        }
 
         formValidator.addValidator(formValidator.factory.createPasswordValidator(for: passwordConfirmTextField),
                                    withKey: passwordConfirmTextField.tag)

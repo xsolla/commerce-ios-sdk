@@ -53,6 +53,9 @@ public struct StoreBundle
 
     /// Bundle package content.
     public let content: [ContentItem]
+    
+    /// Promotion settings in Store.
+    public let promotions: [StoreItemPromotion]
 
     /// Bundle package content item.
     public struct ContentItem
@@ -95,88 +98,5 @@ public struct StoreBundle
 
         /// Quantity of the same item in a package.
         public let quantity: Int
-    }
-}
-
-extension StoreBundle
-{
-    init(fromResponse response: GetBundlesListResponse.Item)
-    {
-        self.sku = response.sku
-        self.name = response.name
-        self.groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        self.description = response.description
-        self.attributes = response.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-        self.type = response.type
-        self.bundleType = response.bundleType
-        self.imageUrl = response.imageUrl
-        self.isFree = response.isFree
-        self.price = StoreItemPrice(fromOptionalAPIResponse: response.price)
-        self.totalContentPrice = StoreItemPrice(fromOptionalAPIResponse: response.totalContentPrice)
-        self.virtualPrices = response.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-
-        self.content = response.content.map
-        { item in
-
-            let price = StoreItemPrice(fromOptionalAPIResponse: item.price)
-            let virtualPrices = item.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-            let attributes = item.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-            let groups = item.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-            let inventoryOptions = StoreItemInventoryOptions(fromAPIResponse: item.inventoryOptions)
-
-            return ContentItem(sku: item.sku,
-                               name: item.name,
-                               groups: groups,
-                               attributes: attributes,
-                               type: item.type,
-                               description: item.description,
-                               imageUrl: item.imageUrl,
-                               isFree: item.isFree,
-                               price: price,
-                               virtualPrices: virtualPrices,
-                               inventoryOptions: inventoryOptions,
-                               virtualItemType: item.virtualItemType,
-                               quantity: item.quantity)
-        }
-    }
-
-    init(fromResponse response: GetBundleResponse)
-    {
-        self.sku = response.sku
-        self.name = response.name
-        self.groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        self.description = response.description
-        self.attributes = response.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-        self.type = response.type
-        self.bundleType = response.bundleType
-        self.imageUrl = response.imageUrl
-        self.isFree = response.isFree
-        self.price = StoreItemPrice(fromOptionalAPIResponse: response.price)
-        self.totalContentPrice = StoreItemPrice(fromOptionalAPIResponse: response.totalContentPrice)
-        self.virtualPrices = response.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-
-        self.content = response.content.map
-        { item in
-
-            let price = StoreItemPrice(fromOptionalAPIResponse: item.price)
-            let virtualPrices = item.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-            let attributes = item.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-            let groups = item.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-            let inventoryOptions = StoreItemInventoryOptions(fromAPIResponse: item.inventoryOptions)
-
-            return ContentItem(sku: item.sku,
-                               name: item.name,
-                               groups: groups,
-                               attributes: attributes,
-                               type: item.type,
-                               description: item.description,
-                               imageUrl: item.imageUrl,
-                               isFree: item.isFree,
-                               price: price,
-                               virtualPrices: virtualPrices,
-                               inventoryOptions: inventoryOptions,
-                               virtualItemType: item.virtualItemType,
-                               quantity: item.quantity)
-        }
     }
 }

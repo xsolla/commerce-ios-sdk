@@ -56,7 +56,7 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
                 {
                     viewController.setState(.error(nil), animated: true)
                     logger.error { error }
-                    showError(error)
+                    self?.showError(error)
                 }
             }
         }
@@ -81,18 +81,18 @@ class AuthenticationOTPCoordinator: BaseCoordinator<AuthenticationOTPCoordinator
             self.dependencies.otpSequence.sendOTPRequest(payload: payload,
                                                          state: UUID().uuidString,
                                                          confirmationLink: AppConfig.passwordlessConfirmationUrl)
-            { result in
+            { [weak self] result in
 
                 if case .success = result
                 {
                     viewController.startTimer()
-                    self.startListeningConfirmationCode(in: viewController, payload: payload, operationId: operationId)
+                    self?.startListeningConfirmationCode(in: viewController, payload: payload, operationId: operationId)
                 }
 
                 if case .failure(let error) = result
                 {
                     logger.error { error }
-                    showError(error)
+                    self?.showError(error)
                 }
             }
         }

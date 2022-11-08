@@ -22,7 +22,7 @@ class RegisterNewUserRequest: LoginBaseRequest<RegisterNewUserRequest.Params>,
                               APIRequestProtocol
 {
     typealias ResponseModel = RegisterNewUserResponse
-    typealias ErrorHandler  = RegisterNewUserErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void
@@ -41,7 +41,8 @@ class RegisterNewUserRequest: LoginBaseRequest<RegisterNewUserRequest.Params>,
         [
             "response_type": params.responseType,
             "client_id": String(params.clientId),
-            "state": params.state
+            "state": params.state,
+            "locale": params.locale
         ]
         
         if let scope = params.scope { queryParams["scope"] = scope }
@@ -70,6 +71,7 @@ extension RegisterNewUserRequest
         // query params
         let responseType: String
         let clientId: Int
+        let locale: String?
         let state: String
         let scope: String?
         let redirectUri: String?

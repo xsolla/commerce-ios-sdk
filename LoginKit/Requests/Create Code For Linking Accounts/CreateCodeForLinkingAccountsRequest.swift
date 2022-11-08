@@ -20,7 +20,7 @@ class CreateCodeForLinkingAccountsRequest: LoginBaseRequest<CreateCodeForLinking
                                            APIRequestProtocol
 {
     typealias ResponseModel = CreateCodeForLinkingAccountsResponse
-    typealias ErrorHandler  = CreateCodeForLinkingAccountsErrorHandler
+    typealias ErrorHandler  = LoginAPIDefaultErrorHandler
     typealias ErrorModel    = LoginAPIErrorModel
     typealias ErrorType     = LoginAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

@@ -17,7 +17,7 @@ import XsollaSDKUtilities
 class AddUsernameAndPasswordRequest: LoginBaseRequest<AddUsernameAndPasswordRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = AddUsernameAndPasswordResponse
-    typealias ErrorHandler = AddUsernameAndPasswordErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

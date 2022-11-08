@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class GetCurrentUserDetailsRequest: LoginBaseRequest<GetCurrentUserDetailsRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = GetCurrentUserDetailsResponse
-    typealias ErrorHandler = GetCurrentUserDetailsErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

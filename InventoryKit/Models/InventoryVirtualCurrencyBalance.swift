@@ -33,16 +33,3 @@ public struct InventoryVirtualCurrencyBalance
     /// Image URL.
     public let imageUrl: String?
 }
-
-extension InventoryVirtualCurrencyBalance
-{
-    init(fromAPIResponse apiResponseModel: GetUserVirtualCurrencyBalanceResponse.Item)
-    {
-        self.sku = apiResponseModel.sku
-        self.type = apiResponseModel.type
-        self.name = apiResponseModel.name
-        self.amount = apiResponseModel.amount
-        self.description = apiResponseModel.description
-        self.imageUrl = apiResponseModel.imageUrl
-    }
-}

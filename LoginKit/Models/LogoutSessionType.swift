@@ -13,7 +13,6 @@
 
 import Foundation
 
-
 /// Shows how the user is logged out and how the user session is deleted.
 public enum LogoutSessionType: String
 {

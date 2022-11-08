@@ -51,39 +51,7 @@ public struct StoreVirtualItem
 
     /// Type of virtual item.
     public let virtualItemType: String
-}
-
-extension StoreVirtualItem
-{
-    init(fromResponse response: GetVirtualItemsResponse.Item)
-    {
-        self.sku = response.sku
-        self.name = response.name
-        self.groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        self.attributes = response.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-        self.type = response.type
-        self.description = response.description
-        self.imageUrl = response.imageUrl
-        self.isFree = response.isFree
-        self.price = StoreItemPrice(fromOptionalAPIResponse: response.price)
-        self.virtualPrices = response.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-        self.inventoryOptions = StoreItemInventoryOptions(fromAPIResponse: response.inventoryOptions)
-        self.virtualItemType = response.virtualItemType
-    }
-
-    init(fromResponse response: GetItemsOfGroupResponse.Item)
-    {
-        self.sku = response.sku
-        self.name = response.name
-        self.groups = response.groups.map { StoreItemGroupShort(externalId: $0.externalId, name: $0.name) }
-        self.attributes = response.attributes.map { StoreItemAttribute(fromAPIResponse: $0) }
-        self.type = response.type
-        self.description = response.description
-        self.imageUrl = response.imageUrl
-        self.isFree = response.isFree
-        self.price = StoreItemPrice(fromOptionalAPIResponse: response.price)
-        self.virtualPrices = response.virtualPrices.map { StoreItemVirtualPrice(fromAPIResponse: $0) }
-        self.inventoryOptions = StoreItemInventoryOptions(fromAPIResponse: response.inventoryOptions)
-        self.virtualItemType = response.virtualItemType
-    }
+    
+    /// Promotion settings in Store.
+    public let promotions: [StoreItemPromotion]
 }

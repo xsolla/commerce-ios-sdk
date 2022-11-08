@@ -50,18 +50,3 @@ public struct StoreItemGroupShort
     /// Group name.
     public let name: String
 }
-
-extension StoreItemGroup
-{
-    init(fromResponse response: GetItemGroupsResponse.Group)
-    {
-        externalId = response.externalId
-        name = response.name
-        description = response.description
-        imageUrl = response.imageUrl
-        order = response.order
-        level = response.level
-        children = response.children?.map { StoreItemGroup(fromResponse: $0) }
-        parentExternalId = response.parentExternalId
-    }
-}

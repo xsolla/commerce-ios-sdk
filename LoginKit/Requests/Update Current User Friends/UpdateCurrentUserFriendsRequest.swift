@@ -19,7 +19,7 @@ import XsollaSDKUtilities
 class UpdateCurrentUserFriendsRequest: LoginBaseRequest<UpdateCurrentUserFriendsRequest.Params>, APIRequestProtocol
 {
     typealias ResponseModel = APIEmptyResponse
-    typealias ErrorHandler = UpdateCurrentUserFriendsErrorHandler
+    typealias ErrorHandler = LoginAPIDefaultErrorHandler
     typealias ErrorModel = LoginAPIErrorModel
     typealias ErrorType = LoginAPIError
     typealias Callback = (Result<ResponseModel, ErrorType>) -> Void

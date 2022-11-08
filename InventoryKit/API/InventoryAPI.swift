@@ -41,10 +41,20 @@ extension InventoryAPI: InventoryAPIProtocol
                                platform: String?,
                                completion: @escaping (InventoryAPIResult<GetUserInventoryItemsResponse>) -> Void)
     {
-        GetUserInventoryItemsAPIProxy(configuration).getUserInventoryItems(accessToken: accessToken,
-                                                                           projectId: projectId,
-                                                                           platform: platform,
-                                                                           completion: completion)
+        let params = GetUserInventoryItemsRequest.Params(accessToken: accessToken,
+                                                         projectId: projectId,
+                                                         platform: platform)
+
+        let request = GetUserInventoryItemsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func getUserVirtualCurrencyBalance(
@@ -53,21 +63,41 @@ extension InventoryAPI: InventoryAPIProtocol
         platform: String?,
         completion: @escaping (InventoryAPIResult<GetUserVirtualCurrencyBalanceResponse>) -> Void)
     {
-        GetUserVirtualCurrencyBalanceAPIProxy(configuration).getUserVirtualCurrencyBalance(accessToken: accessToken,
-                                                                                           projectId: projectId,
-                                                                                           platform: platform,
-                                                                                           completion: completion)
+        let params = GetUserVirtualCurrencyBalanceRequest.Params(accessToken: accessToken,
+                                                                 projectId: projectId,
+                                                                 platform: platform)
+
+        let request = GetUserVirtualCurrencyBalanceRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
-    func getUserSubscriptions(accessToken: String,
-                              projectId: Int,
-                              platform: String?,
-                              completion: @escaping (InventoryAPIResult<GetUserSubscriptionsResponse>) -> Void)
+    func getTimeLimitedItems(accessToken: String,
+                             projectId: Int,
+                             platform: String?,
+                             completion: @escaping (InventoryAPIResult<GetTimeLimitedItemsResponse>) -> Void)
     {
-        GetUserSubscriptionsAPIProxy(configuration).getUserSubscriptions(accessToken: accessToken,
-                                                                         projectId: projectId,
-                                                                         platform: platform,
-                                                                         completion: completion)
+        let params = GetTimeLimitedItemsRequest.Params(accessToken: accessToken,
+                                                       projectId: projectId,
+                                                       platform: platform)
+
+        let request = GetTimeLimitedItemsRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
     
     func consumeItem(accessToken: String,
@@ -76,11 +106,23 @@ extension InventoryAPI: InventoryAPIProtocol
                      consumingItem: InventoryConsumingItem,
                      completion: @escaping (InventoryAPIResult<APIEmptyResponse>) -> Void)
     {
-        ConsumeItemAPIProxy(configuration).consumeItem(accessToken: accessToken,
-                                                       projectId: projectId,
-                                                       platform: platform,
-                                                       consumingItem: consumingItem,
-                                                       completion: completion)
+        let params = ConsumeItemRequest.Params(accessToken: accessToken,
+                                               projectId: projectId,
+                                               platform: platform,
+                                               itemSku: consumingItem.sku,
+                                               itemQuantity: consumingItem.quantity,
+                                               instanceId: consumingItem.instanceId)
+
+        let request = ConsumeItemRequest(params: params, apiConfiguration: configuration)
+
+        request.perform
+        { result in
+            switch result
+            {
+                case .success(let responseModel): completion(.success(responseModel))
+                case .failure(let error): completion(.failure(error))
+            }
+        }
     }
 }
 

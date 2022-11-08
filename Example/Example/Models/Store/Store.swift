@@ -17,7 +17,9 @@ import XsollaSDKInventoryKit
 
 class Store: StoreProtocol
 {
-    func purchase(itemSku: String, withCurrencySku currencySku: String, completion: @escaping StoreKitCompletion<Int>)
+    func purchase(itemSku: String,
+                  withCurrencySku currencySku: String, 
+                  completion: @escaping (Result<Int, Error>) -> Void)
     {
         dependencies.xsollaSDK.purchaseItemByVirtualCurrency(projectId: AppConfig.projectId,
                                                              itemSKU: itemSku,
@@ -32,7 +34,7 @@ class Store: StoreProtocol
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
-                     completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
+                     completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
     {
 
         let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme,

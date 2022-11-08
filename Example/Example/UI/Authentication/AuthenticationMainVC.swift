@@ -87,26 +87,9 @@ class AuthenticationMainVC: BaseViewController, AuthenticationMainVCProtocol
     {
         var items: [TabbarViewController.Item] = []
         
-        do
-        {
-            let tabbarItem = UITabBarItem(title: L10n.Auth.Main.Tabs.login,
-                                          image: nil,
-                                          selectedImage: nil)
-            
-            let item = TabbarViewController.Item(tabbarItem: tabbarItem, viewController: loginVC)
-            items.append(item)
-        }
-        
-        do
-        {
-            let tabbarItem = UITabBarItem(title: L10n.Auth.Main.Tabs.signup,
-                                          image: nil,
-                                          selectedImage: nil)
-            
-            let item = TabbarViewController.Item(tabbarItem: tabbarItem, viewController: signupVC)
-            items.append(item)
-        }
-        
+        items.append(TabbarViewController.Item(title: L10n.Auth.Main.Tabs.login, viewController: loginVC))
+        items.append(TabbarViewController.Item(title: L10n.Auth.Main.Tabs.signup, viewController: signupVC))
+
         addChild(tabbarVC)
         tabbarViewControllerContainer.addSubview(tabbarVC.view)
         tabbarVC.view.pinToSuperview()

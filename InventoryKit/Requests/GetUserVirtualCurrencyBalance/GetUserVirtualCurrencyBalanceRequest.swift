@@ -20,7 +20,7 @@ class GetUserVirtualCurrencyBalanceRequest: InventoryBaseRequest<GetUserVirtualC
                                             APIRequestProtocol
 {
     typealias ResponseModel = GetUserVirtualCurrencyBalanceResponse
-    typealias ErrorHandler  = GetUserVirtualCurrencyBalanceErrorHandler
+    typealias ErrorHandler  = InventoryAPIDefaultErrorHandler
     typealias ErrorModel    = InventoryAPIErrorModel
     typealias ErrorType     = InventoryAPIError
     typealias Callback      = (Result<ResponseModel, ErrorType>) -> Void

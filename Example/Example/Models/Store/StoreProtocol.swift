@@ -18,11 +18,14 @@ import XsollaSDKStoreKit
 
 protocol StoreProtocol: AnyObject
 {
-    func purchase(itemSku: String, withCurrencySku currencySku: String, completion: @escaping StoreKitCompletion<Int>)
+    func purchase(itemSku: String,
+                  withCurrencySku currencySku: String, 
+                  completion: @escaping (Result<Int, Error>) -> Void)
+    
     func createOrder(itemSKU: String,
                      quantity: Int,
                      currency: String?,
                      locale: String?,
                      isSandbox: Bool,
-                     completion: @escaping StoreKitCompletion<StoreOrderPaymentInfo>)
+                     completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
 }

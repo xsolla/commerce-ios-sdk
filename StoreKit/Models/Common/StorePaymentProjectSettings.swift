@@ -50,7 +50,6 @@ public struct StorePaymentProjectSettings: Encodable
     }
 }
 
-
 extension StorePaymentProjectSettings
 {
     public struct UISettings: Encodable
@@ -88,7 +87,6 @@ extension StorePaymentProjectSettings.UISettings
         case large
     }
 }
-
 
 extension StorePaymentProjectSettings
 {

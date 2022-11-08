@@ -104,19 +104,24 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
     {
         viewController.setState(.loading(nil), animated: true)
 
-        loginAsync.authWith(username: AppConfig.demoUsername, password: AppConfig.demoPassword).then
-        { tokenInfo in
+        dependencies.xsollaSDK.createDemoUser { [weak self] result in guard let self = self else { return }
 
-            viewController.setState(.normal, animated: true)
-            self.dependencies.loginManager.login(tokenInfo: tokenInfo)
-            self.onFinish?(self)
-        }
-        .catch
-        { error in
+            DispatchQueue.main.async
+            {
+                if case .success(let tokenInfo) = result
+                {
+                    viewController.setState(.normal, animated: true)
+                    self.dependencies.loginManager.login(tokenInfo: tokenInfo)
+                    self.onFinish?(self)
+                }
 
-            logger.error { error }
-            viewController.setState(.error(nil), animated: true)
-            self.showError(error)
+                if case .failure(let error) = result
+                {
+                    logger.error { error }
+                    viewController.setState(.error(nil), animated: true)
+                    self.showError(error)
+                }
+            }
         }
     }
 
