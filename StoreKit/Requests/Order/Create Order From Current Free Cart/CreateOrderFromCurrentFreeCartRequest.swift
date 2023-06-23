@@ -14,11 +14,11 @@
 import Foundation
 import XsollaSDKUtilities
 
-// https://developers.xsolla.com/api/igs-bb/operation/create-order-by-cart-id/
+//https://developers.xsolla.com/ru/api/igs-bb/operation/create-free-order/
 
-class CreateOrderFromParticularCartRequest: StoreBaseRequest<CreateOrderFromParticularCartRequest.Params>, APIRequestProtocol
+class CreateOrderFromCurrentFreeCartRequest: StoreBaseRequest<CreateOrderFromCurrentFreeCartRequest.Params>, APIRequestProtocol
 {
-    typealias ResponseModel = CreateOrderResponse
+    typealias ResponseModel = CreateFreeOrderResponse
     typealias ErrorHandler = StoreAPIDefaultErrorHandler
     typealias ErrorModel = StoreAPIErrorModel
     typealias ErrorType = StoreAPIError
@@ -30,11 +30,9 @@ class CreateOrderFromParticularCartRequest: StoreBaseRequest<CreateOrderFromPart
     
     override var httpMethod: HTTPMethod { .post }
     
-    override var relativePath: String { "/v2/project/\(String(params.projectId))/payment/cart/\(params.cartId)" }
+    override var relativePath: String { "/v2/project/\(String(params.projectId))/free/cart" }
     
     override var authenticationToken: String? { params.accessToken }
-    
-    override var bodyParameters: Encodable? { params.bodyParams }
     
     func handleSuccess(model: ResponseModel, completionHandler: Callback)
     {
@@ -47,22 +45,11 @@ class CreateOrderFromParticularCartRequest: StoreBaseRequest<CreateOrderFromPart
     }
 }
 
-extension CreateOrderFromParticularCartRequest
+extension CreateOrderFromCurrentFreeCartRequest
 {
     struct Params: RequestParams
     {
         let projectId: Int
-        let cartId: String
         let accessToken: String
-        let bodyParams: BodyParams
-    }
-
-    struct BodyParams: Encodable
-    {
-        let currency: String?
-        let locale: String?
-        let sandbox: Bool
-        let settings: StorePaymentProjectSettings?
-        let customParameters: [String: String]?
     }
 }

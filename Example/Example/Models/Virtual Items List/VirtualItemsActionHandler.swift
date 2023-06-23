@@ -53,6 +53,7 @@ class VirtualItemsActionHandler
 
             switch action
             {
+                case .buyFree: self?.buyFree(item: item)
                 case .buyWithRealCurrency: self?.buy(item: item)
                 case .buyWithVirtualCurrency(let sku): self?.buy(item: item, withVirtialCurrency: sku)
                 case .previewBundle: self?.previewBundle(for: item)
@@ -76,6 +77,27 @@ class VirtualItemsActionHandler
             switch result
             {
                 case .success(let createdOrder): self?.orderPaymentHandler?(createdOrder)
+
+                case .failure(let error): logger.error { error }
+            }
+        }
+    }
+    
+    /// Buy a free virtual item.
+    private func buyFree(item: VirtualItemsListDatasource.Item)
+    {
+        logger.info { "Buy free item: \(item.name)" }
+
+        store.purchaseFreeItem(itemSKU: item.sku)
+        { [weak self] result in
+
+            switch result
+            {
+                case .success(let orderId): do
+                {
+                    logger.info { "Bought free item: \(item.name), order id: \(orderId)" }
+                    self?.reloadDataRequest?()
+                }
 
                 case .failure(let error): logger.error { error }
             }

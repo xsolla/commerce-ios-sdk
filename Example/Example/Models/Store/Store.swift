@@ -29,6 +29,17 @@ class Store: StoreProtocol
                                                              completion: completion)
     }
     
+    func purchaseFreeItem(itemSKU: String,
+                          completion: @escaping (Result<Int, Error>) -> Void)
+    {
+        
+        dependencies.xsollaSDK.purchaseFreeItem(projectId: AppConfig.projectId,
+                                                itemSKU: itemSKU,
+                                                quantity: 1,
+                                                customParameters: nil,
+                                                completion: completion)
+    }
+    
     func createOrder(itemSKU: String,
                      quantity: Int = 1,
                      currency: String?,

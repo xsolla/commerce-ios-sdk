@@ -288,53 +288,11 @@ extension StoreKit
     }
 
     /**
-     Creates an order with all items from the particular cart. The created order will get a `new` order status.
-     - Parameters:
-        - projectId: Project ID, can be found in Publisher Account next to the name of the project. **Required**.
-        - accessToken: User JWT obtained during authorization using Xsolla Login ([Bearer token](https://developers.xsolla.com/api/login/overview/#section/Authentication/Getting-a-user-token)). **Required**.
-        - cartId: Unique cart identifier. **Required**.
-        - currency: Preferred payment currency (USD by default). Three-letter currency code per ISO 4217.
-        - locale: Interface language (English by default). Accepts values according to the ISO 639-1 standard.
-        - isSandbox: Whether to open payment UI in the sandbox mode. The option is available for users specified in the list of company users.
-        - paymentProjectSettings: Custom Pay Station settings.
-        - customParameters: Project specific parameters.
-        - completion: Closure with `Result`: `StoreOrderPaymentInfo` in case of success and `Error` in case of failure.
-     */
-    public func createOrderFromParticularCart(projectId: Int,
-                                              accessToken: String,
-                                              cartId: String,
-                                              quantity: Int = 1,
-                                              currency: String? = nil,
-                                              locale: String? = nil,
-                                              isSandbox: Bool,
-                                              paymentProjectSettings: StorePaymentProjectSettings? = nil,
-                                              customParameters: [String: String]? = nil,
-                                              completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
-    {
-        api.createOrderFromParticularCart(accessToken: accessToken,
-                                          projectId: projectId,
-                                          cartId: cartId,
-                                          quantity: quantity,
-                                          currency: currency,
-                                          locale: locale,
-                                          isSandbox: isSandbox,
-                                          paymentProjectSettings: paymentProjectSettings,
-                                          customParameters: customParameters)
-        { [factory = modelFactory, translator = errorTranslator] result in
-
-            completion(result
-                .map { factory.getStoreOrderPaymentInfo(response: $0, isSandbox: isSandbox) }
-                .mapError(translator.translateError)
-            )
-        }
-    }
-
-    /**
      Creates an order with all items from the cart. The created order will get a `new` order status.
      - Parameters:
         - projectId: Project ID, can be found in Publisher Account next to the name of the project. **Required**.
         - accessToken: User JWT obtained during authorization using Xsolla Login ([Bearer token](https://developers.xsolla.com/api/login/overview/#section/Authentication/Getting-a-user-token)). **Required**.
-        - cartId: Unique cart identifier. **Required**.
+        - cartId: Unique cart identifier.
         - currency: Preferred payment currency (USD by default). Three-letter currency code per ISO 4217.
         - locale: Interface language (English by default). Accepts values according to the ISO 639-1 standard.
         - isSandbox: Whether to open payment UI in the sandbox mode. The option is available for users specified in the list of company users.
@@ -342,22 +300,24 @@ extension StoreKit
         - customParameters: Project specific parameters.
         - completion: Closure with `Result`: `StoreOrderPaymentInfo` in case of success and `Error` in case of failure.
      */
-    public func createOrderFromCurrentCart(projectId: Int,
-                                           accessToken: String,
-                                           currency: String? = nil,
-                                           locale: String? = nil,
-                                           isSandbox: Bool,
-                                           paymentProjectSettings: StorePaymentProjectSettings? = nil,
-                                           customParameters: [String: String]? = nil,
-                                           completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
+    public func createOrderWithCart(projectId: Int,
+                                    accessToken: String,
+                                    cartId: String?,
+                                    currency: String? = nil,
+                                    locale: String? = nil,
+                                    isSandbox: Bool,
+                                    paymentProjectSettings: StorePaymentProjectSettings? = nil,
+                                    customParameters: [String: String]? = nil,
+                                    completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
     {
-        api.createOrderFromCurrentCart(accessToken: accessToken,
-                                       projectId: projectId,
-                                       currency: currency,
-                                       locale: locale,
-                                       isSandbox: isSandbox,
-                                       paymentProjectSettings: paymentProjectSettings,
-                                       customParameters: customParameters)
+        api.createOrderWithCart(accessToken: accessToken,
+                                projectId: projectId,
+                                cartId: cartId,
+                                currency: currency,
+                                locale: locale,
+                                isSandbox: isSandbox,
+                                paymentProjectSettings: paymentProjectSettings,
+                                customParameters: customParameters)
         { [factory = modelFactory, translator = errorTranslator] result in
 
             completion(result
@@ -366,7 +326,60 @@ extension StoreKit
             )
         }
     }
+    
+    /**
+     Create order with free cart.
+     - Parameters:
+        - projectId: Project ID, can be found in Publisher Account next to the name of the project. **Required**.
+        - accessToken: User JWT obtained during authorization using Xsolla Login ([Bearer token](https://developers.xsolla.com/api/login/overview/#section/Authentication/Getting-a-user-token)). **Required**.
+        - cartId: Unique cart identifier.
+        - completion: Closure with `Result`: `OrderId` in case of success and `Error` in case of failure.
+     */
+    public func createOrderWithFreeCart(projectId: Int,
+                                        accessToken: String,
+                                        cartId: String? = nil,
+                                        completion: @escaping (Result<Int, Error>) -> Void)
+    {
+        api.createOrderWithFreeCart(accessToken: accessToken,
+                                    projectId: projectId,
+                                    cartId: cartId)
+        { [factory = modelFactory, translator = errorTranslator] result in
 
+            completion(result
+                .map(factory.getFreeOrderId)
+                .mapError(translator.translateError)
+            )
+        }
+    }
+    
+    /**
+     Create an order with a specified free item
+     - Parameters:
+        - projectId: Project ID, can be found in Publisher Account next to the name of the project. **Required**.
+        - itemSku: Item SKU.
+        - quantity: Item quantity.
+        - accessToken: User JWT obtained during authorization using Xsolla Login ([Bearer token](https://developers.xsolla.com/api/login/overview/#section/Authentication/Getting-a-user-token)). **Required**.
+        - completion: Closure with `Result`: `OrderId` in case of success and `Error` in case of failure.
+     */
+    public func createOrderWithSpecifiedFreeItem(projectId: Int,
+                                                 itemSKU: String,
+                                                 quantity: Int = 1,
+                                                 accessToken: String,
+                                                 completion: @escaping (Result<Int, Error>) -> Void)
+    {
+        api.createOrderWithFreeItem(accessToken: accessToken,
+                                    projectId: projectId,
+                                    itemSKU: itemSKU,
+                                    quantity: quantity)
+        { [factory = modelFactory, translator = errorTranslator] result in
+
+            completion(result
+                .map(factory.getFreeOrderId)
+                .mapError(translator.translateError)
+            )
+        }
+    }
+    
     /**
      Creates item purchase using virtual currency.
      - Parameters:

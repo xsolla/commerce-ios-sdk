@@ -178,6 +178,7 @@ class VirtualItemCell: TableViewCell
             case .buyWithRealCurrency,
                  .buyWithVirtualCurrency: return L10n.Common.Button.buy
                 
+            case .buyFree: return L10n.Common.Button.free
             case .previewBundle: return L10n.Common.Button.preview
             
             default: return ""

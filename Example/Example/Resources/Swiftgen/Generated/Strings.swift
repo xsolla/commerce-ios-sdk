@@ -244,6 +244,8 @@ internal enum L10n {
         internal static var buyAgain: String { L10n.tr("Localizable", "Common.button.buyAgain") }
         /// Consume
         internal static var consume: String { L10n.tr("Localizable", "Common.button.consume") }
+        /// Free
+        internal static var free: String { L10n.tr("Localizable", "Common.button.free") }
         /// Preview
         internal static var preview: String { L10n.tr("Localizable", "Common.button.preview") }
       }

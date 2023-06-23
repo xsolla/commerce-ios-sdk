@@ -36,7 +36,8 @@ extension GetVirtualCurrencyResponse
         let price: PriceResponse?
         let virtualPrices: [VirtualPriceResponse]
         let inventoryOptions: InventoryOptionsResponse
-        let promotions : [StoreItemPromotionResponse]
+        let promotions: [StoreItemPromotionResponse]
+        let limits: StoreItemLimitsResponse?
         
         enum CodingKeys: String, CodingKey
         {
@@ -52,6 +53,7 @@ extension GetVirtualCurrencyResponse
             case virtualPrices = "virtual_prices"
             case inventoryOptions = "inventory_options"
             case promotions = "promotions"
+            case limits = "limits"
         }
     }
 }

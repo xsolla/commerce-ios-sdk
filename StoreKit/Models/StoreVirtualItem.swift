@@ -54,4 +54,7 @@ public struct StoreVirtualItem
     
     /// Promotion settings in Store.
     public let promotions: [StoreItemPromotion]
+    
+    /// Limits.
+    public let limits: StoreItemLimits?
 }

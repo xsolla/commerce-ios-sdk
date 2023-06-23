@@ -105,6 +105,7 @@
 "Common.button.buyAgain" = "Buy Again";
 "Common.button.buy" = "Buy now";
 "Common.button.preview" = "Preview";
+"Common.button.free" = "Free";
 
 // MARK: - Account
 

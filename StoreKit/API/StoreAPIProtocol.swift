@@ -82,25 +82,26 @@ protocol StoreAPIProtocol
                      customParameters: [String: String]?,
                      completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
     
-    func createOrderFromParticularCart(accessToken: String,
-                                       projectId: Int,
-                                       cartId: String,
-                                       quantity: Int,
-                                       currency: String?,
-                                       locale: String?,
-                                       isSandbox: Bool,
-                                       paymentProjectSettings: StorePaymentProjectSettings?,
-                                       customParameters: [String: String]?,
-                                       completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    func createOrderWithCart(accessToken: String,
+                             projectId: Int,
+                             cartId: String?,
+                             currency: String?,
+                             locale: String?,
+                             isSandbox: Bool,
+                             paymentProjectSettings: StorePaymentProjectSettings?,
+                             customParameters: [String: String]?,
+                             completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
     
-    func createOrderFromCurrentCart(accessToken: String,
-                                    projectId: Int,
-                                    currency: String?,
-                                    locale: String?,
-                                    isSandbox: Bool,
-                                    paymentProjectSettings: StorePaymentProjectSettings?,
-                                    customParameters: [String: String]?,
-                                    completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    func createOrderWithFreeCart(accessToken: String,
+                                 projectId: Int,
+                                 cartId: String?,
+                                 completion: @escaping (StoreAPIResult<CreateFreeOrderResponse>) -> Void)
+    
+    func createOrderWithFreeItem(accessToken: String,
+                                 projectId: Int,
+                                 itemSKU: String,
+                                 quantity: Int,
+                                 completion: @escaping (StoreAPIResult<CreateFreeOrderResponse>) -> Void)
     
     func purchaseItemByVirtualCurrency(
         projectId: Int,

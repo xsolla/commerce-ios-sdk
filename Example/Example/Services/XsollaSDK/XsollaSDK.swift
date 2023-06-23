@@ -1111,6 +1111,23 @@ extension XsollaSDK
                                                 completion: completion) }
     }
     
+    func purchaseFreeItem(projectId: Int,
+                          itemSKU: String,
+                          quantity: Int,
+                          customParameters: Encodable?,
+                          completion: @escaping (Result<Int, Error>) -> Void)
+    {
+        let store = self.store
+        startTokenDependentTask
+        { token in guard let token = token else { completion(.failure(LoginKitError.invalidToken)); return }
+            
+            store.createOrderWithSpecifiedFreeItem(projectId: projectId,
+                                                   itemSKU: itemSKU,
+                                                   quantity: quantity,
+                                                   accessToken: token,
+                                                   completion: completion) }
+    }
+    
     func redeemCoupon(projectId: Int,
                       couponCode: String,
                       selectedUnitItems: [String: String]?,

@@ -37,7 +37,8 @@ extension GetItemsOfGroupResponse
         let virtualPrices: [VirtualPriceResponse]
         let inventoryOptions: InventoryOptionsResponse
         let virtualItemType: String
-        let promotions : [StoreItemPromotionResponse]
+        let promotions: [StoreItemPromotionResponse]
+        let limits: StoreItemLimitsResponse?
         
         enum CodingKeys: String, CodingKey
         {
@@ -54,6 +55,7 @@ extension GetItemsOfGroupResponse
             case inventoryOptions = "inventory_options"
             case virtualItemType = "virtual_item_type"
             case promotions = "promotions"
+            case limits = "limits"
         }
     }
 }

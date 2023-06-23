@@ -26,6 +26,7 @@ protocol ModelFactoryProtocol
     func getOrder(response: GetOrderResponse) -> StoreOrder
     func getStoreOrderPaymentInfo(response: CreateOrderResponse, isSandbox: Bool) -> StoreOrderPaymentInfo
     func getOrderId(response: PurchaseItemByVirtualCurrencyResponse) -> Int
+    func getFreeOrderId(response: CreateFreeOrderResponse) -> Int
     func getRedeemedCouponItems(response: RedeemCouponResponse) -> [StoreRedeemedCouponItem]
     func getCouponRewards(response: GetCouponRewardsResponse) -> StoreCouponRewards
     func getPromocodeRewards(response: GetPromocodeRewardsResponse) -> StorePromocodeRewards
@@ -118,7 +119,8 @@ class StoreKitModelFactory: ModelFactoryProtocol
                            bundleType: response.bundleType,
                            totalContentPrice: response.totalContentPrice.flatMap(getStoreItemPrice),
                            content: content,
-                           promotions: response.promotions.map(getStoreItemPromotion))
+                           promotions: response.promotions.map(getStoreItemPromotion),
+                           limits: response.limits.flatMap(getStoreItemLimits))
     }
 
     func getOrder(response: GetOrderResponse) -> StoreOrder
@@ -158,7 +160,12 @@ class StoreKitModelFactory: ModelFactoryProtocol
     {
         response.orderId
     }
-
+    
+    func getFreeOrderId(response: CreateFreeOrderResponse) -> Int
+    {
+        response.orderId
+    }
+    
     func getRedeemedCouponItems(response: RedeemCouponResponse) -> [StoreRedeemedCouponItem]
     {
         response.items.map(getStoreCouponRedeemedItem)
@@ -420,7 +427,8 @@ private extension StoreKitModelFactory
                          virtualPrices: response.virtualPrices.map(getStoreItemVirtualPrice),
                          inventoryOptions: getStoreItemInventoryOptions(response: response.inventoryOptions),
                          virtualItemType: response.virtualItemType,
-                         promotions: response.promotions.map(getStoreItemPromotion))
+                         promotions: response.promotions.map(getStoreItemPromotion),
+                         limits: response.limits.flatMap(getStoreItemLimits))
     }
 
     func getStoreVirtualItem(response: GetItemsOfGroupResponse.Item) -> StoreVirtualItem
@@ -437,7 +445,8 @@ private extension StoreKitModelFactory
                          virtualPrices: response.virtualPrices.map(getStoreItemVirtualPrice),
                          inventoryOptions: getStoreItemInventoryOptions(response: response.inventoryOptions),
                          virtualItemType: response.virtualItemType,
-                         promotions: response.promotions.map(getStoreItemPromotion))
+                         promotions: response.promotions.map(getStoreItemPromotion),
+                         limits: response.limits.flatMap(getStoreItemLimits))
     }
 
     func getStoreVirtualCurrency(response: GetVirtualCurrencyResponse.Item) -> StoreVirtualCurrency
@@ -453,7 +462,8 @@ private extension StoreKitModelFactory
                              price: response.price.flatMap(getStoreItemPrice),
                              virtualPrices: response.virtualPrices.map(getStoreItemVirtualPrice),
                              inventoryOptions: getStoreItemInventoryOptions(response: response.inventoryOptions),
-                             promotions: response.promotions.map(getStoreItemPromotion))
+                             promotions: response.promotions.map(getStoreItemPromotion),
+                             limits: response.limits.flatMap(getStoreItemLimits))
     }
 
     func getStoreCurrencyPackage(response: GetVirtualCurrencyPackagesResponse.Item) -> StoreCurrencyPackage
@@ -533,7 +543,8 @@ private extension StoreKitModelFactory
                            bundleType: response.bundleType,
                            totalContentPrice: response.totalContentPrice.flatMap(getStoreItemPrice),
                            content: content,
-                           promotions: response.promotions.map(getStoreItemPromotion))
+                           promotions: response.promotions.map(getStoreItemPromotion),
+                           limits: response.limits.flatMap(getStoreItemLimits))
     }
 
     func getStoreItemVirtualPrice(response: VirtualPriceResponse) -> StoreItemVirtualPrice
@@ -668,5 +679,18 @@ private extension StoreKitModelFactory
                       gameSku: response.gameSku,
                       drm: response.drm,
                       isPreOrder: response.isPreOrder)
+    }
+    
+    func getStoreItemLimits(response: StoreItemLimitsResponse) -> StoreItemLimits
+    {
+        let available = response.perUser.available
+        let total = response.perUser.total
+        let requrrentSchedule = StoreItemLimits.LimitsPerUser.RecurrentSchedule(intervalType: response.perUser.recurrentSchedule.intervalType,
+                                                                                resetNextDate: response.perUser.recurrentSchedule.resetNextDate)
+        let perUser = StoreItemLimits.LimitsPerUser(available: available,
+                                                    total: total,
+                                                    recurrentSchedule: requrrentSchedule)
+
+        return StoreItemLimits(perUser: perUser)
     }
 }

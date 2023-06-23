@@ -50,4 +50,7 @@ public struct StoreVirtualCurrency
     
     /// Promotion settings in Store.
     public let promotions: [StoreItemPromotion]
+    
+    /// Limits.
+    public let limits: StoreItemLimits?
 }

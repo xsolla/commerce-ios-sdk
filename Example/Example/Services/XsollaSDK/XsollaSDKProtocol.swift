@@ -247,6 +247,12 @@ protocol XsollaSDKProtocol: AnyObject
                                        customParameters: Encodable?,
                                        completion: @escaping (Result<Int, Error>) -> Void)
     
+    func purchaseFreeItem(projectId: Int,
+                          itemSKU: String,
+                          quantity: Int,
+                          customParameters: Encodable?,
+                          completion: @escaping (Result<Int, Error>) -> Void)
+    
     func redeemCoupon(projectId: Int,
                       couponCode: String,
                       selectedUnitItems: [String: String]?,

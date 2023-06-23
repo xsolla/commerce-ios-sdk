@@ -22,6 +22,9 @@ protocol StoreProtocol: AnyObject
                   withCurrencySku currencySku: String, 
                   completion: @escaping (Result<Int, Error>) -> Void)
     
+    func purchaseFreeItem(itemSKU: String,
+                          completion: @escaping (Result<Int, Error>) -> Void)
+
     func createOrder(itemSKU: String,
                      quantity: Int,
                      currency: String?,

@@ -30,7 +30,8 @@ struct GetBundleResponse: Decodable
     let totalContentPrice: PriceResponse?
     let virtualPrices: [VirtualPriceResponse]
     let content: [ContentItem]
-    let promotions : [StoreItemPromotionResponse]
+    let promotions: [StoreItemPromotionResponse]
+    let limits: StoreItemLimitsResponse?
     
     enum CodingKeys: String, CodingKey
     {
@@ -48,6 +49,7 @@ struct GetBundleResponse: Decodable
         case virtualPrices = "virtual_prices"
         case content = "content"
         case promotions = "promotions"
+        case limits = "limits"
     }
 }
 

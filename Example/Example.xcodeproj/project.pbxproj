@@ -252,6 +252,23 @@
 		7EEC1D1825CC246F00969618 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEC1D1725CC246F00969618 /* ActivityIndicator.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5B2A095F264BC75C0039456A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7EC5C033264559F700CBBF22;
+			remoteInfo = SubscriptionsKit;
+		};
+		5B2A0961264BC75C0039456A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7EC5C03C264559F700CBBF22;
+			remoteInfo = SubscriptionsKitTests;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		5B00C4F825C2D28A0063B87B /* BalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceView.swift; sourceTree = "<group>"; };
 		5B06AE5325B713A4001FE7E5 /* TextFieldDelegateProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldDelegateProxy.swift; sourceTree = "<group>"; };
@@ -295,6 +312,7 @@
 		5B29589826A9711300FF1D2D /* AsyncUtilsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncUtilsFactory.swift; sourceTree = "<group>"; };
 		5B29589A26A9884B00FF1D2D /* AccessTokenInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInfo.swift; sourceTree = "<group>"; };
 		5B29BF1A28B277D1000993B8 /* DemoUserCreationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoUserCreationHelper.swift; sourceTree = "<group>"; };
+		5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SubscriptionsKit.xcodeproj; path = ../SubscriptionsKit/SubscriptionsKit.xcodeproj; sourceTree = "<group>"; };
 		5B2AB89525B5F5F500E57D16 /* FloatingTitleTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTitleTextField.swift; sourceTree = "<group>"; };
 		5B2B615627889F380033DD87 /* SegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControl.swift; sourceTree = "<group>"; };
 		5B2B8EC725E928F90029F4AA /* SystemFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemFont.swift; sourceTree = "<group>"; };
@@ -500,6 +518,16 @@
 		7EEC1D1725CC246F00969618 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		5BDF75482594C31E00BB9350 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		5B00C4EE25C2D2820063B87B /* Views */ = {
 			isa = PBXGroup;
@@ -583,6 +611,15 @@
 				5B1D110125E5680D00FF2AB4 /* Store.swift */,
 			);
 			path = Store;
+			sourceTree = "<group>";
+		};
+		5B2A0953264BC75C0039456A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */,
+				5B2A0962264BC75C0039456A /* SubscriptionsKitTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		5B2C60B32613326B00AC6D47 /* Misc */ = {
@@ -1259,6 +1296,7 @@
 				5B9DBC2E25A37C2600883FBA /* SwiftGen */,
 				5B9DBBE625A3678A00883FBA /* SwiftLint */,
 				5BDF75472594C31E00BB9350 /* Sources */,
+				5BDF75482594C31E00BB9350 /* Frameworks */,
 				5BDF75492594C31E00BB9350 /* Resources */,
 			);
 			buildRules = (
@@ -1295,12 +1333,35 @@
 			mainGroup = 5BDF75422594C31E00BB9350;
 			productRefGroup = 5BDF754C2594C31E00BB9350 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5B2A0953264BC75C0039456A /* Products */;
+					ProjectRef = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5BDF754A2594C31E00BB9350 /* Example */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKSubscriptionsKit.framework;
+			remoteRef = 5B2A095F264BC75C0039456A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2A0962264BC75C0039456A /* SubscriptionsKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SubscriptionsKitTests.xctest;
+			remoteRef = 5B2A0961264BC75C0039456A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5BDF75492594C31E00BB9350 /* Resources */ = {
@@ -1760,7 +1821,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1783,7 +1844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

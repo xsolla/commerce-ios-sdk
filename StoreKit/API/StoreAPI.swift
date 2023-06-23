@@ -208,52 +208,81 @@ extension StoreAPI: StoreAPIProtocol
         CreateOrderRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
-    func createOrderFromParticularCart(accessToken: String,
-                                       projectId: Int,
-                                       cartId: String,
-                                       quantity: Int,
-                                       currency: String?,
-                                       locale: String?,
-                                       isSandbox: Bool,
-                                       paymentProjectSettings: StorePaymentProjectSettings?,
-                                       customParameters: [String: String]?,
-                                       completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    func createOrderWithCart(accessToken: String,
+                             projectId: Int,
+                             cartId: String?,
+                             currency: String?,
+                             locale: String?,
+                             isSandbox: Bool,
+                             paymentProjectSettings: StorePaymentProjectSettings?,
+                             customParameters: [String: String]?,
+                             completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
     {
-        let bodyParams = CreateOrderFromParticularCartRequest.BodyParams(currency: currency,
-                                                                         quantity: quantity,
-                                                                         locale: locale,
-                                                                         sandbox: isSandbox,
-                                                                         settings: paymentProjectSettings,
-                                                                         customParameters: customParameters)
-        
-        let params = CreateOrderFromParticularCartRequest.Params(projectId: projectId,
-                                                                 cartId: cartId,
-                                                                 accessToken: accessToken,
-                                                                 bodyParams: bodyParams)
-        
-        CreateOrderFromParticularCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+        if cartId != nil
+        {
+            let bodyParams = CreateOrderFromParticularCartRequest.BodyParams(currency: currency,
+                                                                             locale: locale,
+                                                                             sandbox: isSandbox,
+                                                                             settings: paymentProjectSettings,
+                                                                             customParameters: customParameters)
+            
+            let params = CreateOrderFromParticularCartRequest.Params(projectId: projectId,
+                                                                     cartId: cartId!,
+                                                                     accessToken: accessToken,
+                                                                     bodyParams: bodyParams)
+            
+            CreateOrderFromParticularCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+        } else
+        {
+            let bodyParams = CreateOrderFromCurrentCartRequest.BodyParams(currency: currency,
+                                                                          locale: locale,
+                                                                          sandbox: isSandbox,
+                                                                          settings: paymentProjectSettings,
+                                                                          customParameters: customParameters)
+            
+            let params = CreateOrderFromCurrentCartRequest.Params(projectId: projectId,
+                                                                  accessToken: accessToken,
+                                                                  bodyParams: bodyParams)
+            
+            CreateOrderFromCurrentCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+        }
     }
     
-    func createOrderFromCurrentCart(accessToken: String,
-                                    projectId: Int,
-                                    currency: String?,
-                                    locale: String?,
-                                    isSandbox: Bool,
-                                    paymentProjectSettings: StorePaymentProjectSettings?,
-                                    customParameters: [String: String]?,
-                                    completion: @escaping (StoreAPIResult<CreateOrderResponse>) -> Void)
+    func createOrderWithFreeCart(accessToken: String,
+                                 projectId: Int,
+                                 cartId: String?,
+                                 completion: @escaping (StoreAPIResult<CreateFreeOrderResponse>) -> Void)
     {
-        let bodyParams = CreateOrderFromCurrentCartRequest.BodyParams(currency: currency,
-                                                                      locale: locale,
-                                                                      sandbox: isSandbox,
-                                                                      settings: paymentProjectSettings,
-                                                                      customParameters: customParameters)
+        if cartId != nil
+        {
+            let params = CreateOrderFromParticularFreeCartRequest.Params(projectId: projectId,
+                                                                         cartId: cartId!,
+                                                                         accessToken: accessToken)
+            
+            CreateOrderFromParticularFreeCartRequest(params: params,apiConfiguration: configuration).perform(completion)
+        } else
+        {
+            let params = CreateOrderFromCurrentFreeCartRequest.Params(projectId: projectId,
+                                                                      accessToken: accessToken)
+            
+            CreateOrderFromCurrentFreeCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+        }
+    }
+    
+    func createOrderWithFreeItem(accessToken: String,
+                                 projectId: Int,
+                                 itemSKU: String,
+                                 quantity: Int,
+                                 completion: @escaping (StoreAPIResult<CreateFreeOrderResponse>) -> Void)
+    {
+            let bodyParams = CreateOrderWithFreeItemRequest.Params.BodyParams(quantity: quantity)
         
-        let params = CreateOrderFromCurrentCartRequest.Params(projectId: projectId,
-                                                              accessToken: accessToken,
-                                                              bodyParams: bodyParams)
-        
-        CreateOrderFromCurrentCartRequest(params: params, apiConfiguration: configuration).perform(completion)
+            let params = CreateOrderWithFreeItemRequest.Params(projectId: projectId,
+                                                               accessToken: accessToken,
+                                                               itemSKU: itemSKU,
+                                                               bodyParams: bodyParams)
+            
+            CreateOrderWithFreeItemRequest(params: params, apiConfiguration: configuration).perform(completion)
     }
     
     func purchaseItemByVirtualCurrency(projectId: Int,

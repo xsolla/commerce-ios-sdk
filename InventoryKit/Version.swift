@@ -15,5 +15,5 @@ import Foundation
 
 public extension InventoryKit
 {
-    static let version = "0.5.0"
+    static let version = "0.6.0"
 }

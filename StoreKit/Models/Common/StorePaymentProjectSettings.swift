@@ -29,6 +29,9 @@ public struct StorePaymentProjectSettings: Encodable
 
     /// Redirect policy rules and settings.
     public let redirectPolicy: RedirectPolicy?
+    
+    /// Transaction external id.
+    public let externalId: String?
 
     enum CodingKeys: String, CodingKey
     {
@@ -36,17 +39,20 @@ public struct StorePaymentProjectSettings: Encodable
         case paymentMethod = "payment_method"
         case returnUrl = "return_url"
         case redirectPolicy = "redirect_policy"
+        case externalId = "external_id"
     }
 
     public init(ui: UISettings,
                 paymentMethod: Int? = nil,
                 returnUrl: String? = nil,
-                redirectPolicy: RedirectPolicy? = nil)
+                redirectPolicy: RedirectPolicy? = nil,
+                externalId: String? = nil)
     {
         self.ui = ui
         self.paymentMethod = paymentMethod
         self.returnUrl = returnUrl
         self.redirectPolicy = redirectPolicy
+        self.externalId = externalId
     }
 }
 
@@ -54,8 +60,8 @@ extension StorePaymentProjectSettings
 {
     public struct UISettings: Encodable
     {
-        /// Payment UI theme. Can be `default`, `defaultDark`, or `ps4-default-dark`.
-        public let theme: Theme
+        /// Payment UI theme.
+        public let theme: String
 
         /// Payment UI size. Can be:
         /// - [small](https://livedemo.xsolla.com/developers/small/): the least possible size of the payment UI. Use this value when the window size is strictly limited (dimensions: 620 x 630).
@@ -63,7 +69,7 @@ extension StorePaymentProjectSettings
         /// - [large](https://livedemo.xsolla.com/developers/large/): the optimal size for displaying the payment UI in a new window or tab (dimensions: 820 x 840).\n
         public let size: Size?
 
-        public init(theme: Theme, size: Size? = nil)
+        public init(theme: String, size: Size? = nil)
         {
             self.theme = theme
             self.size = size
@@ -73,13 +79,6 @@ extension StorePaymentProjectSettings
 
 extension StorePaymentProjectSettings.UISettings
 {
-    public enum Theme: String, Encodable
-    {
-        case `default` = "default"
-        case defaultDark = "default_dark"
-        case ps4DefaultDark = "ps4-default-dark"
-    }
-
     public enum Size: String, Encodable
     {
         case small

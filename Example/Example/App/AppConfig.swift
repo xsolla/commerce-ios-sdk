@@ -101,7 +101,8 @@ enum AppConfig
     static let demoUsername = "xsolla"
     static let demoPassword = "xsolla"
 
-    static let paystationUITheme = StorePaymentProjectSettings.UISettings.Theme.ps4DefaultDark
+    ///To use default themes, enter "default" or "default_dark" values. Or enter the name of the custom theme you configured in Publisher Account to use it.
+    static let paystationUITheme = "default"
     static let paystationUISize = StorePaymentProjectSettings.UISettings.Size.medium
 
     /// Defines where Pay Station should open: inside the app or in an external browser.

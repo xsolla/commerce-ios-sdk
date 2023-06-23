@@ -16,6 +16,7 @@ import Foundation
 enum VirtualItemsListItemAction
 {
     case none
+    case buyFree
     case buyWithRealCurrency
     case buyWithVirtualCurrency(currencySku: String)
     case previewBundle

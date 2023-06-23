@@ -13,7 +13,12 @@
 
 import Foundation
 
-public extension PaymentsKit
+struct CreateFreeOrderResponse: Decodable
 {
-    static let version = "0.6.0"
+    let orderId: Int
+    
+    enum CodingKeys: String, CodingKey
+    {
+        case orderId = "order_id"
+}
 }

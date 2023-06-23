@@ -86,6 +86,7 @@ class VirtualItemsListGroupDataSource: NSObject, TableViewDataSource
     func getAction(for item: Item) -> VirtualItemsListItemAction
     {
         if isPurchasedNonConsumable(item: item) { return .none }
+        if item.isFree { return .buyFree }
         
         if let virtualCurrency = item.virtualPrices.first
         {

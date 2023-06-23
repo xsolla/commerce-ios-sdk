@@ -37,7 +37,8 @@ extension GetVirtualItemsResponse
         let virtualPrices: [VirtualPriceResponse]
         let inventoryOptions: InventoryOptionsResponse
         let virtualItemType: String
-        let promotions : [StoreItemPromotionResponse]
+        let promotions: [StoreItemPromotionResponse]
+        let limits: StoreItemLimitsResponse?
 
         enum CodingKeys: String, CodingKey
         {
@@ -54,6 +55,7 @@ extension GetVirtualItemsResponse
             case inventoryOptions = "inventory_options"
             case virtualItemType = "virtual_item_type"
             case promotions = "promotions"
+            case limits = "limits"
         }
 
         init(from decoder: Decoder) throws
@@ -71,7 +73,8 @@ extension GetVirtualItemsResponse
             virtualPrices = try container.decode([VirtualPriceResponse].self, forKey: .virtualPrices)
             inventoryOptions = try container.decode(InventoryOptionsResponse.self, forKey: .inventoryOptions)
             virtualItemType = try container.decode(String.self, forKey: .virtualItemType)
-            promotions = try container.decode([StoreItemPromotionResponse].self, forKey:.promotions)
+            promotions = try container.decode([StoreItemPromotionResponse].self, forKey: .promotions)
+            limits = try container.decodeIfPresent(StoreItemLimitsResponse.self, forKey: .limits)
         }
     }
 }
