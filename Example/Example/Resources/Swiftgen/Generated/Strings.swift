@@ -197,6 +197,8 @@ internal enum L10n {
           internal static var logInWithDeviceId: String { L10n.tr("Localizable", "Auth.loginOptions.button.logInWithDeviceId") }
           /// Log in with phone
           internal static var logInWithPhone: String { L10n.tr("Localizable", "Auth.loginOptions.button.logInWithPhone") }
+          /// Log in with Xsolla widget
+          internal static var logInWithXsollaWidget: String { L10n.tr("Localizable", "Auth.loginOptions.button.logInWithXsollaWidget") }
           /// Log in with email
           internal static var passwordlessAuthorization: String { L10n.tr("Localizable", "Auth.loginOptions.button.passwordlessAuthorization") }
         }

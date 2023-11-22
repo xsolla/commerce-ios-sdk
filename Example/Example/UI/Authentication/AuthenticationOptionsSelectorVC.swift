@@ -35,6 +35,7 @@ class AuthenticationOptionsSelectorVC: BaseViewController, AuthenticationOptions
     @IBOutlet private weak var guestUserButton: Button!
     @IBOutlet private weak var emailLoginButton: Button!
     @IBOutlet private weak var phoneLoginButton: Button!
+    @IBOutlet private weak var xsollaWidgetLoginButton: Button!
 
     override func viewDidLoad()
     {
@@ -46,6 +47,7 @@ class AuthenticationOptionsSelectorVC: BaseViewController, AuthenticationOptions
         guestUserButton.setupAppearance(config: Button.largeOutlined)
         emailLoginButton.setupAppearance(config: Button.largeOutlined)
         phoneLoginButton.setupAppearance(config: Button.largeOutlined)
+        xsollaWidgetLoginButton.setupAppearance(config: Button.largeOutlined)
 
         optionsCommonInfoLabel.attributedText =
             L10n.Auth.LoginOptions.Text.intro.attributed(.description, color: .xsolla_inactiveWhite)
@@ -58,12 +60,14 @@ class AuthenticationOptionsSelectorVC: BaseViewController, AuthenticationOptions
         guestUserButton.setTitle(L10n.Auth.LoginOptions.Button.logInWithDeviceId, attributes: attributes)
         emailLoginButton.setTitle(L10n.Auth.LoginOptions.Button.passwordlessAuthorization, attributes: attributes)
         phoneLoginButton.setTitle(L10n.Auth.LoginOptions.Button.logInWithPhone, attributes: attributes)
+        xsollaWidgetLoginButton.setTitle(L10n.Auth.LoginOptions.Button.logInWithXsollaWidget, attributes: attributes)
     }
 
     @IBAction private func onDemoUserButton(_ sender: Button) { loginRequestHandler?(.demoUser) }
     @IBAction private func onEmailButton(_ sender: Button) { loginRequestHandler?(.email) }
     @IBAction private func onPhoneButton(_ sender: Button) { loginRequestHandler?(.phone) }
     @IBAction private func onGuestUserButton(_ sender: Button) { loginRequestHandler?(.deviceId) }
+    @IBAction private func onXsollaWidgetButton(_ sender: Button) { loginRequestHandler?(.xsollaWidget) }
 }
 
 extension AuthenticationOptionsSelectorVC: LoadStatable

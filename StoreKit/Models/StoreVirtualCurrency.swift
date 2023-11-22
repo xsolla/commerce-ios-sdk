@@ -47,10 +47,10 @@ public struct StoreVirtualCurrency
 
     /// Defines the inventory item options.
     public let inventoryOptions: StoreItemInventoryOptions
-    
+
     /// Promotion settings in Store.
     public let promotions: [StoreItemPromotion]
-    
-    /// Limits.
+
+    /// Limit to the number of times one user can buy an item.
     public let limits: StoreItemLimits?
 }

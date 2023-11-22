@@ -18,6 +18,7 @@ public enum LoginKitError: Error
     case failedURLExtraction
 
     case authCodeExtractionError(String?)
+    case authTokenExtractionError(String?)
     case networkLinkingError(String?)
 
     case invalidRedirectUrl(String?)

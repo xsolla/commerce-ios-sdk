@@ -22,6 +22,7 @@ extension LoginKitError: LocalizedError
         {
             case .failedURLExtraction: return "Failed url extraction"
             case .authCodeExtractionError(let message): return message ?? "Auth code extraction error"
+            case .authTokenExtractionError(let message): return message ?? "Auth token extraction error"
             case .networkLinkingError(let message): return message ?? "Network linking error"
             case .invalidRedirectUrl(let message): return message ?? "Invalid redirect url"
             case .invalidToken: return "Invalid token"

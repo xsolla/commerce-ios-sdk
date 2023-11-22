@@ -129,6 +129,18 @@ extension XsollaSDK: XsollaSDKProtocol
                                   presentationContextProvider: presentationContextProvider,
                                   completion: completion)
     }
+    
+    @available(iOS 13.4, *)
+    func authWithXsollaWidget(oAuth2Params: OAuth2Params,
+                              presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                              completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
+    {
+        login.authWithXsollaWidget(loginProjectId: AppConfig.loginId,
+                                   oAuth2Params: oAuth2Params,
+                                   presentationContextProvider: presentationContextProvider,
+                                   completion: completion)
+    }
+
 
     func authByUsernameAndPassword(username: String,
                                    password: String,

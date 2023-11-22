@@ -137,7 +137,9 @@ class Button: UIButton
 
             setTitleColor(foregroundColor, for: state)
 
+            if (bounds.size.width <= 0 || bounds.size.height <= 0) { return; }
             UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+            
             guard let context = UIGraphicsGetCurrentContext() else { continue }
 
             if borderWidth > 0 { layer.borderWidth = 0 }

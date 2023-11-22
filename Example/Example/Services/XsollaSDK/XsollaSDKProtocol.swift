@@ -31,6 +31,10 @@ protocol XsollaSDKProtocol: AnyObject
                              jwtParams: JWTGenerationParams,
                              presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
                              completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
+    @available(iOS 13.4, *)
+    func authWithXsollaWidget(oAuth2Params: OAuth2Params,
+                              presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                              completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     
     func authByUsernameAndPassword(username: String,
                                    password: String,

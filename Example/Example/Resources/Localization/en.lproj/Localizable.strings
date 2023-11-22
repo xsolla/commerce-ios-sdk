@@ -32,6 +32,7 @@
 "Auth.loginOptions.button.logInAsDemoUser" = "Log in as demo user";
 "Auth.loginOptions.button.logInWithDeviceId" = "Log in with device ID";
 "Auth.loginOptions.button.logInWithPhone" = "Log in with phone";
+"Auth.loginOptions.button.logInWithXsollaWidget" = "Log in with Xsolla widget";
 "Auth.loginOptions.button.passwordlessAuthorization" = "Log in with email";
 
 "Auth.OTP.email.start.title" = "Log in with email";

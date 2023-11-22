@@ -101,16 +101,16 @@ enum AppConfig
     static let demoUsername = "xsolla"
     static let demoPassword = "xsolla"
 
-    ///To use default themes, enter "default" or "default_dark" values. Or enter the name of the custom theme you configured in Publisher Account to use it.
-    static let paystationUITheme = "default"
+    ///To use default themes, enter "63295a9a2e47fab76f7708e1" (light) or "63295aab2e47fab76f7708e3" (dark) values. Or enter the ID of a custom theme you've configured in Publisher Account to use it.
+    static let paystationUIThemeId = "63295aab2e47fab76f7708e3"
     static let paystationUISize = StorePaymentProjectSettings.UISettings.Size.medium
 
-    /// Defines where Pay Station should open: inside the app or in an external browser.
+    /// Defines where Pay Station should open: in an app or in an external browser.
     static let useExternalBrowserForPayStation = true
 
     /// Whether to send the confirmation link via email in case of passwordless authentication.
     static let sendEmailOTPConfirmationLink = true
-    /// Whether to send the confirmation link via an SMS in case of passwordless authentication.
+    /// Whether to send the confirmation link via SMS in case of passwordless authentication.
     static let sendPhoneOTPConfirmationLink = false
 }
 

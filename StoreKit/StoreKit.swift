@@ -16,6 +16,7 @@
 import Foundation
 import XsollaSDKUtilities
 
+
 public final class StoreKit
 {
     public static let shared = StoreKit()
@@ -23,6 +24,7 @@ public final class StoreKit
     private var api: StoreAPIProtocol
     private var modelFactory: ModelFactoryProtocol
     private var errorTranslator: ErrorTranslatorProtocol
+    private var ordersTracker: OrdersTracker
 
     convenience init()
     {
@@ -40,6 +42,7 @@ public final class StoreKit
         self.api = api
         self.modelFactory = modelFactory
         self.errorTranslator = errorTranslator
+        self.ordersTracker = OrdersTracker(storeApi: api)
     }
 }
 
@@ -243,6 +246,31 @@ extension StoreKit
             )
         }
     }
+    
+    /**
+     Establishes connections to an Xsolla server to track the order status. Tracking stops when the status changes to `canceled` or `done`.
+     - Parameters:
+        - projectId: Project ID, can be found in Publisher Account next to the name of the project. **Required**.
+        - authToken: User JWT obtained during authorization using Xsolla Login ([Bearer token](https://developers.xsolla.com/api/login/overview/#section/Authentication/Getting-a-user-token)). **Required**.
+        - orderId: Order ID.
+        - paymentToken: Payment token.
+        - initialized: called after the connection is established. To track the order status correctly, the payment UI should be opened while the connection with the Xsolla server is active (after `initialized` callback).
+        - completion: **Status**  in case of success.
+     */
+    public func trackOrderStatus(projectId: Int,
+                               authToken: String,
+                               orderId: Int,
+                               paymentToken: String,
+                               initialized: (() -> Void)? = nil,
+                               completion: @escaping (Result<String, Error>) -> Void)
+    {
+        ordersTracker.addToTracking(projectId: projectId,
+                                    authToken: authToken,
+                                    orderId: orderId,
+                                    paymentToken: paymentToken,
+                                    initialized: initialized,
+                                    completion: completion)
+    }
 
     /**
      Creates an order with a specified item. The created order will be given a `new` order status.
@@ -326,7 +354,7 @@ extension StoreKit
             )
         }
     }
-    
+
     /**
      Create order with free cart.
      - Parameters:
@@ -351,9 +379,9 @@ extension StoreKit
             )
         }
     }
-    
+
     /**
-     Create an order with a specified free item
+     Create an order with a specified free item.
      - Parameters:
         - projectId: Project ID, can be found in Publisher Account next to the name of the project. **Required**.
         - itemSku: Item SKU.
@@ -379,7 +407,7 @@ extension StoreKit
             )
         }
     }
-    
+
     /**
      Creates item purchase using virtual currency.
      - Parameters:

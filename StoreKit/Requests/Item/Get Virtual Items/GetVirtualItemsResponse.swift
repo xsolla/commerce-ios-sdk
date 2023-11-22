@@ -50,7 +50,7 @@ extension GetVirtualItemsResponse
             case description
             case imageUrl = "image_url"
             case isFree = "is_free"
-            case priсe
+            case priсe = "price"
             case virtualPrices = "virtual_prices"
             case inventoryOptions = "inventory_options"
             case virtualItemType = "virtual_item_type"

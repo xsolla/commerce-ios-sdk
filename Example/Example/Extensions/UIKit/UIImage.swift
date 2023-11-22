@@ -50,6 +50,7 @@ extension UIImage
     private func modifiedImage( draw: (CGContext, CGRect) -> Void) -> UIImage?
     {
         // using scale correctly preserves retina images
+        if (size.width <= 0 || size.height <= 0) { return nil; }
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         let context: CGContext! = UIGraphicsGetCurrentContext()
         assert(context != nil)

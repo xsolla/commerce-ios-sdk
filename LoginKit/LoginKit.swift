@@ -25,6 +25,8 @@ public final class LoginKit
     public static let shared = LoginKit()
 
     public var authCodeExtractor: AuthCodeExtracting = AuthCodeExtractor()
+    
+    public var authTokenExtractor: AuthTokenExtracting = AuthTokenExtractor()
 
     private var api: LoginAPIProtocol
     private var modelFactory: ModelFactoryProtocol
@@ -89,38 +91,82 @@ extension LoginKit
 
             if case .success(let url) = result
             {
-                self.getAccessTokenFromWebAuthenticationSession(with: url,
-                                                                callbackScheme: callbackScheme,
-                                                                jwtParams: jwtParams,
-                                                                presentationContextProvider: presentationContextProvider)
+                self.getAccessCodeFromWebAuthenticationSession(with: url,
+                                                          callbackScheme: callbackScheme,
+                                                          presentationContextProvider: presentationContextProvider)
                 { result in
 
-                    completion(result)
+                    if case .failure(let error) = result { completion(.failure(error)) }
+
+                    if case .success(let code) = result
+                    {
+                        self.generateJWT(with: code, jwtParams: jwtParams)
+                        { result in
+                            completion(result)
+                        }
+                    }
                 }
             }
         }
     }
+    
+    /**
+     Authenticates the user via xsolla widget.
 
-    func getAccessTokenFromWebAuthenticationSession(with url: URL,
-                                                    callbackScheme: String,
-                                                    jwtParams: JWTGenerationParams,
-                                                    presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
-                                                    completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
+     - Parameters:
+       - loginProjectId: Login project ID from [Publisher Account](https://publisher.xsolla.com/).
+       - oAuth2Params: Instance of **OAuth2Params**.
+       - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
+     */
+    public func authWithXsollaWidget(loginProjectId: String,
+                                     oAuth2Params: OAuth2Params,
+                                     presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                                     completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
-        getAccessCodeFromWebAuthenticationSession(with: url,
+        guard
+            let redirectUri = oAuth2Params.redirectUri,
+            let urlComponents = URLComponents(string: redirectUri),
+            let callbackScheme = urlComponents.scheme,
+            ["http", "https"].contains(callbackScheme) != true
+        else
+        {
+            let error = LoginKitError.invalidRedirectUrl("Invalid callback URL in OAuth parameters")
+            completion(.failure(error))
+            return
+        }
+
+        let stringUrl = "https://login-widget.xsolla.com/latest/?projectId=\(loginProjectId)&login_url=\(oAuth2Params.redirectUri!)"
+        let url = URL(string: stringUrl)
+        
+        getAccessTokenFromWebAuthenticationSession(with: url!,
                                                   callbackScheme: callbackScheme,
                                                   presentationContextProvider: presentationContextProvider)
         { result in
 
             if case .failure(let error) = result { completion(.failure(error)) }
 
-            if case .success(let code) = result
+            if case .success(let token) = result
             {
-                self.generateJWT(with: code, jwtParams: jwtParams)
-                { result in
-                    completion(result)
-                }
+                let accessToken = AccessTokenInfo(accessToken: token,
+                                                  expiresIn: 3600,
+                                                  refreshToken: "",
+                                                  tokenType: "bearer")
+                                                  completion(.success(accessToken))
             }
+        }
+    }
+
+    func getAccessTokenFromWebAuthenticationSession(with url: URL,
+                                                    callbackScheme: String,
+                                                    presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
+                                                    completion: @escaping (Result<String, Error>) -> Void)
+    {
+        startWebAuthenticationSession(with: url,
+                                      callbackScheme: callbackScheme,
+                                      presentationContextProvider: presentationContextProvider)
+        { result in
+
+            completion(self.authTokenExtractor.extract(from: result))
         }
     }
 

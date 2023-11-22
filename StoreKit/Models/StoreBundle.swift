@@ -53,11 +53,11 @@ public struct StoreBundle
 
     /// Bundle package content.
     public let content: [ContentItem]
-    
+
     /// Promotion settings in Store.
     public let promotions: [StoreItemPromotion]
-    
-    /// Limits.
+
+    /// Limit to the number of times one user can buy an item.
     public let limits: StoreItemLimits?
 
     /// Bundle package content item.

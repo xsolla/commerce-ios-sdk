@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.7.0] - November 2023
+
+### Added
+  - Centrifugo integration
+  - `trackOrderStatus` SDK method. Establishes connection to Xsolla server to track the order status
+  - `authWithXsollaWidget` SDK method. Authenticates the user with Xsolla Login widget
+
+### Changed
+  - AppConfig settings. `paystationUITheme` renamed to `paystationUIThemeId`
+  - Minimum iOS version (12.0)
+
+## [0.6.0] - June 2023
+
+### Added
+  - `createOrderWithFreeItem` - method for purchasing a free virtual item
+  - `createOrderWithFreeCart` - method for purchasing a cart that contains free items
+  - `StoreItemLimits` data to store items (Bundle, VirtualCurrency, VirtualItem)
+  - Ability to pass `externalId` data to purchase order requests
+
+### Changed
+  - Methods `createOrderWithCart` and `createOrderFromCurrentCart` have been combined into a single `createOrderWithCart`
+  - Parameter `StorePaymentProjectSettings.UISettings.theme` has changed its type from an `enum` to a `string`
+
 ## [0.5.0] - November 2022
 
 ### Added
@@ -13,7 +36,7 @@
 - Removed request proxies in LoginKit, InventoryKit, and StoreKit
 - Changed modelFactory in LoginKit, InventoryKit, and StoreKit
 - Refactored error handlers
-- KitCompletion<> replaced by Result<> 
+- KitCompletion<> replaced by Result<>
 - Response and requests models:
   * LogUserOut
   * GetDRMList
@@ -27,14 +50,14 @@
   * RedeemGameCode
   * FillCartWithItems
   * FillSpecificCartWithItems
-  
+
 ### Fixed
 - Optional parameters generation in APIBaseRequest.swift
 - Array parameters in query
 - Optional parameter in StoreKit
 - Access token use removed from some methods
 - Method names in StoreKit
-- Quantity in CreateOrderFromCurrentCartRequest 
+- Quantity in CreateOrderFromCurrentCartRequest
 
 ## [0.4.0] - December 2021
 
@@ -77,4 +100,4 @@
   * updateSocialNetworkFriends
   * getClientUserAttributes
   * getClientUserReadOnlyAttributes
-  * updateClientUserAttributes.
+  * updateClientUserAttributes

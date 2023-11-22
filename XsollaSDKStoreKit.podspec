@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKStoreKit'
-  s.version      = '0.6.0'
+  s.version      = '0.7.0'
   s.summary      = 'The official Xsolla SDK for iOS used to sell items in the apps based on In-Game Store.'
   s.description  = <<-DESC
                    The library contains methods for working with the Store API and allows you to implement the following features:
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.homepage     = 'http://www.xsolla.com'
   s.license      = { :type => 'Apache 2.0', :file => 'LICENSE' }
 
-  s.platform     = :ios, '11.0'
+  s.platform     = :ios, '12.0'
   s.swift_version = '5.0'
 
   s.source       = { :git => "https://github.com/xsolla/commerce-ios-sdk.git", :tag => "#{s.version}" }
@@ -27,5 +27,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'StoreKit/**/*.{h,m,swift}'
   s.dependency     'XsollaSDKUtilities', "~> #{s.version}"
+  s.dependency     'SwiftCentrifuge', '< 8.0.0'
 
 end

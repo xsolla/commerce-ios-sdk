@@ -67,7 +67,7 @@ class InventoryList
     {
         logger.info { "Buy item: \(item.name)" }
 
-        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme,
+        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUIThemeId,
                                                                 size: AppConfig.paystationUISize)
         let redirectPolicy =
             StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,

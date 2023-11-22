@@ -146,6 +146,18 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
             self.showError(error)
         }
     }
+    
+    func loginXsollaWidgetRequestHandler(in viewController: AuthenticationOptionsVCProtocol)
+    {
+        if #available(iOS 13.4, *)
+        {
+            loginXsollaWidgetAuthenticationSessionFlow(forVC: viewController)
+        }
+        else
+        {
+            loginXsollaWidgetLegacyFlow(forVC: viewController)
+        }
+    }
 
     func signupRequestHandler(formData: SignupFormData, forVC viewController: SignupVCProtocol, sender: UIView)
     {
@@ -260,6 +272,30 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
             if case .success(let tokenInfo) = result { self.dependencies.loginManager.login(tokenInfo: tokenInfo) }
         }
     }
+    
+    @available(iOS 13.4, *)
+    func loginXsollaWidgetAuthenticationSessionFlow(forVC viewController: AuthenticationOptionsVCProtocol)
+    {
+        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        logger.info(.ui, domain: .example) { "Auth coordinator - loginXsollaWidgetAuthenticationSessionFlow" }
+
+        let oauthParams = OAuth2Params(clientId: AppConfig.oAuth2ClientId,
+                                state: UUID().uuidString,
+                                scope: "offline",
+                                redirectUri: AppConfig.customSchemeRedirectUrl)
+
+        let presentationContextProvider = WebAuthenticationPresentationContextProvider(presentationAnchor: window)
+
+        dependencies.xsollaSDK.authWithXsollaWidget(oAuth2Params: oauthParams,
+                                                    presentationContextProvider: presentationContextProvider)
+        { [weak self] result in
+
+            guard let self = self else { return }
+
+            if case .success(let tokenInfo) = result { self.dependencies.loginManager.login(tokenInfo: tokenInfo) }
+        }
+    }
 
     func loginSocialNetworkCustomSchemeFlow(network: SocialNetwork, forVC viewController: LoginVCProtocol)
     {
@@ -293,6 +329,14 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
                 }
             }
         }
+    }
+    
+    func loginXsollaWidgetLegacyFlow(forVC viewController: AuthenticationOptionsVCProtocol)
+    {
+        logger.info(.ui, domain: .example) { "Auth coordinator - loginXsollaWidgetLegacyFlow " }
+
+        viewController.setState(.loading(nil), animated: true)
+        self.startXsollaWidgetAuthSession()
     }
     
     func loginSocialNetworkRequestHandler(network: SocialNetwork, forVC viewController: LoginVCProtocol)
@@ -397,6 +441,7 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
             case .email: startEmailAuthCoordinator(in: viewController)
             case .phone: startPhoneAuthCoordinator(in: viewController)
             case .deviceId: loginDeviceIdRequestHandler(in: viewController)
+            case .xsollaWidget: loginXsollaWidgetRequestHandler(in: viewController)
             
             default: break
         }
@@ -466,6 +511,42 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         presenter?.present(webVC, animated: true, completion: nil)
     }
 
+    /// Opens web browser with a link for xsolla widget authentication.
+    private func startXsollaWidgetAuthSession()
+    {
+        let stringUrl = "https://login-widget.xsolla.com/latest/?projectId=\(AppConfig.loginId)&login_url=\(AppConfig.customSchemeRedirectUrl)"
+        let url = URL(string: stringUrl)
+
+        let webVC = dependencies.viewControllerFactory.createWebBrowserVC(params: url)
+        let webRedirectHandler = WebRedirectHandler()
+
+        webRedirectHandler.onRedirect =
+        { [weak webVC, weak self] url in
+
+            if url.absoluteString.starts(with: AppConfig.customSchemeRedirectUrl)
+            {
+                webVC?.dismiss(animated: true, completion: nil)
+
+                switch LoginKit.shared.authTokenExtractor.extract(from: url)
+                {
+                    case .success(let token):
+                        self?.dependencies.loginManager.login(accessToken: token,
+                                                              refreshToken: "",
+                                                              expireDate: Date(timeIntervalSinceNow: TimeInterval(3600)))
+                    case .failure(let error): self?.showError(error)
+                }
+
+                return .cancel
+            }
+            return .allow
+        }
+
+        webVC.navigationDelegate = webRedirectHandler
+        self.webRedirectHandler = webRedirectHandler
+
+        presenter?.present(webVC, animated: true, completion: nil)
+    }
+    
     /// Exchanges auth code for JWT token and saves it.
     private func performAuthentication(withAuthCode authCode: String)
     {

@@ -48,7 +48,7 @@ class Store: StoreProtocol
                      completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
     {
 
-        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUITheme,
+        let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUIThemeId,
                                                                 size: AppConfig.paystationUISize)
         let redirectPolicy =
             StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,

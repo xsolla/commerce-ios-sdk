@@ -24,6 +24,7 @@ enum AuthenticationOption
     case deviceId
     case email
     case phone
+    case xsollaWidget
 
     // 3rd parties
     case appleId

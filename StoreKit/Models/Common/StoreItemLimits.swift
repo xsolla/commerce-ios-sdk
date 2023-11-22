@@ -18,27 +18,25 @@ public struct StoreItemLimits
 {
     /// Limitations applied to the use of promotions.
     public let perUser: LimitsPerUser
-    
+
     public struct LimitsPerUser
     {
         /// Whether to limit the number of times one user can buy an item.
         public let available: Int
-        
+
         /// Number of times one user can buy an item.
         public let total: Int
-        
-        /// TEXTREVIEW
+
+        /// Regular limit refresh schedule.
         public let recurrentSchedule: RecurrentSchedule
-        
+
         public struct RecurrentSchedule
         {
-            /// TEXTREVIEW
+            /// Refresh period type.
             public let intervalType: String
-            
-            /// TEXTREVIEW
+
+            /// Next refresh date.
             public let resetNextDate: Int
         }
     }
 }
-
-

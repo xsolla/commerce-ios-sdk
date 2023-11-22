@@ -15,7 +15,7 @@ import Foundation
 
 public struct StoreFilterParams
 {
-    /// Limit for the number of elements on the page.
+    /// Limit for the number of elements on the page. The maximum number of elements on a page is 50.
     public let limit: Int?
 
     /// Number of the element from which the list is generated (the count starts from 0).
