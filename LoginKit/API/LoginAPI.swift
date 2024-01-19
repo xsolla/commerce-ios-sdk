@@ -19,13 +19,15 @@ import XsollaSDKUtilities
 
 class LoginAPI
 {
+    let apiBasePath: String
     let requestPerformer: RequestPerformer
     let responseProcessor: ResponseProcessor
     
-    init(requestPerformer: RequestPerformer, responseProcessor: ResponseProcessor)
+    init(apiBasePath: String, requestPerformer: RequestPerformer, responseProcessor: ResponseProcessor)
     {
         logger.debug(.initialization, domain: .loginKit) { String(describing: Self.self) }
         
+        self.apiBasePath = apiBasePath
         self.requestPerformer = requestPerformer
         self.responseProcessor = responseProcessor
     }
@@ -938,6 +940,6 @@ extension LoginAPI
     {
         LoginAPIConfiguration(requestPerformer: requestPerformer,
                               responseProcessor: responseProcessor,
-                              apiBasePath: "https://login.xsolla.com/api")
+                              apiBasePath: apiBasePath)
     }
 }

@@ -22,7 +22,7 @@ public typealias LoginOperationId = String
 
 public final class LoginKit
 {
-    public static let shared = LoginKit()
+    public static let shared = LoginKit(apiBasePath: "https://login.xsolla.com/api")
 
     public var authCodeExtractor: AuthCodeExtracting = AuthCodeExtractor()
     
@@ -32,19 +32,14 @@ public final class LoginKit
     private var modelFactory: ModelFactoryProtocol
     private var errorTranslator: ErrorTranslatorProtocol
 
-    convenience init()
+    public init(apiBasePath: String)
     {
         let requestPerformer = XSDKNetwork(sessionConfiguration: XSDKNetwork.defaultSessionConfiguration)
         let responseProcessor = LoginAPIResponseProcessor()
-        let api = LoginAPI(requestPerformer: requestPerformer, responseProcessor: responseProcessor)
+        let api = LoginAPI(apiBasePath: apiBasePath, requestPerformer: requestPerformer, responseProcessor: responseProcessor)
         let modelFactory = LoginKitModelFactory()
         let errorTranslator = LoginKitErrorTranslator()
 
-        self.init(api: api, modelFactory: modelFactory, errorTranslator: errorTranslator)
-    }
-
-    init(api: LoginAPIProtocol, modelFactory: ModelFactoryProtocol, errorTranslator: ErrorTranslatorProtocol)
-    {
         self.api = api
         self.modelFactory = modelFactory
         self.errorTranslator = errorTranslator

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKLoginKit'
-  s.version      = '0.7.0'
+  s.version      = '0.7.1'
   s.summary      = 'The official Xsolla SDK for iOS used to authenticate users and to connect them via a friend system using the solution based on Xsolla Login.'
   s.description  = <<-DESC
                    The library contains methods for working with the Login API and allows you to implement the following features:
