@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKPaymentsKit'
-  s.version      = '0.7.1'
+  s.version      = '0.7.2'
   s.summary      = 'The official Xsolla SDK for iOS used to receive payments for in-game purchases with the convenient UI based on Xsolla Pay Station.'
   s.description  = <<-DESC
                    The library allows opening payment UI via web to use main Pay Station features:

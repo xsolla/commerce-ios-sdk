@@ -15,5 +15,5 @@ import Foundation
 
 public extension LoginKit
 {
-    static let version = "0.7.1"
+    static let version = "0.7.2"
 }

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDKStoreKit'
-  s.version      = '0.7.1'
+  s.version      = '0.7.2'
   s.summary      = 'The official Xsolla SDK for iOS used to sell items in the apps based on In-Game Store.'
   s.description  = <<-DESC
                    The library contains methods for working with the Store API and allows you to implement the following features:

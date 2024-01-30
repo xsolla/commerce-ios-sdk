@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.2] - January 2024
+
+### Added
+  - ‘authWithXsollaWidget’ SDK method. Added the ‘locale’ parameter
+
 ## [0.7.0] - November 2023
 
 ### Added
