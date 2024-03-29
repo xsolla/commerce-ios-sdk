@@ -1,0 +1,24 @@
+platform :ios, '12.0'
+use_frameworks!
+inhibit_all_warnings!
+
+target 'Example' do
+
+  pod 'XsollaSDK'
+  
+  pod 'SwiftLint'
+  pod 'SwiftGen'
+  
+  pod 'PromisesSwift'
+  pod 'SDWebImage'
+  pod 'IQKeyboardManager'
+  
+end
+
+post_install do |pi|
+    pi.pods_project.targets.each do |t|
+      t.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      end
+    end
+end

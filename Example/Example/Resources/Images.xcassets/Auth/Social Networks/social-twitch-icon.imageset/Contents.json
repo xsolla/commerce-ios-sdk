@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "social-twitch-icon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
