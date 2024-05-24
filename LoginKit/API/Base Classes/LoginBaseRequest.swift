@@ -15,11 +15,11 @@ import Foundation
 import UIKit
 import XsollaSDKUtilities
 
-class LoginBaseRequest<ParamsType: RequestParams>: APIBaseRequest
+open class LoginBaseRequest<ParamsType: RequestParams>: APIBaseRequest
 {
-    let params: ParamsType
+    public let params: ParamsType
 
-    init(params: ParamsType, apiConfiguration: APIConfigurationProtocol)
+    public init(params: ParamsType, apiConfiguration: APIConfigurationProtocol)
     {
         logger.debug(.initialization, domain: .loginKit) { String(describing: Self.self) }
         
@@ -33,7 +33,7 @@ class LoginBaseRequest<ParamsType: RequestParams>: APIBaseRequest
         logger.debug(.deinitialization, domain: .loginKit) { deinitingType }
     }
     
-    override var headers: APIBaseRequest.HTTPHeaders
+    public override var headers: APIBaseRequest.HTTPHeaders
     {
         var headers = defaultHeaders
 
@@ -44,7 +44,7 @@ class LoginBaseRequest<ParamsType: RequestParams>: APIBaseRequest
         return headers
     }
     
-    override var queryParameters: APIBaseRequest.QueryParameters
+    public override var queryParameters: APIBaseRequest.QueryParameters
     {
         var parameters = defaultParameters
 
@@ -58,21 +58,45 @@ class LoginBaseRequest<ParamsType: RequestParams>: APIBaseRequest
     
     var analyticsQueryParams: APIBaseRequest.QueryParameters
     {
-        ["engine": "ios",
-         "engine_v": iOSVersion,
-         "sdk": "login",
-         "sdk_v": kitVersion ?? ""]
+        var params: APIBaseRequest.QueryParameters = [
+            "engine": "ios",
+            "engine_v": iOSVersion,
+            "sdk": LoginAnalyticsUtils.sdk,
+            "sdk_v": LoginAnalyticsUtils.sdkVersion]
+        
+        if !LoginAnalyticsUtils.gameEngine.isEmpty
+        {
+            params["game_engine"] = LoginAnalyticsUtils.gameEngine
+        }
+        
+        if !LoginAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            params["game_engine_v"] = LoginAnalyticsUtils.gameEngineVersion
+        }
+        
+        return params
     }
 
     var analyticsHeaders: APIBaseRequest.HTTPHeaders
     {
-        ["X-ENGINE": "IOS",
-         "X-ENGINE-V": iOSVersion.uppercased(),
-         "X-SDK": "LOGIN",
-         "X-SDK-V": kitVersion?.uppercased() ?? ""]
+        var headers: APIBaseRequest.HTTPHeaders = [
+            "X-ENGINE": "IOS",
+            "X-ENGINE-V": iOSVersion.uppercased(),
+            "X-SDK": LoginAnalyticsUtils.sdk.uppercased(),
+            "X-SDK-V": LoginAnalyticsUtils.sdkVersion.uppercased()]
+        
+        if !LoginAnalyticsUtils.gameEngine.isEmpty
+        {
+            headers["X-GAME-ENGINE"] = LoginAnalyticsUtils.gameEngine.uppercased()
+        }
+        
+        if !LoginAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            headers["X-GAME-ENGINE-V"] = LoginAnalyticsUtils.gameEngineVersion.uppercased()
+        }
+        
+        return headers
     }
     
     private var iOSVersion: String { UIDevice.current.systemVersion }
-    
-    private var kitVersion: String? { LoginKit.version }
 }

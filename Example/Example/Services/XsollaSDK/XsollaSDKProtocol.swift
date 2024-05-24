@@ -17,6 +17,8 @@ import Foundation
 import XsollaSDKInventoryKit
 import XsollaSDKLoginKit
 import XsollaSDKStoreKit
+import UIKit
+import XsollaSDKPaymentsKit
 
 protocol XsollaSDKProtocol: AnyObject
 {
@@ -33,6 +35,7 @@ protocol XsollaSDKProtocol: AnyObject
                              completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     @available(iOS 13.4, *)
     func authWithXsollaWidget(oAuth2Params: OAuth2Params,
+                              jwtParams: JWTGenerationParams,
                               presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
                               completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     
@@ -198,7 +201,7 @@ protocol XsollaSDKProtocol: AnyObject
                      completion: @escaping (Result<Void, Error>) -> Void)
     
     func getUserInventoryItems(projectId: Int,
-                               platform: String?,
+                               filterParams: InventoryFilterParams,
                                detailedSubscriptions: Bool?,
                                completion: @escaping (Result<[InventoryItem], Error>) -> Void)
     
@@ -267,4 +270,12 @@ protocol XsollaSDKProtocol: AnyObject
                           completion: @escaping (Result<StoreCouponRewards, Error>) -> Void)
 
     func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
+    
+    func presentPaymentView(presenter: UIViewController,
+                            paymentToken: String,
+                            isSandbox: Bool,
+                            redirectUrl: String,
+                            completionHandler: ((PaymentStatus) -> Void)?)
+    
+    func warmupPaymentView()
 }

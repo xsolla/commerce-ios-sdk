@@ -26,7 +26,7 @@ struct StoreItemLimitsResponse: Decodable
     {
         public let available: Int
         public let total: Int
-        public let recurrentSchedule: RecurrentScheduleResponse
+        public let recurrentSchedule: RecurrentScheduleResponse?
         
         enum CodingKeys: String, CodingKey
         {

@@ -15,5 +15,5 @@ import Foundation
 
 public extension PaymentsKit
 {
-    static let version = "0.7.2"
+    static let version = "1.0.0"
 }

@@ -47,9 +47,14 @@ class Store: StoreProtocol
                      isSandbox: Bool,
                      completion: @escaping (Result<StoreOrderPaymentInfo, Error>) -> Void)
     {
+        let mobileHeaderSettings = StorePaymentProjectSettings.UISettings.PlatformSettings.Header(closeButton: !AppConfig.useExternalBrowserForPayStation)
+        
+        let mobilePlatformSettings = StorePaymentProjectSettings.UISettings.PlatformSettings(header: mobileHeaderSettings)
 
         let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUIThemeId,
-                                                                size: AppConfig.paystationUISize)
+                                                                size: AppConfig.paystationUISize,
+                                                                mobilePlatformSettings: mobilePlatformSettings)
+
         let redirectPolicy =
             StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,
                                                        delay: 5,

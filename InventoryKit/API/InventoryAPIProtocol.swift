@@ -21,7 +21,7 @@ protocol InventoryAPIProtocol
 {
     func getUserInventoryItems(accessToken: String,
                                projectId: Int,
-                               platform: String?,
+                               filterParams: InventoryFilterParams,
                                completion: @escaping (InventoryAPIResult<GetUserInventoryItemsResponse>) -> Void)
     
     func getUserVirtualCurrencyBalance(

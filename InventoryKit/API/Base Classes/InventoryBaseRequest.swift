@@ -58,21 +58,45 @@ class InventoryBaseRequest<ParamsType: RequestParams>: APIBaseRequest
     
     var analyticsQueryParams: APIBaseRequest.QueryParameters
     {
-        ["engine": "ios",
-         "engine_v": iOSVersion,
-         "sdk": "inventory",
-         "sdk_v": kitVersion ?? ""]
+        var params: APIBaseRequest.QueryParameters = [
+            "engine": "ios",
+            "engine_v": iOSVersion,
+            "sdk": InventoryAnalyticsUtils.sdk,
+            "sdk_v": InventoryAnalyticsUtils.sdkVersion]
+        
+        if !InventoryAnalyticsUtils.gameEngine.isEmpty
+        {
+            params["game_engine"] = InventoryAnalyticsUtils.gameEngine
+        }
+        
+        if !InventoryAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            params["game_engine_v"] = InventoryAnalyticsUtils.gameEngineVersion
+        }
+        
+        return params
     }
     
     var analyticsHeaders: APIBaseRequest.HTTPHeaders
     {
-        ["X-ENGINE": "IOS",
-         "X-ENGINE-V": iOSVersion.uppercased(),
-         "X-SDK": "INVENTORY",
-         "X-SDK-V": kitVersion?.uppercased() ?? ""]
+        var headers: APIBaseRequest.HTTPHeaders = [
+            "X-ENGINE": "IOS",
+            "X-ENGINE-V": iOSVersion.uppercased(),
+            "X-SDK": InventoryAnalyticsUtils.sdk.uppercased(),
+            "X-SDK-V": InventoryAnalyticsUtils.sdkVersion.uppercased()]
+        
+        if !InventoryAnalyticsUtils.gameEngine.isEmpty
+        {
+            headers["X-GAME-ENGINE"] = InventoryAnalyticsUtils.gameEngine.uppercased()
+        }
+        
+        if !InventoryAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            headers["X-GAME-ENGINE-V"] = InventoryAnalyticsUtils.gameEngineVersion.uppercased()
+        }
+        
+        return headers
     }
     
     private var iOSVersion: String { UIDevice.current.systemVersion }
-    
-    private var kitVersion: String? { InventoryKit.version }
 }

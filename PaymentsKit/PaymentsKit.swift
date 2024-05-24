@@ -13,23 +13,27 @@
 
 import Foundation
 import XsollaSDKUtilities
+import UIKit
 
 public final class PaymentsKit
 {
     public static let shared = PaymentsKit()
 
-    private var api: PaymentsAPIProtocol
+    private let paystationViewController: PaystationViewController = PaystationViewController()
+    private let api: PaymentsAPIProtocol
 
-    convenience init()
+    public convenience init(paystationVersion: PaystationVersion = .v4)
     {
         let requestPerformer = XSDKNetwork(sessionConfiguration: XSDKNetwork.defaultSessionConfiguration)
         let responseProcessor = PaymentsAPIResponseProcessor()
-        let api = PaymentsAPI(requestPerformer: requestPerformer, responseProcessor: responseProcessor)
+        let api = PaymentsAPI(requestPerformer: requestPerformer,
+                              responseProcessor: responseProcessor,
+                              paystationVersion: paystationVersion)
 
         self.init(api: api)
     }
 
-    init(api: PaymentsAPIProtocol)
+    init(api: PaymentsAPIProtocol, paystationVersion: PaystationVersion = .v4)
     {
         self.api = api
     }
@@ -49,5 +53,37 @@ extension PaymentsKit
     public func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
     {
         api.createPaymentUrl(paymentToken: paymentToken, isSandbox: isSandbox)
+    }
+
+    /// Returns a URL that can be used to "warm up" Pay Station web page for faster display later on
+    public func getPaymentWarmupUrl() -> URL?
+    {
+        return api.getWarmupUrl()
+    }
+
+    /// Warms up the internal Pay Station WebView
+    public func warmupPaymentView()
+    {
+        paystationViewController.warmupPaystationWebView()
+    }
+
+    /// Displays internal Pay Station WebView
+    public func presentPaymentView(presenter: UIViewController,
+                                   paymentToken: String,
+                                   isSandbox: Bool,
+                                   redirectUrl: String,
+                                   completionHandler: ((PaymentStatus) -> Void)?)
+    {
+        let controller = paystationViewController
+        controller.configuration = .init(paymentToken: paymentToken, redirectURL: redirectUrl, isSandbox: isSandbox)
+
+        controller.completionHandler =
+        { status in
+            controller.dismiss(animated: true, completion: nil)
+            completionHandler?(status)
+        }
+
+        controller.loadPaystation()
+        presenter.present(controller, animated: true, completion: nil)
     }
 }

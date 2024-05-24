@@ -41,6 +41,7 @@ class GetVirtualItemsRequest: StoreBaseRequest<GetVirtualItemsRequest.Params>,
         if let offset = params.offset { queryParams["offset"] = "\(offset)" }
         if let locale = params.locale { queryParams["locale"] = locale }
         if let country = params.country { queryParams["country"] = country }
+        if let withGeo = params.withGeo { queryParams["with_geo"] = "\(withGeo)" }
         
         if let additionalFields = params.additionalFields
         {
@@ -52,6 +53,20 @@ class GetVirtualItemsRequest: StoreBaseRequest<GetVirtualItemsRequest.Params>,
 
     override var authenticationToken: String? { params.accessToken }
 
+    func handleSuccess(response: URLResponse?, model: ResponseModel, completionHandler: Callback)
+    {
+        guard let httpResponse = response as? HTTPURLResponse else 
+        {
+            completionHandler(.success(model))
+            return
+        }
+        
+        let languageCode = httpResponse.allHeaderFields["X-User-Locale-Code"] as? String
+        let countryCode = httpResponse.allHeaderFields["X-User-Country-Code"] as? String
+        
+        completionHandler(.success(ResponseModel(hasMore: model.hasMore, items: model.items, languageCode: languageCode, countryCode: countryCode)))
+    }
+    
     func handleSuccess(model: ResponseModel, completionHandler: Callback)
     {
         completionHandler(.success(model))
@@ -74,5 +89,6 @@ extension GetVirtualItemsRequest
         let locale: String?
         let additionalFields: [String]?
         let country: String?
+        let withGeo: Int?
     }
 }

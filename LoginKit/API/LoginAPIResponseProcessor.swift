@@ -16,13 +16,13 @@
 import Foundation
 import XsollaSDKUtilities
 
-class LoginAPIResponseProcessor
+public class LoginAPIResponseProcessor
 {
     typealias LoginAPIError = APIError<LoginAPIErrorModel>
     
     let decoder: JSONDecoder
     
-    init(decoder: JSONDecoder = JSONDecoder())
+    public init(decoder: JSONDecoder = JSONDecoder())
     {
         logger.debug(.initialization, domain: .loginKit) { String(describing: Self.self) }
 
@@ -38,7 +38,7 @@ class LoginAPIResponseProcessor
 
 extension LoginAPIResponseProcessor: ResponseProcessor
 {
-    func process<ResponseModel: Decodable>(response: URLResponse?,
+    public func process<ResponseModel: Decodable>(response: URLResponse?,
                                            data: Data?,
                                            request: URLRequest,
                                            error: Error?,

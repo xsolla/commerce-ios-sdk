@@ -26,7 +26,7 @@ class InventoryList
         dependencies.loadStateListener.setState(.loading(nil), animated: true)
         
         dependencies.xsollaSDK.getUserInventoryItems(projectId: AppConfig.projectId,
-                                                     platform: "",
+                                                     filterParams: .empty,
                                                      detailedSubscriptions: true)
         { [weak self] result in
             
@@ -66,9 +66,15 @@ class InventoryList
     private func handleBuyAgainAction(for item: InventoryListDataSource.Item)
     {
         logger.info { "Buy item: \(item.name)" }
-
+        
+        let mobileHeaderSettings = StorePaymentProjectSettings.UISettings.PlatformSettings.Header(closeButton: !AppConfig.useExternalBrowserForPayStation)
+        
+        let mobilePlatformSettings = StorePaymentProjectSettings.UISettings.PlatformSettings(header: mobileHeaderSettings)
+        
         let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUIThemeId,
-                                                                size: AppConfig.paystationUISize)
+                                                                size: AppConfig.paystationUISize,
+                                                                mobilePlatformSettings: mobilePlatformSettings)
+        
         let redirectPolicy =
             StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,
                                                        delay: 5,

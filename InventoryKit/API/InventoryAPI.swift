@@ -38,12 +38,14 @@ extension InventoryAPI: InventoryAPIProtocol
 {
     func getUserInventoryItems(accessToken: String,
                                projectId: Int,
-                               platform: String?,
+                               filterParams: InventoryFilterParams,
                                completion: @escaping (InventoryAPIResult<GetUserInventoryItemsResponse>) -> Void)
     {
         let params = GetUserInventoryItemsRequest.Params(accessToken: accessToken,
                                                          projectId: projectId,
-                                                         platform: platform)
+                                                         platform: filterParams.platform,
+                                                         limit: filterParams.limit,
+                                                         offset: filterParams.offset)
 
         let request = GetUserInventoryItemsRequest(params: params, apiConfiguration: configuration)
 

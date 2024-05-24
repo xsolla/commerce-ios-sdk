@@ -29,7 +29,7 @@ public struct StorePaymentProjectSettings: Encodable
 
     /// Redirect policy rules and settings.
     public let redirectPolicy: RedirectPolicy?
-    
+
     /// Transaction external id.
     public let externalId: String?
 
@@ -63,16 +63,60 @@ extension StorePaymentProjectSettings
         /// Payment UI theme.
         public let theme: String
 
+        // Pay Station UI settings for the mobile version.
+        public let mobilePlatformSettings: PlatformSettings?
+
         /// Payment UI size. Can be:
         /// - [small](https://livedemo.xsolla.com/developers/small/): the least possible size of the payment UI. Use this value when the window size is strictly limited (dimensions: 620 x 630).
         /// - [medium](https://livedemo.xsolla.com/developers/medium/): recommended size. Use this value to display the payment UI in a lightbox (dimensions: 740 x 760).
         /// - [large](https://livedemo.xsolla.com/developers/large/): the optimal size for displaying the payment UI in a new window or tab (dimensions: 820 x 840).\n
         public let size: Size?
 
-        public init(theme: String, size: Size? = nil)
+        enum CodingKeys: String, CodingKey
+        {
+            case theme
+            case mobilePlatformSettings = "mobile"
+            case size
+        }
+
+        public init(theme: String, size: Size? = nil, mobilePlatformSettings: PlatformSettings?)
         {
             self.theme = theme
             self.size = size
+            self.mobilePlatformSettings = mobilePlatformSettings
+        }
+    }
+}
+
+extension StorePaymentProjectSettings.UISettings
+{
+    public struct PlatformSettings: Encodable
+    {
+        /// Header settings.
+        public let header: Header?
+
+        public init(header: Header?)
+        {
+            self.header = header
+        }
+    }
+}
+
+extension StorePaymentProjectSettings.UISettings.PlatformSettings
+{
+    public struct Header: Encodable
+    {
+        /// Whether to show a button to close Pay Station.
+        public let closeButton: Bool?
+
+        enum CodingKeys: String, CodingKey
+        {
+            case closeButton = "close_button"
+        }
+
+        public init(closeButton: Bool?)
+        {
+            self.closeButton = closeButton
         }
     }
 }

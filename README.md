@@ -81,7 +81,7 @@ Allows opening payment UI via the web to use the main [Xsolla Pay Station](https
 * purchase refund
 
 ## System requirements
-* iOS 11 or higher
+* iOS 12 or higher
 * Swift 5
 * Internet connection
 
@@ -96,7 +96,7 @@ Before you integrate:
 4. Register an [Xsolla Publisher Account](https://publisher.xsolla.com/?utm_source=github&utm_medium=sdk-ios&utm_campaign=commerce) and set up a new project.
 
 ## Installation
-The library is available in CocoaPods.
+The library is available in CocoaPods and Swift Package Manager.
 
 Add the following line to your `Podfile` to include all SDKs for iOS at once:
 

@@ -13,6 +13,7 @@
 
 import UIKit
 import XsollaSDKUtilities
+import XsollaSDKPaymentsKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate
@@ -25,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     {
         DeepLinkManager.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         setupRouting()
+        PaymentsKit.shared.warmupPaymentView()
 
         return true
     }

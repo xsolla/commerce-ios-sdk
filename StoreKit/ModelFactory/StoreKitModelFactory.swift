@@ -18,6 +18,7 @@ protocol ModelFactoryProtocol
     func getItemGroups(response: GetItemGroupsResponse) -> [StoreItemGroup]
     func getAllVirtualItems(response: GetAllVirtualItemsResponse) -> [StoreVirtualItemShort]
     func getVirtualItems(response: GetVirtualItemsResponse) -> [StoreVirtualItem]
+    func getVirtualItemsWithInfo(response: GetVirtualItemsResponse) -> StoreVirtualItems
     func getVirtualCurrency(response: GetVirtualCurrencyResponse) -> [StoreVirtualCurrency]
     func getVirtualCurrencyPackages(response: GetVirtualCurrencyPackagesResponse) -> [StoreCurrencyPackage]
     func getItemsOfGroup(response: GetItemsOfGroupResponse) -> [StoreVirtualItem]
@@ -58,6 +59,15 @@ class StoreKitModelFactory: ModelFactoryProtocol
     func getVirtualItems(response: GetVirtualItemsResponse) -> [StoreVirtualItem]
     {
         response.items.map(getStoreVirtualItem)
+    }
+    
+    func getVirtualItemsWithInfo(response: GetVirtualItemsResponse) -> StoreVirtualItems
+    {
+        return StoreVirtualItems(hasMore: response.hasMore,
+                                 items: response.items.map(getStoreVirtualItem),
+                                 languageCode: response.languageCode,
+                                 countryCode: response.countryCode)
+        
     }
 
     func getVirtualCurrency(response: GetVirtualCurrencyResponse) -> [StoreVirtualCurrency]
@@ -685,11 +695,13 @@ private extension StoreKitModelFactory
     {
         let available = response.perUser.available
         let total = response.perUser.total
-        let requrrentSchedule = StoreItemLimits.LimitsPerUser.RecurrentSchedule(intervalType: response.perUser.recurrentSchedule.intervalType,
-                                                                                resetNextDate: response.perUser.recurrentSchedule.resetNextDate)
+        let recurrentSchedule = response.perUser.recurrentSchedule.map {
+            StoreItemLimits.LimitsPerUser.RecurrentSchedule(intervalType: $0.intervalType,
+                                                            resetNextDate: $0.resetNextDate)
+        }
         let perUser = StoreItemLimits.LimitsPerUser(available: available,
                                                     total: total,
-                                                    recurrentSchedule: requrrentSchedule)
+                                                    recurrentSchedule: recurrentSchedule)
 
         return StoreItemLimits(perUser: perUser)
     }

@@ -52,7 +52,7 @@ class VirtualItemsList
         { fulfill, reject in
             
             self.dependencies.xsollaSDK.getUserInventoryItems(projectId: AppConfig.projectId,
-                                                              platform: nil,
+                                                              filterParams: .empty,
                                                               detailedSubscriptions: nil)
             { result in
                 

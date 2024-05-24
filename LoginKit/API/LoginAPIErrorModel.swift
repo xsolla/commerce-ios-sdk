@@ -16,7 +16,7 @@
 import Foundation
 import XsollaSDKUtilities
 
-struct LoginAPIErrorModel: Codable
+public struct LoginAPIErrorModel: Codable
 {
     let error: ErrorModel
     
@@ -61,7 +61,7 @@ struct LoginAPIErrorModel: Codable
 
 extension LoginAPIErrorModel: APIDecodableErrorModelProtocol
 {
-    var code: Int { error.code }
-    var description: String { error.description }
-    var extendedDescription: String { error.description }
+    public var code: Int { error.code }
+    public var description: String { error.description }
+    public var extendedDescription: String { error.description }
 }

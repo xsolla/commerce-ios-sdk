@@ -12,6 +12,8 @@
 // See the License for the specific language governing and permissions and
 
 import UIKit
+import WebKit
+import XsollaSDKPaymentsKit
 
 protocol MainCoordinatorProtocol: Coordinator, Finishable
 {
@@ -208,23 +210,19 @@ class MainCoordinator: BaseCoordinator<MainCoordinator.Dependencies, MainCoordin
     private func showPaymentBrowser(paymentToken: String, isSandbox: Bool, onSuccessCompletion: (() -> Void)? = nil)
     {
         let xsollaSDK = params.xsollaSDK
-        let paystationVC = PaystationVC()
 
-        paystationVC.onSuccessPurchase =
-        { vc in
-
-            xsollaSDK.requestBalanceUpdate()
-            vc.dismiss(animated: true, completion: nil)
-
-            onSuccessCompletion?()
+        xsollaSDK.presentPaymentView(presenter: presenter!,
+                                     paymentToken: paymentToken,
+                                     isSandbox: isSandbox,
+                                     redirectUrl: AppConfig.paymentsRedirectURL)
+        { status in
+            logger.debug(.debug, domain: .paymentsKit) { status }
+            if status == .success
+            {
+                xsollaSDK.requestBalanceUpdate()
+                onSuccessCompletion?()
+            }
         }
-        
-        paystationVC.configuration = .init(paymentToken: paymentToken,
-                                           redirectURL: AppConfig.paymentsRedirectURL,
-                                           isSandbox: isSandbox)
-        
-        paystationVC.modalPresentationStyle = .formSheet
-        presenter?.present(paystationVC, animated: true, completion: nil)
     }
 }
 

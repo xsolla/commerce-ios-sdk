@@ -32,15 +32,17 @@ public protocol PaystationWebViewDelegate: AnyObject
 public class PaystationWebView: UIView
 {
     public weak var delegate: PaystationWebViewDelegate?
+    
     public var customUserAgent: String = WKWebView.defaultUserAgent
     {
         didSet { webView.customUserAgent = customUserAgent }
     }
-
+    
+    internal var loadingDelegate: PaystationWebViewLoadingDelegate?
     private var configuration: Configuration?
 
     private var webView: WKWebView = WKWebView()
-
+    
     // MARK: - Initialization
 
     public override init(frame: CGRect)
@@ -62,8 +64,13 @@ public class PaystationWebView: UIView
 
     private func setupWebView()
     {
+#if DEBUG
+        if #available(iOS 16.4, *)
+        {
+            webView.isInspectable = true
+        }
+#endif
         webView.customUserAgent = customUserAgent
-
         webView.navigationDelegate = self
 
         self.addSubview(webView)
@@ -79,10 +86,20 @@ public class PaystationWebView: UIView
     public func loadPaystation(with configuration: Configuration)
     {
         self.configuration = configuration
-
         let url = configuration.buildURL()
-
-        webView.load(URLRequest(url: url))
+        loadUrl(url: url)
+    }
+    
+    public func warmupWebView()
+    {
+        let url = PaymentsKit.shared.getPaymentWarmupUrl()
+        loadUrl(url: url!)
+    }
+    
+    func loadUrl(url: URL)
+    {
+        let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)
+        webView.load(request)
     }
 }
 
@@ -111,6 +128,19 @@ extension PaystationWebView: WKNavigationDelegate
 
         delegate?.paystationWebView(self, didFinishPaymentWithInvoice: invoiceId, forUser: userId)
     }
+    
+    public func webView(_ webView: WKWebView, 
+                        didStartProvisionalNavigation navigation: WKNavigation!)
+    {
+        loadingDelegate?.onStartLoad(self)
+    }
+    
+    public func webView(_ webView: WKWebView,
+                        didFinish navigation: WKNavigation!)
+    {
+        loadingDelegate?.onFinishLoad(self)
+    }
+
 }
 
 // MARK: - Configuration
@@ -144,23 +174,7 @@ extension PaystationWebView
 
         public func buildURL() -> URL
         {
-            let baseUrlString = isSandbox
-                ? "https://sandbox-secure.xsolla.com/paystation3/"
-                : "https://secure.xsolla.com/paystation3/"
-
-            guard var urlComponents = URLComponents(string: baseUrlString) else
-            {
-                fatalError("Cannot build base URL.")
-            }
-
-            urlComponents.queryItems = [URLQueryItem(name: "access_token", value: paymentToken)]
-
-            guard let url = urlComponents.url else
-            {
-                fatalError("Cannot extract URL from URLComponents")
-            }
-
-            return url
+            return PaymentsKit.shared.createPaymentUrl(paymentToken: paymentToken, isSandbox: isSandbox)!
         }
     }
 }

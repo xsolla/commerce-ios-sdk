@@ -64,8 +64,14 @@ class VirtualCurrencyList
     {
         logger.info { "Buy action for item: \(item.name)" }
 
+        let mobileHeaderSettings = StorePaymentProjectSettings.UISettings.PlatformSettings.Header(closeButton: !AppConfig.useExternalBrowserForPayStation)
+        
+        let mobilePlatformSettings = StorePaymentProjectSettings.UISettings.PlatformSettings(header: mobileHeaderSettings)
+        
         let uiSettings = StorePaymentProjectSettings.UISettings(theme: AppConfig.paystationUIThemeId,
-                                                                size: AppConfig.paystationUISize)
+                                                                size: AppConfig.paystationUISize,
+                                                                mobilePlatformSettings: mobilePlatformSettings)
+
         let redirectPolicy =
             StorePaymentProjectSettings.RedirectPolicy(redirectConditions: .any,
                                                        delay: 5,

@@ -54,11 +54,11 @@ extension InventoryKit
      */
     public func getUserInventoryItems(accessToken: String,
                                       projectId: Int,
-                                      platform: String?,
+                                      filterParams: InventoryFilterParams,
                                       detailedSubscriptions: Bool? = false,
                                       completion: @escaping (Result<[InventoryItem], Error>) -> Void)
     {
-        api.getUserInventoryItems(accessToken: accessToken, projectId: projectId, platform: platform)
+        api.getUserInventoryItems(accessToken: accessToken, projectId: projectId, filterParams: filterParams)
         { [weak self, factory = modelFactory, translator = errorTranslator] result in
             switch result
             {
@@ -75,7 +75,7 @@ extension InventoryKit
                     self?.getDetailedUserSubscriptions(for: items,
                                                        accessToken: accessToken,
                                                        projectId: projectId,
-                                                       platform: platform,
+                                                       platform: filterParams.platform,
                                                        completion: completion)
                 }
 

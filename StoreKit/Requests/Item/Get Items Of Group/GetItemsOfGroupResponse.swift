@@ -18,7 +18,14 @@ import Foundation
 
 struct GetItemsOfGroupResponse: Decodable
 {
+    let hasMore: Bool
     let items: [Item]
+    
+    enum CodingKeys: String, CodingKey
+    {
+        case hasMore = "has_more"
+        case items = "items"
+    }
 }
 
 extension GetItemsOfGroupResponse

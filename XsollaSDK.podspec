@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDK'
-  s.version      = '0.7.2'
+  s.version      = '1.0.0'
   s.summary      = 'The official Xsolla SDKs for iOS used to work with Xsolla products.'
   s.description  = <<-DESC
                    After integrating SDKs for iOS you will be able to:
@@ -25,27 +25,27 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.subspec 'Utilities' do |utilities|
-    utilities.dependency 'XsollaSDKUtilities', "~> #{s.version}"
+    utilities.dependency 'XsollaSDKUtilities', "#{s.version}"
   end
 
   s.subspec 'LoginKit' do |login|
     login.dependency 'XsollaSDK/Utilities'
-    login.dependency 'XsollaSDKLoginKit', "~> #{s.version}"
+    login.dependency 'XsollaSDKLoginKit', "#{s.version}"
   end
 
   s.subspec 'StoreKit' do |store|
     store.dependency 'XsollaSDK/Utilities'
-    store.dependency 'XsollaSDKStoreKit', "~> #{s.version}"
+    store.dependency 'XsollaSDKStoreKit', "#{s.version}"
   end
 
   s.subspec 'InventoryKit' do |inventory|
     inventory.dependency 'XsollaSDK/Utilities'
-    inventory.dependency 'XsollaSDKInventoryKit', "~> #{s.version}"
+    inventory.dependency 'XsollaSDKInventoryKit', "#{s.version}"
   end
 
   s.subspec 'PaymentsKit' do |payments|
     payments.dependency "XsollaSDK/Utilities"
-    payments.dependency 'XsollaSDKPaymentsKit', "~> #{s.version}"
+    payments.dependency 'XsollaSDKPaymentsKit', "#{s.version}"
   end
 
 end

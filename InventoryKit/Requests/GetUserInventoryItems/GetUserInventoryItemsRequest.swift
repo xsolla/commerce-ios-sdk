@@ -40,6 +40,8 @@ class GetUserInventoryItemsRequest: InventoryBaseRequest<GetUserInventoryItemsRe
         var queryParams = [String: String]()
         
         if let platform = params.platform { queryParams["platform"] = platform }
+        if let limit = params.limit { queryParams["limit"] = "\(limit)" }
+        if let offset = params.offset { queryParams["offset"] = "\(offset)" }
         
         return queryParams
     }
@@ -62,5 +64,7 @@ extension GetUserInventoryItemsRequest
         let accessToken: String
         let projectId: Int
         let platform: String?
+        let limit: Int?
+        let offset: Int?
     }
 }

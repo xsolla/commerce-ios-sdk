@@ -35,6 +35,8 @@ public struct StoreFilterParams
     /// Country to calculate regional prices and restrictions for a catalog. Two-letter uppercase country code per ISO 3166-1 alpha-2.
     /// If you don't specify the country explicitly, it will be calculated based on the user's IP address.
     public let country: String?
+    
+    public var withGeo: Int? = nil
 
     public init(limit: Int?, offset: Int?, locale: String?, additionalFields: [String]?, country: String?)
     {

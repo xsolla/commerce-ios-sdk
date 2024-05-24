@@ -20,6 +20,7 @@ import XsollaSDKInventoryKit
 import XsollaSDKLoginKit
 import XsollaSDKStoreKit
 import XsollaSDKPaymentsKit
+import UIKit
 
 protocol XsollaSDKAuthorizationErrorDelegate: AnyObject
 {
@@ -132,11 +133,13 @@ extension XsollaSDK: XsollaSDKProtocol
     
     @available(iOS 13.4, *)
     func authWithXsollaWidget(oAuth2Params: OAuth2Params,
+                              jwtParams: JWTGenerationParams,
                               presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
                               completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
     {
         login.authWithXsollaWidget(loginProjectId: AppConfig.loginId,
                                    oAuth2Params: oAuth2Params,
+                                   jwtParams: jwtParams,
                                    presentationContextProvider: presentationContextProvider,
                                    completion: completion)
     }
@@ -957,7 +960,7 @@ extension XsollaSDK
     }
     
     func getUserInventoryItems(projectId: Int,
-                               platform: String?,
+                               filterParams: InventoryFilterParams,
                                detailedSubscriptions: Bool?,
                                completion: @escaping (Result<[InventoryItem], Error>) -> Void)
     {
@@ -967,7 +970,7 @@ extension XsollaSDK
             
             inventory.getUserInventoryItems(accessToken: token,
                                             projectId: projectId,
-                                            platform: platform,
+                                            filterParams: filterParams,
                                             detailedSubscriptions: detailedSubscriptions,
                                             completion: completion) }
     }
@@ -1178,6 +1181,24 @@ extension XsollaSDK
     func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
     {
         self.payments.createPaymentUrl(paymentToken: paymentToken, isSandbox: isSandbox)
+    }
+    
+    func presentPaymentView(presenter: UIViewController,
+                            paymentToken: String,
+                            isSandbox: Bool,
+                            redirectUrl: String,
+                            completionHandler: ((PaymentStatus) -> Void)?)
+    {
+        self.payments.presentPaymentView(presenter: presenter,
+                                         paymentToken: paymentToken,
+                                         isSandbox: isSandbox,
+                                         redirectUrl: redirectUrl,
+                                         completionHandler: completionHandler)
+    }
+    
+    func warmupPaymentView()
+    {
+        self.payments.warmupPaymentView()
     }
 }
 

@@ -20,4 +20,6 @@ public typealias PaymentsAPIResult<T> = Result<T, PaymentsAPIError>
 protocol PaymentsAPIProtocol
 {
     func createPaymentUrl(paymentToken: String, isSandbox: Bool) -> URL?
+    
+    func getWarmupUrl() -> URL?
 }

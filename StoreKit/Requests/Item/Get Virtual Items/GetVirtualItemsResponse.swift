@@ -18,7 +18,17 @@ import Foundation
 
 struct GetVirtualItemsResponse: Decodable
 {
+    let hasMore: Bool
     let items: [Item]
+    
+    var languageCode: String?
+    var countryCode: String?
+    
+    enum CodingKeys: String, CodingKey
+    {
+        case hasMore = "has_more"
+        case items = "items"
+    }
 }
 
 extension GetVirtualItemsResponse

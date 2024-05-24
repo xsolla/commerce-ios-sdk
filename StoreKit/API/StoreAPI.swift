@@ -62,7 +62,8 @@ extension StoreAPI: StoreAPIProtocol
                                                    offset: filterParams.offset,
                                                    locale: filterParams.locale,
                                                    additionalFields: filterParams.additionalFields,
-                                                   country: filterParams.country)
+                                                   country: filterParams.country,
+                                                   withGeo: filterParams.withGeo)
         
         GetVirtualItemsRequest(params: params, apiConfiguration: configuration).perform(completion)
     }

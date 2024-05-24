@@ -1,9 +1,30 @@
 # Changelog
 
+## [1.0.0] - May 2024
+### Added
+ - `getVirtualItemsWithInfo` SDK method. (Modified version of `getVirtualItems` method)
+
+### Changed
+ - `authWithXsollaWidget` SDK method. Added `jwtParams` parameter. This method uses OAuth2.0 authorization now
+
+## [0.7.3] - Marсh 2024
+### Added
+ - `presentPaymentView` method. Enables a seamless display of the Pay Station view for transactions
+ - `warmupPaymentView` method. Preloads the internal Pay Station WebView, ensuring faster content display
+ - Ability to close the Pay Station directly within the WebView
+
+### Changed
+ - `getUserInventoryItems` SDK method. Added `limit` and `offset` parameters
+ - `hasMore` parameter to the response added to the following SDK methods:
+    - `getVirtualItemsResponse`
+    - `getItemsOfGroupResponse`
+    - `getVirtualCurrencyResponse`
+    - `getVirtualCurrencyPackagesResponse`
+
 ## [0.7.2] - January 2024
 
 ### Added
-  - ‘authWithXsollaWidget’ SDK method. Added the ‘locale’ parameter
+  - `authWithXsollaWidget` SDK method. Added the `locale` parameter
 
 ## [0.7.0] - November 2023
 

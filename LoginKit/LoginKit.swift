@@ -111,11 +111,13 @@ extension LoginKit
      - Parameters:
        - loginProjectId: Login project ID from [Publisher Account](https://publisher.xsolla.com/).
        - oAuth2Params: Instance of **OAuth2Params**.
+       - jwtParams: Instance of **JWTGenerationParams**.
        - locale: Login widget UI language. Supported languages: Arabic (ar_AE), Bulgarian (bg_BG), Czech (cz_CZ), Filipino (fil-PH), English (en_XX), German (de_DE), Spanish (es_ES), French (fr_FR), Hebrew (he_IL), Indonesian (id-ID), Italian (it_IT), Japanese (ja_JP), Khmer (km-KH), Korean (ko_KR), Lao language ( lo-LA), Myanmar (my-MM), NepaliPolish (ne-NP), (pl_PL), Portuguese (pt_BR), Romanian (ro_RO), Russian (ru_RU), Thai (th_TH), Turkish (tr_TR), Vietnamese (vi_VN), Chinese Simplified (zh_CN), Chinese Traditional (zh_TW).
        - completion: Completion with `Result`: `AccessTokenInfo` in case of success and `Error` in case of failure.
      */
     public func authWithXsollaWidget(loginProjectId: String,
                                      oAuth2Params: OAuth2Params,
+                                     jwtParams: JWTGenerationParams,
                                      locale: String? = nil,
                                      presentationContextProvider: WebAuthenticationSession.PresentationContextProviding,
                                      completion: @escaping (Result<AccessTokenInfo, Error>) -> Void)
@@ -132,28 +134,33 @@ extension LoginKit
             return
         }
 
-        var stringUrl = "https://login-widget.xsolla.com/latest/?projectId=\(loginProjectId)&login_url=\(oAuth2Params.redirectUri!)"
+        var stringUrl = "https://login-widget.xsolla.com/latest/?projectId=\(loginProjectId)&client_id=\(String(oAuth2Params.clientId))&response_type=\(oAuth2Params.responseType)&state=\(oAuth2Params.state)"
         
-        if let locale = locale {
+        if let locale = locale 
+        {
             stringUrl += "&locale=\(locale)"
+        }
+        if let redirectUri = oAuth2Params.redirectUri
+        {
+            stringUrl += "&redirect_uri=\(redirectUri)"
+        }
+        if let scope = oAuth2Params.scope
+        {
+            stringUrl += "&scope=\(scope)"
         }
         
         let url = URL(string: stringUrl)
         
-        getAccessTokenFromWebAuthenticationSession(with: url!,
+        getAccessCodeFromWebAuthenticationSession(with: url!,
                                                   callbackScheme: callbackScheme,
                                                   presentationContextProvider: presentationContextProvider)
         { result in
 
             if case .failure(let error) = result { completion(.failure(error)) }
 
-            if case .success(let token) = result
+            if case .success(let code) = result
             {
-                let accessToken = AccessTokenInfo(accessToken: token,
-                                                  expiresIn: 3600,
-                                                  refreshToken: "",
-                                                  tokenType: "bearer")
-                                                  completion(.success(accessToken))
+                self.getAccessToken(with: code, jwtParams: jwtParams, completion: completion)
             }
         }
     }
@@ -168,7 +175,7 @@ extension LoginKit
                                       presentationContextProvider: presentationContextProvider)
         { result in
 
-            completion(self.authTokenExtractor.extract(from: result))
+            completion(self.authCodeExtractor.extract(from: result))
         }
     }
 

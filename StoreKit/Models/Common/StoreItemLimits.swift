@@ -28,7 +28,7 @@ public struct StoreItemLimits
         public let total: Int
 
         /// Regular limit refresh schedule.
-        public let recurrentSchedule: RecurrentSchedule
+        public let recurrentSchedule: RecurrentSchedule?
 
         public struct RecurrentSchedule
         {

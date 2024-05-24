@@ -31,6 +31,9 @@ public protocol APIRequestProtocol
     var errorHandler: ErrorHandler { get }
 
     func perform(_ completionHandler: Callback) -> NetworkTask
+    
+    func handleSuccess(response: URLResponse?, model: ResponseModel, completionHandler: Callback)
+    
     func handleSuccess(model: ResponseModel, completionHandler: Callback)
     func handleFailure(error: ErrorType, completionHandler: Callback)
 }
@@ -56,7 +59,7 @@ extension APIRequestProtocol
             {
                 case .success(let model): do
                 {
-                    DispatchQueue.main.async { self.handleSuccess(model: model, completionHandler: completionHandler) }
+                    DispatchQueue.main.async { self.handleSuccess(response: response, model: model, completionHandler: completionHandler) }
                 }
 
                 case .failure(let error): do
@@ -68,5 +71,10 @@ extension APIRequestProtocol
         }
 
         return task
+    }
+    
+    public func handleSuccess(response: URLResponse?, model: ResponseModel, completionHandler: Callback)
+    {
+        handleSuccess(model: model, completionHandler: completionHandler)
     }
 }

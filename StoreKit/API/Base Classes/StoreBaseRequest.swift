@@ -58,21 +58,45 @@ class StoreBaseRequest<ParamsType: RequestParams>: APIBaseRequest
     
     var analyticsQueryParams: APIBaseRequest.QueryParameters
     {
-        ["engine": "ios",
-         "engine_v": iOSVersion,
-         "sdk": "store",
-         "sdk_v": kitVersion ?? ""]
+        var params: APIBaseRequest.QueryParameters = [
+            "engine": "ios",
+            "engine_v": iOSVersion,
+            "sdk": StoreAnalyticsUtils.sdk,
+            "sdk_v": StoreAnalyticsUtils.sdkVersion]
+        
+        if !StoreAnalyticsUtils.gameEngine.isEmpty
+        {
+            params["game_engine"] = StoreAnalyticsUtils.gameEngine
+        }
+        
+        if !StoreAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            params["game_engine_v"] = StoreAnalyticsUtils.gameEngineVersion
+        }
+        
+        return params
     }
     
     var analyticsHeaders: APIBaseRequest.HTTPHeaders
     {
-        ["X-ENGINE": "IOS",
-         "X-ENGINE-V": iOSVersion.uppercased(),
-         "X-SDK": "STORE",
-         "X-SDK-V": kitVersion?.uppercased() ?? ""]
+        var headers: APIBaseRequest.HTTPHeaders = [
+            "X-ENGINE": "IOS",
+            "X-ENGINE-V": iOSVersion.uppercased(),
+            "X-SDK": StoreAnalyticsUtils.sdk.uppercased(),
+            "X-SDK-V": StoreAnalyticsUtils.sdkVersion.uppercased()]
+        
+        if !StoreAnalyticsUtils.gameEngine.isEmpty
+        {
+            headers["X-GAME-ENGINE"] = StoreAnalyticsUtils.gameEngine.uppercased()
+        }
+        
+        if !StoreAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            headers["X-GAME-ENGINE-V"] = StoreAnalyticsUtils.gameEngineVersion.uppercased()
+        }
+        
+        return headers
     }
     
     private var iOSVersion: String { UIDevice.current.systemVersion }
-    
-    private var kitVersion: String? { StoreKit.version }
 }

@@ -58,3 +58,13 @@ public struct StoreVirtualItem
     /// Limit to the number of times one user can buy an item.
     public let limits: StoreItemLimits?
 }
+
+/// Virtual items.
+public struct StoreVirtualItems
+{
+    public let hasMore: Bool
+    public let items: [StoreVirtualItem]
+    
+    public var languageCode: String?
+    public var countryCode: String?
+}

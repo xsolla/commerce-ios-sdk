@@ -285,9 +285,12 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
                                 scope: "offline",
                                 redirectUri: AppConfig.customSchemeRedirectUrl)
 
+        let jwtParams = JWTGenerationParams(clientId: AppConfig.oAuth2ClientId, redirectUri: AppConfig.customSchemeRedirectUrl)
+        
         let presentationContextProvider = WebAuthenticationPresentationContextProvider(presentationAnchor: window)
 
         dependencies.xsollaSDK.authWithXsollaWidget(oAuth2Params: oauthParams,
+                                                    jwtParams: jwtParams,
                                                     presentationContextProvider: presentationContextProvider)
         { [weak self] result in
 
@@ -514,7 +517,8 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
     /// Opens web browser with a link for xsolla widget authentication.
     private func startXsollaWidgetAuthSession()
     {
-        let stringUrl = "https://login-widget.xsolla.com/latest/?projectId=\(AppConfig.loginId)&login_url=\(AppConfig.customSchemeRedirectUrl)"
+        var stringUrl = "https://login-widget.xsolla.com/latest/?projectId=\(AppConfig.loginId)&client_id=\(String(AppConfig.oAuth2ClientId))&redirect_uri=\(AppConfig.redirectUrl)&response_type=code&state=\(UUID().uuidString)&scope=offline"
+        
         let url = URL(string: stringUrl)
 
         let webVC = dependencies.viewControllerFactory.createWebBrowserVC(params: url)
@@ -523,16 +527,13 @@ class AuthenticationCoordinator: BaseCoordinator<AuthenticationCoordinator.Depen
         webRedirectHandler.onRedirect =
         { [weak webVC, weak self] url in
 
-            if url.absoluteString.starts(with: AppConfig.customSchemeRedirectUrl)
+            if url.absoluteString.starts(with: AppConfig.redirectUrl)
             {
                 webVC?.dismiss(animated: true, completion: nil)
 
-                switch LoginKit.shared.authTokenExtractor.extract(from: url)
+                switch LoginKit.shared.authCodeExtractor.extract(from: url)
                 {
-                    case .success(let token):
-                        self?.dependencies.loginManager.login(accessToken: token,
-                                                              refreshToken: "",
-                                                              expireDate: Date(timeIntervalSinceNow: TimeInterval(3600)))
+                    case .success(let code): self?.performAuthentication(withAuthCode: code)
                     case .failure(let error): self?.showError(error)
                 }
 

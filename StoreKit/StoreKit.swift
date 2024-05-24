@@ -109,6 +109,28 @@ extension StoreKit
             )
         }
     }
+    
+    /**
+     Gets a virtual items list for building a catalog with aditional info available.
+     - Parameters:
+        - projectId: Project ID
+        - filterParams: Instance of **StoreFilterParams**.
+        - completion: List of `StoreVirtualItem` in case of success.
+     */
+    public func getVirtualItemsWithInfo(accessToken: String? = nil,
+                                        projectId: Int,
+                                        filterParams: StoreFilterParams,
+                                        completion: @escaping (Result<StoreVirtualItems, Error>) -> Void)
+    {
+        api.getVirtualItems(accessToken: accessToken, projectId: projectId, filterParams: filterParams)
+        { [factory = modelFactory, translator = errorTranslator] result in
+
+            completion(result
+                .map(factory.getVirtualItemsWithInfo)
+                .mapError(translator.translateError)
+            )
+        }
+    }
 
     /**
      Gets a virtual currency list for building a catalog.

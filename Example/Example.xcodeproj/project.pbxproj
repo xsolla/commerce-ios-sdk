@@ -242,7 +242,6 @@
 		7E71FA1526B0360A00C2387D /* ConnectedDevicesListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E71FA1426B0360A00C2387D /* ConnectedDevicesListVC.swift */; };
 		7E71FA2526B0385E00C2387D /* ConnectedDevicesListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7E71FA2426B0385E00C2387D /* ConnectedDevicesListItemCell.xib */; };
 		7E76CE1C26B2C199007CD032 /* ConnectedDevicesListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E76CE1B26B2C199007CD032 /* ConnectedDevicesListItemCell.swift */; };
-		7EA3B07925EE219C00051F3C /* PaystationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA3B07825EE219C00051F3C /* PaystationVC.swift */; };
 		7EC5BF912643BC7500CBBF22 /* PhoneNumberValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC5BF902643BC7500CBBF22 /* PhoneNumberValidator.swift */; };
 		7ECD013A263BE5F3008C0388 /* UserProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECD0139263BE5F3008C0388 /* UserProfileVC.swift */; };
 		7ECD013C263BE614008C0388 /* UserProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7ECD013B263BE614008C0388 /* UserProfile.storyboard */; };
@@ -251,23 +250,6 @@
 		7EEC1D0B25CC073200969618 /* RecoverPasswordFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEC1D0A25CC073200969618 /* RecoverPasswordFormData.swift */; };
 		7EEC1D1825CC246F00969618 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEC1D1725CC246F00969618 /* ActivityIndicator.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		5B2A095F264BC75C0039456A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7EC5C033264559F700CBBF22;
-			remoteInfo = SubscriptionsKit;
-		};
-		5B2A0961264BC75C0039456A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7EC5C03C264559F700CBBF22;
-			remoteInfo = SubscriptionsKitTests;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		5B00C4F825C2D28A0063B87B /* BalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceView.swift; sourceTree = "<group>"; };
@@ -312,7 +294,6 @@
 		5B29589826A9711300FF1D2D /* AsyncUtilsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncUtilsFactory.swift; sourceTree = "<group>"; };
 		5B29589A26A9884B00FF1D2D /* AccessTokenInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInfo.swift; sourceTree = "<group>"; };
 		5B29BF1A28B277D1000993B8 /* DemoUserCreationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoUserCreationHelper.swift; sourceTree = "<group>"; };
-		5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SubscriptionsKit.xcodeproj; path = ../SubscriptionsKit/SubscriptionsKit.xcodeproj; sourceTree = "<group>"; };
 		5B2AB89525B5F5F500E57D16 /* FloatingTitleTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTitleTextField.swift; sourceTree = "<group>"; };
 		5B2B615627889F380033DD87 /* SegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControl.swift; sourceTree = "<group>"; };
 		5B2B8EC725E928F90029F4AA /* SystemFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemFont.swift; sourceTree = "<group>"; };
@@ -508,7 +489,6 @@
 		7E71FA1426B0360A00C2387D /* ConnectedDevicesListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDevicesListVC.swift; sourceTree = "<group>"; };
 		7E71FA2426B0385E00C2387D /* ConnectedDevicesListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConnectedDevicesListItemCell.xib; sourceTree = "<group>"; };
 		7E76CE1B26B2C199007CD032 /* ConnectedDevicesListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDevicesListItemCell.swift; sourceTree = "<group>"; };
-		7EA3B07825EE219C00051F3C /* PaystationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaystationVC.swift; sourceTree = "<group>"; };
 		7EC5BF902643BC7500CBBF22 /* PhoneNumberValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberValidator.swift; sourceTree = "<group>"; };
 		7ECD0139263BE5F3008C0388 /* UserProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileVC.swift; sourceTree = "<group>"; };
 		7ECD013B263BE614008C0388 /* UserProfile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = UserProfile.storyboard; sourceTree = "<group>"; };
@@ -611,15 +591,6 @@
 				5B1D110125E5680D00FF2AB4 /* Store.swift */,
 			);
 			path = Store;
-			sourceTree = "<group>";
-		};
-		5B2A0953264BC75C0039456A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */,
-				5B2A0962264BC75C0039456A /* SubscriptionsKitTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		5B2C60B32613326B00AC6D47 /* Misc */ = {
@@ -903,7 +874,6 @@
 				5B6042D825A5A76500561E99 /* Main */,
 				5B6042E625A5A95500561E99 /* SideMenu */,
 				7E596C5625C184690045D277 /* WebBrowserVC.swift */,
-				7EA3B07825EE219C00051F3C /* PaystationVC.swift */,
 				5B7D463926BD2B940029B117 /* WebFlowURLCallbackListenableVC.swift */,
 			);
 			path = UI;
@@ -1333,35 +1303,12 @@
 			mainGroup = 5BDF75422594C31E00BB9350;
 			productRefGroup = 5BDF754C2594C31E00BB9350 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 5B2A0953264BC75C0039456A /* Products */;
-					ProjectRef = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				5BDF754A2594C31E00BB9350 /* Example */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = XsollaSDKSubscriptionsKit.framework;
-			remoteRef = 5B2A095F264BC75C0039456A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5B2A0962264BC75C0039456A /* SubscriptionsKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SubscriptionsKitTests.xctest;
-			remoteRef = 5B2A0961264BC75C0039456A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5BDF75492594C31E00BB9350 /* Resources */ = {
@@ -1656,7 +1603,6 @@
 				5BC6A38325BEEFB800A304C9 /* AppConfig.swift in Sources */,
 				5B65C4F925E68D9A003A5A37 /* BundlePreviewVC.swift in Sources */,
 				5B1B8A09273A95E600268779 /* InventoryCoordinator.swift in Sources */,
-				7EA3B07925EE219C00051F3C /* PaystationVC.swift in Sources */,
 				5BA2A95425CAE44B00DA250D /* ActivityIndicatingViewController.swift in Sources */,
 				5B71A5C526541AEA00A9D2C8 /* UnifiedUserAttribute.swift in Sources */,
 				5B84D50625A5E13F001EA477 /* AppCoordinatorBuilder.swift in Sources */,
@@ -1821,8 +1767,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = NTH9M3YL62;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1844,7 +1790,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

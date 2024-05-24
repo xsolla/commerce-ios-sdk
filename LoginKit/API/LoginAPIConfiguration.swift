@@ -14,9 +14,15 @@
 import Foundation
 import XsollaSDKUtilities
 
-struct LoginAPIConfiguration: APIConfigurationProtocol
+public struct LoginAPIConfiguration: APIConfigurationProtocol
 {
-    let requestPerformer: RequestPerformer
-    let responseProcessor: ResponseProcessor
-    let apiBasePath: String
+    public let requestPerformer: RequestPerformer
+    public let responseProcessor: ResponseProcessor
+    public let apiBasePath: String
+    
+    public init(requestPerformer: any RequestPerformer, responseProcessor: any ResponseProcessor, apiBasePath: String) {
+        self.requestPerformer = requestPerformer
+        self.responseProcessor = responseProcessor
+        self.apiBasePath = apiBasePath
+    }
 }

@@ -106,7 +106,7 @@ enum AppConfig
     static let paystationUISize = StorePaymentProjectSettings.UISettings.Size.medium
 
     /// Defines where Pay Station should open: in an app or in an external browser.
-    static let useExternalBrowserForPayStation = true
+    static let useExternalBrowserForPayStation = false
 
     /// Whether to send the confirmation link via email in case of passwordless authentication.
     static let sendEmailOTPConfirmationLink = true

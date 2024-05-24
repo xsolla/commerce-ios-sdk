@@ -14,9 +14,9 @@
 import Foundation
 import XsollaSDKUtilities
 
-final class LoginAPIDefaultErrorHandler: APIBaseErrorHandler
+public final class LoginAPIDefaultErrorHandler: APIBaseErrorHandler
 {
-    override func setHandlers()
+    public override func setHandlers()
     {
         add(handler: APIServerCode400ErrorHandler())
         add(handler: APIServerCode401ErrorHandler())

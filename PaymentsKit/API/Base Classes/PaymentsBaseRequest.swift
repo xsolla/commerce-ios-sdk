@@ -58,21 +58,45 @@ class PaymentsBaseRequest<ParamsType: RequestParams>: APIBaseRequest
     
     var analyticsQueryParams: APIBaseRequest.QueryParameters
     {
-        ["engine": "ios",
-         "engine_v": iOSVersion,
-         "sdk": "payments",
-         "sdk_v": kitVersion ?? ""]
+        var params: APIBaseRequest.QueryParameters = [
+            "engine": "ios",
+            "engine_v": iOSVersion,
+            "sdk": PaymentsAnalyticsUtils.sdk,
+            "sdk_v": PaymentsAnalyticsUtils.sdkVersion]
+        
+        if !PaymentsAnalyticsUtils.gameEngine.isEmpty
+        {
+            params["game_engine"] = PaymentsAnalyticsUtils.gameEngine
+        }
+        
+        if !PaymentsAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            params["game_engine_v"] = PaymentsAnalyticsUtils.gameEngineVersion
+        }
+        
+        return params
     }
     
     var analyticsHeaders: APIBaseRequest.HTTPHeaders
     {
-        ["X-ENGINE": "IOS",
-         "X-ENGINE-V": iOSVersion.uppercased(),
-         "X-SDK": "PAYMENTS",
-         "X-SDK-V": kitVersion?.uppercased() ?? ""]
+        var headers: APIBaseRequest.HTTPHeaders = [
+            "X-ENGINE": "IOS",
+            "X-ENGINE-V": iOSVersion.uppercased(),
+            "X-SDK": PaymentsAnalyticsUtils.sdk.uppercased(),
+            "X-SDK-V": PaymentsAnalyticsUtils.sdkVersion.uppercased()]
+        
+        if !PaymentsAnalyticsUtils.gameEngine.isEmpty
+        {
+            headers["X-GAME-ENGINE"] = PaymentsAnalyticsUtils.gameEngine.uppercased()
+        }
+        
+        if !PaymentsAnalyticsUtils.gameEngineVersion.isEmpty
+        {
+            headers["X-GAME-ENGINE-V"] = PaymentsAnalyticsUtils.gameEngineVersion.uppercased()
+        }
+        
+        return headers
     }
     
     private var iOSVersion: String { UIDevice.current.systemVersion }
-    
-    private var kitVersion: String? { PaymentsKit.version }
 }
