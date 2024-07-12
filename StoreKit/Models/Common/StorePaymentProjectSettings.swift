@@ -32,6 +32,9 @@ public struct StorePaymentProjectSettings: Encodable
 
     /// Transaction external id.
     public let externalId: String?
+    
+    /// Settings for generating a payment token for different platforms.
+    private let sdk: SDKTokenSettings
 
     enum CodingKeys: String, CodingKey
     {
@@ -40,6 +43,7 @@ public struct StorePaymentProjectSettings: Encodable
         case returnUrl = "return_url"
         case redirectPolicy = "redirect_policy"
         case externalId = "external_id"
+        case sdk
     }
 
     public init(ui: UISettings,
@@ -53,9 +57,33 @@ public struct StorePaymentProjectSettings: Encodable
         self.returnUrl = returnUrl
         self.redirectPolicy = redirectPolicy
         self.externalId = externalId
+        sdk = SDKTokenSettings()
     }
 }
 
+extension StorePaymentProjectSettings
+{
+    public struct SDKTokenSettings: Encodable
+    {
+        /// Application build platform.
+        public let platform: String
+        
+        /// Type of browser used to launch payment UI.
+        public let browserType: String
+
+        enum CodingKeys: String, CodingKey
+        {
+            case platform
+            case browserType = "browser_type"
+        }
+        
+        public init()
+        {
+            self.platform = "ios"
+            self.browserType = "wk_web_view"
+        }
+    }
+}
 extension StorePaymentProjectSettings
 {
     public struct UISettings: Encodable
@@ -108,15 +136,21 @@ extension StorePaymentProjectSettings.UISettings.PlatformSettings
     {
         /// Whether to show a button to close Pay Station.
         public let closeButton: Bool?
+        
+        /// The icon of the Close button in the payment UI. Can be `arrow` or `cross`.
+        public let closeButtonIcon: String?
 
         enum CodingKeys: String, CodingKey
         {
             case closeButton = "close_button"
+            case closeButtonIcon = "close_button_icon"
         }
 
-        public init(closeButton: Bool?)
+        public init(closeButton: Bool?,
+                    closeButtonIcon: String? = nil)
         {
             self.closeButton = closeButton
+            self.closeButtonIcon = closeButtonIcon
         }
     }
 }

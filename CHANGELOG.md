@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.1] - July 2024
+### Changed
+ - `StorePaymentProjectSettings` structure. Added closeButtonIcon parameter, that defines the icon of the **Close** button in the payment UI. Can be arrow or cross.
+
 ## [1.0.0] - May 2024
 ### Added
  - `getVirtualItemsWithInfo` SDK method. (Modified version of `getVirtualItems` method)

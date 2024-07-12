@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'XsollaSDK'
-  s.version      = '1.0.0'
+  s.version      = '1.0.1'
   s.summary      = 'The official Xsolla SDKs for iOS used to work with Xsolla products.'
   s.description  = <<-DESC
                    After integrating SDKs for iOS you will be able to:

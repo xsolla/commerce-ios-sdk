@@ -1,4 +1,9 @@
-# Xsolla SDK for iOS
+# Enterprise-level Xsolla SDK for iOS
+
+Interested in new ways to extend the reach of payment options while staying compliant with platform requirements? Learn more about [Xsolla Mobile SDK](https://developers.xsolla.com/sdk/mobile/) that brings the power of Xsolla Pay Station onto mobile stores!
+\
+\
+\
 This SDK is a set of classes and methods that you can integrate into your iOS app to work with Xsolla products. After integration, you can:
 * authenticate users while keeping user data safe, secure, and under your ownership
 * sell virtual goods to a worldwide audience and integrate in-app purchases
