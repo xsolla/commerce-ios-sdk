@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -50,6 +50,7 @@
 		5B29589926A9711300FF1D2D /* AsyncUtilsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29589826A9711300FF1D2D /* AsyncUtilsFactory.swift */; };
 		5B29589B26A9884B00FF1D2D /* AccessTokenInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29589A26A9884B00FF1D2D /* AccessTokenInfo.swift */; };
 		5B29BF1B28B277D1000993B8 /* DemoUserCreationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29BF1A28B277D1000993B8 /* DemoUserCreationHelper.swift */; };
+		5B2A0964264BC7970039456A /* XsollaSDKSubscriptionsKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2A0960264BC75C0039456A /* XsollaSDKSubscriptionsKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5B2B615727889F380033DD87 /* SegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2B615627889F380033DD87 /* SegmentedControl.swift */; };
 		5B2B8EC825E928F90029F4AA /* SystemFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2B8EC725E928F90029F4AA /* SystemFont.swift */; };
 		5B2C60B52613328E00AC6D47 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 5B2C60B42613328D00AC6D47 /* Podfile */; };
@@ -57,6 +58,14 @@
 		5B2C60BB261332AD00AC6D47 /* NOTICE in Resources */ = {isa = PBXBuildFile; fileRef = 5B2C60B8261332AD00AC6D47 /* NOTICE */; };
 		5B2C60BC261332AD00AC6D47 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5B2C60B9261332AD00AC6D47 /* LICENSE */; };
 		5B2C60BD261332AD00AC6D47 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5B2C60BA261332AD00AC6D47 /* README.md */; };
+		5B2D1F4E25AC8F640013822B /* XsollaSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F3025AC8EDD0013822B /* XsollaSDKLoginKit.framework */; };
+		5B2D1F4F25AC8F640013822B /* XsollaSDKLoginKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F3025AC8EDD0013822B /* XsollaSDKLoginKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5B2D1F5025AC8F680013822B /* XsollaSDKInventoryKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F3925AC8EE40013822B /* XsollaSDKInventoryKit.framework */; };
+		5B2D1F5125AC8F680013822B /* XsollaSDKInventoryKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F3925AC8EE40013822B /* XsollaSDKInventoryKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5B2D1F5225AC8F6B0013822B /* XsollaSDKPaymentsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F4225AC8EEA0013822B /* XsollaSDKPaymentsKit.framework */; };
+		5B2D1F5325AC8F6B0013822B /* XsollaSDKPaymentsKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F4225AC8EEA0013822B /* XsollaSDKPaymentsKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5B2D1F5525AC8F770013822B /* XsollaSDKStoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F4B25AC8EF00013822B /* XsollaSDKStoreKit.framework */; };
+		5B2D1F5625AC8F770013822B /* XsollaSDKStoreKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2D1F4B25AC8EF00013822B /* XsollaSDKStoreKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5B341D8C25AF26CE0089083E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B341D8B25AF26CE0089083E /* Logger.swift */; };
 		5B341D9525AF26D90089083E /* CategoryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B341D8F25AF26D90089083E /* CategoryExtensions.swift */; };
 		5B341D9725AF26D90089083E /* DomainExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B341D9025AF26D90089083E /* DomainExtensions.swift */; };
@@ -239,9 +248,14 @@
 		7E567E1D25E66C3300D486DB /* InventoryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E567E1C25E66C3300D486DB /* InventoryListItem.swift */; };
 		7E567E3225E66F1300D486DB /* AtomicPropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E567E3125E66F1300D486DB /* AtomicPropertyWrapper.swift */; };
 		7E596C5725C184690045D277 /* WebBrowserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E596C5625C184690045D277 /* WebBrowserVC.swift */; };
+		7E6291F22656804D006DF15A /* XsollaSDKUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E6291F12656804D006DF15A /* XsollaSDKUtilities.framework */; };
+		7E6291F32656804D006DF15A /* XsollaSDKUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7E6291F12656804D006DF15A /* XsollaSDKUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7E71FA1526B0360A00C2387D /* ConnectedDevicesListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E71FA1426B0360A00C2387D /* ConnectedDevicesListVC.swift */; };
 		7E71FA2526B0385E00C2387D /* ConnectedDevicesListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7E71FA2426B0385E00C2387D /* ConnectedDevicesListItemCell.xib */; };
 		7E76CE1C26B2C199007CD032 /* ConnectedDevicesListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E76CE1B26B2C199007CD032 /* ConnectedDevicesListItemCell.swift */; };
+		7E8030812652579E00C97B0C /* XsollaSDKSubscriptionsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E8030752652575400C97B0C /* XsollaSDKSubscriptionsKit.framework */; };
+		7E803083265257A200C97B0C /* XsollaSDKAnalyticsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E80307E2652577100C97B0C /* XsollaSDKAnalyticsKit.framework */; };
+		7E803084265257A200C97B0C /* XsollaSDKAnalyticsKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7E80307E2652577100C97B0C /* XsollaSDKAnalyticsKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7EC5BF912643BC7500CBBF22 /* PhoneNumberValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC5BF902643BC7500CBBF22 /* PhoneNumberValidator.swift */; };
 		7ECD013A263BE5F3008C0388 /* UserProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECD0139263BE5F3008C0388 /* UserProfileVC.swift */; };
 		7ECD013C263BE614008C0388 /* UserProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7ECD013B263BE614008C0388 /* UserProfile.storyboard */; };
@@ -266,7 +280,118 @@
 			remoteGlobalIDString = 7EC5C03C264559F700CBBF22;
 			remoteInfo = SubscriptionsKitTests;
 		};
+		5B2D1F2F25AC8EDD0013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F2925AC8EDD0013822B /* LoginKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5B43EA8B2594C20900819371;
+			remoteInfo = LoginKit;
+		};
+		5B2D1F3125AC8EDD0013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F2925AC8EDD0013822B /* LoginKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5B43EA942594C20900819371;
+			remoteInfo = LoginKitTests;
+		};
+		5B2D1F3825AC8EE40013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F3325AC8EE40013822B /* InventoryKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5B43EAD72594C29700819371;
+			remoteInfo = InventoryKit;
+		};
+		5B2D1F3A25AC8EE40013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F3325AC8EE40013822B /* InventoryKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5B43EAE02594C29800819371;
+			remoteInfo = InventoryKitTests;
+		};
+		5B2D1F4125AC8EEA0013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F3C25AC8EEA0013822B /* PaymentsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5B43EAB12594C26800819371;
+			remoteInfo = PaymentsKit;
+		};
+		5B2D1F4325AC8EEA0013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F3C25AC8EEA0013822B /* PaymentsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5B43EABA2594C26900819371;
+			remoteInfo = PaymentsKitTests;
+		};
+		5B2D1F4A25AC8EF00013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F4525AC8EF00013822B /* StoreKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5BC50CD9259E233C005BC232;
+			remoteInfo = StoreKit;
+		};
+		5B2D1F4C25AC8EF00013822B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2D1F4525AC8EF00013822B /* StoreKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5BC50CE2259E233C005BC232;
+			remoteInfo = StoreKitTests;
+		};
+		7E8030742652575400C97B0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E80306F2652575400C97B0C /* SubscriptionsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7EC5C033264559F700CBBF22;
+			remoteInfo = SubscriptionsKit;
+		};
+		7E80307D2652577100C97B0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E8030782652577100C97B0C /* AnalyticsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7E802FED264D353B00C97B0C;
+			remoteInfo = AnalyticsKit;
+		};
+		7E80307F2652577100C97B0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E8030782652577100C97B0C /* AnalyticsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7E802FF6264D353C00C97B0C;
+			remoteInfo = AnalyticsKitTests;
+		};
+		7E8030E4265273FA00C97B0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E80306F2652575400C97B0C /* SubscriptionsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7EC5C033264559F700CBBF22;
+			remoteInfo = SubscriptionsKit;
+		};
+		7E8030E6265273FA00C97B0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E80306F2652575400C97B0C /* SubscriptionsKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7EC5C03C264559F700CBBF22;
+			remoteInfo = SubscriptionsKitTests;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5BD154D325A33B6C0021AFC0 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5B2A0964264BC7970039456A /* XsollaSDKSubscriptionsKit.framework in Embed Frameworks */,
+				5B2D1F4F25AC8F640013822B /* XsollaSDKLoginKit.framework in Embed Frameworks */,
+				7E803084265257A200C97B0C /* XsollaSDKAnalyticsKit.framework in Embed Frameworks */,
+				5B2D1F5125AC8F680013822B /* XsollaSDKInventoryKit.framework in Embed Frameworks */,
+				5B2D1F5625AC8F770013822B /* XsollaSDKStoreKit.framework in Embed Frameworks */,
+				5B2D1F5325AC8F6B0013822B /* XsollaSDKPaymentsKit.framework in Embed Frameworks */,
+				7E6291F32656804D006DF15A /* XsollaSDKUtilities.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5B00C4F825C2D28A0063B87B /* BalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceView.swift; sourceTree = "<group>"; };
@@ -320,6 +445,10 @@
 		5B2C60B8261332AD00AC6D47 /* NOTICE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NOTICE; sourceTree = SOURCE_ROOT; };
 		5B2C60B9261332AD00AC6D47 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
 		5B2C60BA261332AD00AC6D47 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		5B2D1F2925AC8EDD0013822B /* LoginKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LoginKit.xcodeproj; path = ../LoginKit/LoginKit.xcodeproj; sourceTree = "<group>"; };
+		5B2D1F3325AC8EE40013822B /* InventoryKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InventoryKit.xcodeproj; path = ../InventoryKit/InventoryKit.xcodeproj; sourceTree = "<group>"; };
+		5B2D1F3C25AC8EEA0013822B /* PaymentsKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PaymentsKit.xcodeproj; path = ../PaymentsKit/PaymentsKit.xcodeproj; sourceTree = "<group>"; };
+		5B2D1F4525AC8EF00013822B /* StoreKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = StoreKit.xcodeproj; path = ../StoreKit/StoreKit.xcodeproj; sourceTree = "<group>"; };
 		5B341D8B25AF26CE0089083E /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		5B341D8E25AF26D90089083E /* LevelExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelExtensions.swift; sourceTree = "<group>"; };
 		5B341D8F25AF26D90089083E /* CategoryExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryExtensions.swift; sourceTree = "<group>"; };
@@ -504,9 +633,12 @@
 		7E567E1C25E66C3300D486DB /* InventoryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryListItem.swift; sourceTree = "<group>"; };
 		7E567E3125E66F1300D486DB /* AtomicPropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicPropertyWrapper.swift; sourceTree = "<group>"; };
 		7E596C5625C184690045D277 /* WebBrowserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBrowserVC.swift; sourceTree = "<group>"; };
+		7E6291F12656804D006DF15A /* XsollaSDKUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = XsollaSDKUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E71FA1426B0360A00C2387D /* ConnectedDevicesListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDevicesListVC.swift; sourceTree = "<group>"; };
 		7E71FA2426B0385E00C2387D /* ConnectedDevicesListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConnectedDevicesListItemCell.xib; sourceTree = "<group>"; };
 		7E76CE1B26B2C199007CD032 /* ConnectedDevicesListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDevicesListItemCell.swift; sourceTree = "<group>"; };
+		7E80306F2652575400C97B0C /* SubscriptionsKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SubscriptionsKit.xcodeproj; path = ../SubscriptionsKit/SubscriptionsKit.xcodeproj; sourceTree = "<group>"; };
+		7E8030782652577100C97B0C /* AnalyticsKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AnalyticsKit.xcodeproj; path = ../AnalyticsKit/AnalyticsKit.xcodeproj; sourceTree = "<group>"; };
 		7EC5BF902643BC7500CBBF22 /* PhoneNumberValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberValidator.swift; sourceTree = "<group>"; };
 		7ECD0139263BE5F3008C0388 /* UserProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileVC.swift; sourceTree = "<group>"; };
 		7ECD013B263BE614008C0388 /* UserProfile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = UserProfile.storyboard; sourceTree = "<group>"; };
@@ -521,6 +653,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B2D1F4E25AC8F640013822B /* XsollaSDKLoginKit.framework in Frameworks */,
+				7E6291F22656804D006DF15A /* XsollaSDKUtilities.framework in Frameworks */,
+				5B2D1F5025AC8F680013822B /* XsollaSDKInventoryKit.framework in Frameworks */,
+				5B2D1F5525AC8F770013822B /* XsollaSDKStoreKit.framework in Frameworks */,
+				5B2D1F5225AC8F6B0013822B /* XsollaSDKPaymentsKit.framework in Frameworks */,
+				7E803083265257A200C97B0C /* XsollaSDKAnalyticsKit.framework in Frameworks */,
+				7E8030812652579E00C97B0C /* XsollaSDKSubscriptionsKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,6 +769,42 @@
 				5B2C60B42613328D00AC6D47 /* Podfile */,
 			);
 			path = Misc;
+			sourceTree = "<group>";
+		};
+		5B2D1F2A25AC8EDD0013822B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B2D1F3025AC8EDD0013822B /* XsollaSDKLoginKit.framework */,
+				5B2D1F3225AC8EDD0013822B /* LoginKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5B2D1F3425AC8EE40013822B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B2D1F3925AC8EE40013822B /* XsollaSDKInventoryKit.framework */,
+				5B2D1F3B25AC8EE40013822B /* InventoryKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5B2D1F3D25AC8EEA0013822B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B2D1F4225AC8EEA0013822B /* XsollaSDKPaymentsKit.framework */,
+				5B2D1F4425AC8EEA0013822B /* PaymentsKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5B2D1F4625AC8EF00013822B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B2D1F4B25AC8EF00013822B /* XsollaSDKStoreKit.framework */,
+				5B2D1F4D25AC8EF00013822B /* StoreKitTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		5B341D8A25AF26B70089083E /* Logging */ = {
@@ -863,6 +1038,19 @@
 				5B7E7D3E265E9E6400ABBA34 /* UserAttributeListInfoCell.xib */,
 			);
 			path = Character;
+			sourceTree = "<group>";
+		};
+		5B9DBB7225A3522B00883FBA /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				5B2D1F2925AC8EDD0013822B /* LoginKit.xcodeproj */,
+				5B2D1F3325AC8EE40013822B /* InventoryKit.xcodeproj */,
+				5B2D1F3C25AC8EEA0013822B /* PaymentsKit.xcodeproj */,
+				5B2D1F4525AC8EF00013822B /* StoreKit.xcodeproj */,
+				7E80306F2652575400C97B0C /* SubscriptionsKit.xcodeproj */,
+				7E8030782652577100C97B0C /* AnalyticsKit.xcodeproj */,
+			);
+			name = Dependencies;
 			sourceTree = "<group>";
 		};
 		5B9DBBE325A3671300883FBA /* App */ = {
@@ -1139,6 +1327,10 @@
 				5B9B1808267BA110008BA46E /* CHANGELOG.md */,
 				5BDF754D2594C31E00BB9350 /* Example */,
 				5BDF754C2594C31E00BB9350 /* Products */,
+				9E20C578FA8097087A5F1290 /* Pods */,
+				635881F897460CD2515588AB /* Frameworks */,
+				5B9DBB7225A3522B00883FBA /* Dependencies */,
+				7E8030D3265273FA00C97B0C /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1237,6 +1429,14 @@
 			path = AsyncUtilities;
 			sourceTree = "<group>";
 		};
+		635881F897460CD2515588AB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7E6291F12656804D006DF15A /* XsollaSDKUtilities.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7E0918FB25DA531E00260DA7 /* XsollaSDK */ = {
 			isa = PBXGroup;
 			children = (
@@ -1255,6 +1455,32 @@
 				7E30B9DC26A6811C007D305B /* SocialNetworksListCell.swift */,
 			);
 			path = SocialNetworksList;
+			sourceTree = "<group>";
+		};
+		7E8030792652577100C97B0C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7E80307E2652577100C97B0C /* XsollaSDKAnalyticsKit.framework */,
+				7E8030802652577100C97B0C /* AnalyticsKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7E8030D3265273FA00C97B0C /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				7E8030752652575400C97B0C /* XsollaSDKSubscriptionsKit.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		7E8030E0265273FA00C97B0C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7E8030E5265273FA00C97B0C /* XsollaSDKSubscriptionsKit.framework */,
+				7E8030E7265273FA00C97B0C /* SubscriptionsKitTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		7ECD0130263BE5DC008C0388 /* User Profile */ = {
@@ -1282,6 +1508,13 @@
 			path = "User Profile";
 			sourceTree = "<group>";
 		};
+		9E20C578FA8097087A5F1290 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1295,6 +1528,7 @@
 				5BDF75472594C31E00BB9350 /* Sources */,
 				5BDF75482594C31E00BB9350 /* Frameworks */,
 				5BDF75492594C31E00BB9350 /* Resources */,
+				5BD154D325A33B6C0021AFC0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1332,8 +1566,32 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 7E8030792652577100C97B0C /* Products */;
+					ProjectRef = 7E8030782652577100C97B0C /* AnalyticsKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 5B2D1F3425AC8EE40013822B /* Products */;
+					ProjectRef = 5B2D1F3325AC8EE40013822B /* InventoryKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 5B2D1F2A25AC8EDD0013822B /* Products */;
+					ProjectRef = 5B2D1F2925AC8EDD0013822B /* LoginKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 5B2D1F3D25AC8EEA0013822B /* Products */;
+					ProjectRef = 5B2D1F3C25AC8EEA0013822B /* PaymentsKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 5B2D1F4625AC8EF00013822B /* Products */;
+					ProjectRef = 5B2D1F4525AC8EF00013822B /* StoreKit.xcodeproj */;
+				},
+				{
 					ProductGroup = 5B2A0953264BC75C0039456A /* Products */;
 					ProjectRef = 5B2A0952264BC75C0039456A /* SubscriptionsKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 7E8030E0265273FA00C97B0C /* Products */;
+					ProjectRef = 7E80306F2652575400C97B0C /* SubscriptionsKit.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1356,6 +1614,97 @@
 			fileType = wrapper.cfbundle;
 			path = SubscriptionsKitTests.xctest;
 			remoteRef = 5B2A0961264BC75C0039456A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F3025AC8EDD0013822B /* XsollaSDKLoginKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKLoginKit.framework;
+			remoteRef = 5B2D1F2F25AC8EDD0013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F3225AC8EDD0013822B /* LoginKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = LoginKitTests.xctest;
+			remoteRef = 5B2D1F3125AC8EDD0013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F3925AC8EE40013822B /* XsollaSDKInventoryKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKInventoryKit.framework;
+			remoteRef = 5B2D1F3825AC8EE40013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F3B25AC8EE40013822B /* InventoryKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = InventoryKitTests.xctest;
+			remoteRef = 5B2D1F3A25AC8EE40013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F4225AC8EEA0013822B /* XsollaSDKPaymentsKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKPaymentsKit.framework;
+			remoteRef = 5B2D1F4125AC8EEA0013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F4425AC8EEA0013822B /* PaymentsKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PaymentsKitTests.xctest;
+			remoteRef = 5B2D1F4325AC8EEA0013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F4B25AC8EF00013822B /* XsollaSDKStoreKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKStoreKit.framework;
+			remoteRef = 5B2D1F4A25AC8EF00013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5B2D1F4D25AC8EF00013822B /* StoreKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = StoreKitTests.xctest;
+			remoteRef = 5B2D1F4C25AC8EF00013822B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7E8030752652575400C97B0C /* XsollaSDKSubscriptionsKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKSubscriptionsKit.framework;
+			remoteRef = 7E8030742652575400C97B0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7E80307E2652577100C97B0C /* XsollaSDKAnalyticsKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKAnalyticsKit.framework;
+			remoteRef = 7E80307D2652577100C97B0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7E8030802652577100C97B0C /* AnalyticsKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AnalyticsKitTests.xctest;
+			remoteRef = 7E80307F2652577100C97B0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7E8030E5265273FA00C97B0C /* XsollaSDKSubscriptionsKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XsollaSDKSubscriptionsKit.framework;
+			remoteRef = 7E8030E4265273FA00C97B0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7E8030E7265273FA00C97B0C /* SubscriptionsKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SubscriptionsKitTests.xctest;
+			remoteRef = 7E8030E6265273FA00C97B0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1816,9 +2165,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2FWGTXK3RK;
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1827,7 +2176,7 @@
 				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xsolla.sdk.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.xsolla.sdk.Example";
 				STRIP_PNG_TEXT = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1839,9 +2188,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2FWGTXK3RK;
 				INFOPLIST_FILE = Example/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1850,7 +2199,7 @@
 				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xsolla.sdk.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.xsolla.sdk.Example";
 				STRIP_PNG_TEXT = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
